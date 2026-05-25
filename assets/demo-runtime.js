@@ -85,6 +85,22 @@
     { id: "BB", name: "Boutique Barcelona", city: "Barcelona", state: "warn", visits: 760, visitsTrend: [88, 87, 88, 90, 91, 88], retention: 87, alerts: 2, churn: 24, openTasks: 3 }
   ];
 
+  const mapPositions = {
+    MB: [44, 30],
+    SA: [35, 24],
+    BM: [53, 22],
+    MA: [45, 76],
+    GR: [50, 62],
+    HU: [31, 69],
+    PM: [76, 35],
+    BG: [84, 30],
+    BB: [83, 49]
+  };
+  const mapLinks = [
+    ["SA", "MB"], ["MB", "BM"], ["MB", "GR"], ["GR", "MA"], ["GR", "HU"],
+    ["BM", "BB"], ["BB", "PM"], ["PM", "BG"], ["MA", "BB"]
+  ];
+
   const baseState = {
     currentTab: "dashboard",
     currentScenario: null,
@@ -107,9 +123,9 @@
     },
     heroProof: [
       ["Cliente", "O2 Centro Wellness"],
-      ["Red demo", "9 clubs premium"],
-      ["Foco", "Vida del socio"],
-      ["Formato", "Demo viva + Sheet"]
+      ["Método", "Well-living"],
+      ["Red viva", "9 clubs premium"],
+      ["Huella", "Demo + Sheet"]
     ],
     retentionTrend: {
       labels: ["Dic", "Ene", "Feb", "Mar", "Abr", "May"],
@@ -685,6 +701,7 @@
   function renderNetwork() {
     const grid = byId("network-grid");
     if (!grid) return;
+    renderNetworkMap();
     grid.innerHTML = state.clubs.map((club) => `
       <div class="network-cell ${club.state}" data-club="${club.id}" title="Club ${club.name}">
         <div class="nc-top">
@@ -710,6 +727,48 @@
       summary.textContent = `${totalAlerts} alertas · ${totalTasks} tareas abiertas`;
       summary.className = `status-pill ${totalAlerts > 8 ? "high" : totalAlerts > 3 ? "medium" : "low"}`;
     }
+  }
+
+  function renderNetworkMap() {
+    const map = byId("network-map");
+    const brief = byId("network-brief");
+    if (!map || !brief) return;
+    const lines = mapLinks.map(([from, to]) => {
+      const a = mapPositions[from];
+      const b = mapPositions[to];
+      return a && b ? `<line x1="${a[0]}%" y1="${a[1]}%" x2="${b[0]}%" y2="${b[1]}%" />` : "";
+    }).join("");
+    const nodes = state.clubs.map((club) => {
+      const pos = mapPositions[club.id] || [50, 50];
+      return `
+        <button class="map-node ${club.state}" type="button" data-tab-jump="operations" style="left:${pos[0]}%; top:${pos[1]}%" title="${club.name} · ${club.city}">
+          <strong>${club.name}</strong>
+          <span>${club.city} · ${club.alerts} alertas</span>
+        </button>
+      `;
+    }).join("");
+    map.innerHTML = `<svg class="network-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${nodes}`;
+
+    const totalAlerts = state.clubs.reduce((sum, club) => sum + club.alerts, 0);
+    const critical = state.clubs.filter((club) => club.state === "danger").length;
+    const retentionAvg = Math.round(state.clubs.reduce((sum, club) => sum + club.retention, 0) / state.clubs.length);
+    brief.innerHTML = `
+      <article class="brief-tile">
+        <span>Red O2</span>
+        <strong>${state.clubs.length} clubs</strong>
+        <p>Madrid, Málaga, Granada, Huelva, Girona y Barcelona conectados en una sola lectura.</p>
+      </article>
+      <article class="brief-tile">
+        <span>Prioridad ahora</span>
+        <strong>${critical} críticos</strong>
+        <p>${totalAlerts} alertas vivas con responsable y siguiente acción.</p>
+      </article>
+      <article class="brief-tile">
+        <span>Retención media</span>
+        <strong>${retentionAvg}%</strong>
+        <p>Frecuencia, sentimiento y aforo cruzados por club.</p>
+      </article>
+    `;
   }
 
   function renderTasks() {
