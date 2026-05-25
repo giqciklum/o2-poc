@@ -761,18 +761,33 @@
       display: inline-grid;
       place-items: center;
       flex: 0 0 auto;
-      width: 50px;
-      height: 38px;
+      width: 52px;
+      height: 40px;
       border-radius: var(--radius-sm);
       background: var(--ink);
-      color: #fff;
+      color: #ffffff;
       font-weight: 900;
       font-variant-numeric: tabular-nums;
-      font-size: 0.95rem;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 12px rgba(10, 26, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     }
-    .score.danger { background: linear-gradient(135deg, var(--danger), #b73a44); }
-    .score.warn { background: linear-gradient(135deg, var(--warning), #c87b22); color: #fff; }
-    .score.ok { background: linear-gradient(135deg, var(--ok), var(--green-deep)); }
+    .score.danger {
+      background: linear-gradient(135deg, #b32a34, #7a1820);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(179, 42, 52, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+    .score.warn {
+      background: linear-gradient(135deg, #b06a12, #7a4408);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(176, 106, 18, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+    .score.ok {
+      background: linear-gradient(135deg, #1f7d4d, #105030);
+      color: #ffffff;
+      box-shadow: 0 6px 14px rgba(31, 125, 77, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
 
     .progress {
       height: 8px;
