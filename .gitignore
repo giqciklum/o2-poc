@@ -8,3 +8,7 @@ data/*verification*.png
 # Internal discovery notes. Keep these local; do not publish client/team notes.
 chat.txt
 *.pdf
+PRIVATE_*.md
+LOCAL_*.md
+*_PRIVADO.md
+*_PRIVADA.md
