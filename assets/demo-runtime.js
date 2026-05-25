@@ -86,19 +86,20 @@
   ];
 
   const mapPositions = {
-    MB: [44, 30],
-    SA: [35, 24],
-    BM: [53, 22],
-    MA: [45, 76],
-    GR: [50, 62],
-    HU: [31, 69],
-    PM: [76, 35],
-    BG: [84, 30],
-    BB: [83, 49]
+    SA: [18, 22],
+    MB: [50, 16],
+    BM: [82, 22],
+    BG: [90, 44],
+    PM: [82, 66],
+    BB: [78, 86],
+    MA: [45, 90],
+    GR: [26, 78],
+    HU: [13, 56]
   };
   const mapLinks = [
-    ["SA", "MB"], ["MB", "BM"], ["MB", "GR"], ["GR", "MA"], ["GR", "HU"],
-    ["BM", "BB"], ["BB", "PM"], ["PM", "BG"], ["MA", "BB"]
+    ["SA", "MB"], ["MB", "BM"], ["BM", "BG"], ["BG", "PM"], ["PM", "BB"],
+    ["BB", "MA"], ["MA", "GR"], ["GR", "HU"], ["HU", "SA"],
+    ["MB", "MA"], ["SA", "PM"], ["BM", "GR"]
   ];
 
   const baseState = {
@@ -747,7 +748,15 @@
         </button>
       `;
     }).join("");
-    map.innerHTML = `<svg class="network-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${nodes}`;
+    map.innerHTML = `
+      <svg class="network-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>
+      <div class="map-core" aria-hidden="true">
+        <strong>O₂</strong>
+        <span>Well-living Core</span>
+        <small>5 señales vivas</small>
+      </div>
+      ${nodes}
+    `;
 
     const totalAlerts = state.clubs.reduce((sum, club) => sum + club.alerts, 0);
     const critical = state.clubs.filter((club) => club.state === "danger").length;
