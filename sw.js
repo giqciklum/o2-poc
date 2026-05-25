@@ -1,4 +1,4 @@
-const CACHE_VERSION = "o2-poc-v3";
+const CACHE_VERSION = "o2-poc-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -83,4 +83,3 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(cacheFirst(request));
   }
 });
-

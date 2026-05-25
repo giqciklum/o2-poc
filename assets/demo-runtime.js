@@ -290,7 +290,7 @@
       { time: "Listo", title: "POC preparada", detail: "Base local con datos sintéticos O2 y runtime preparado para backend Apps Script." }
     ],
     urgent: {
-      visible: true,
+      visible: false,
       key: "default",
       text: "Clara Valera · Manuel Becerra · Riesgo 79/100 · LTV 3.240 €",
       tab: "lifetime"
@@ -753,8 +753,8 @@
       const rendered = typeof value === "number" && value > 1000 ? euro(value) : value;
       return `
         <article class="insight-card">
-          <span style="color: var(--muted); font-size: .76rem; font-weight: 600; letter-spacing: .02em;">${label}</span>
-          <strong style="display:block; font-family: Fraunces, serif; font-size: 1.8rem; margin: 8px 0; font-weight: 700; letter-spacing: -.02em; color: var(--ink);">${rendered}</strong>
+          <span style="color: var(--muted); font-size: .76rem; font-weight: 600; letter-spacing: 0;">${label}</span>
+          <strong style="display:block; font-family: Fraunces, serif; font-size: 1.8rem; margin: 8px 0; font-weight: 700; letter-spacing: 0; color: var(--ink);">${rendered}</strong>
           <p style="color: var(--muted); line-height: 1.45; font-size: 0.85rem;">${detail}</p>
         </article>
       `;
@@ -1162,15 +1162,40 @@
     renderCharts();
   }
 
+  function dedupeBy(items, key) {
+    if (!Array.isArray(items)) return [];
+    const seen = new Set();
+    return items.filter((item) => {
+      const value = item && item[key];
+      if (!value) return true;
+      if (seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    });
+  }
+
+  function mergeArtifacts(existing, incoming) {
+    const merged = new Map();
+    [...(existing || []), ...(incoming || [])].forEach((artifact) => {
+      if (artifact && artifact.id) merged.set(artifact.id, artifact);
+    });
+    return [...merged.values()];
+  }
+
   function applyScenario(id) {
     const scenario = scenarios[id];
     if (!scenario) return;
-    const next = deepClone(baseState);
+    const priorArtifacts = deepClone(state.artifacts || []);
+    const priorTimeline = deepClone(state.timeline || []);
+    const next = deepClone(state && state.clubs ? state : baseState);
     next.currentScenario = id;
     next.currentTab = state.currentTab === "simulator" ? "simulator" : state.currentTab;
     scenario.apply(next);
-    next.artifacts = deepClone(scenario.artifacts);
-    next.timeline = deepClone(scenario.timeline);
+    next.tasks = dedupeBy(next.tasks, "id");
+    next.voice = dedupeBy(next.voice, "id");
+    next.sales = dedupeBy(next.sales, "id");
+    next.artifacts = mergeArtifacts(priorArtifacts, deepClone(scenario.artifacts));
+    next.timeline = priorTimeline.concat(deepClone(scenario.timeline));
     state = next;
     saveState();
     renderAll();

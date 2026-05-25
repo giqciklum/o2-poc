@@ -57,9 +57,9 @@
       --ok: #2f9d62;
       --ok-soft: rgba(47, 157, 98, 0.10);
 
-      --radius: 14px;
+      --radius: 8px;
       --radius-sm: 8px;
-      --radius-lg: 22px;
+      --radius-lg: 8px;
       --radius-pill: 999px;
 
       --shadow-sm: 0 4px 12px rgba(10, 26, 42, 0.05);
@@ -80,11 +80,8 @@
       font-size: 15px;
       color: var(--ink);
       background:
-        radial-gradient(1100px 600px at -10% -10%, rgba(0, 157, 224, 0.10), transparent 55%),
-        radial-gradient(900px 500px at 105% 0%, rgba(109, 207, 213, 0.12), transparent 60%),
-        radial-gradient(1300px 700px at 50% 100%, rgba(212, 168, 87, 0.05), transparent 65%),
-        var(--bg);
-      letter-spacing: -0.005em;
+        linear-gradient(180deg, rgba(227, 243, 252, 0.86) 0%, rgba(243, 247, 251, 0.96) 38%, var(--bg) 100%);
+      letter-spacing: 0;
       font-feature-settings: "cv11", "ss01";
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -132,18 +129,18 @@
       width: 44px;
       height: 44px;
       border-radius: var(--radius-sm);
-      background: radial-gradient(120% 120% at 0% 0%, var(--blue-light), var(--blue-deep) 70%);
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-deep));
       color: #fff;
       font-family: "Fraunces", serif;
       font-weight: 900;
       font-size: 1.18rem;
-      letter-spacing: -0.04em;
+      letter-spacing: 0;
       box-shadow: 0 8px 20px var(--blue-shadow);
     }
 
     .brand strong, .brand span { display: block; line-height: 1.2; }
     .brand strong { font-size: 0.95rem; font-weight: 800; }
-    .brand span { color: var(--muted); font-size: 0.74rem; margin-top: 3px; font-weight: 500; letter-spacing: 0.02em; }
+    .brand span { color: var(--muted); font-size: 0.74rem; margin-top: 3px; font-weight: 500; letter-spacing: 0; }
 
     .nav {
       display: flex;
@@ -280,7 +277,7 @@
       font-weight: 800;
       pointer-events: none;
       backdrop-filter: blur(10px);
-      letter-spacing: 0.02em;
+      letter-spacing: 0;
     }
 
     main {
@@ -326,17 +323,7 @@
       overflow: hidden;
     }
 
-    .hero-copy::after {
-      content: "";
-      position: absolute;
-      right: -120px;
-      top: -120px;
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, var(--blue-mist), transparent 70%);
-      pointer-events: none;
-      opacity: 0.6;
-    }
+    .hero-copy::after { display: none; }
 
     .eyebrow {
       display: inline-flex;
@@ -350,7 +337,7 @@
       color: var(--blue-deep);
       font-weight: 800;
       font-size: 0.74rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0;
       text-transform: uppercase;
       position: relative;
     }
@@ -366,10 +353,10 @@
     h1 {
       font-family: "Fraunces", "Inter", serif;
       max-width: 14ch;
-      font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+      font-size: 3.35rem;
       line-height: 0.98;
       font-weight: 700;
-      letter-spacing: -0.025em;
+      letter-spacing: 0;
       color: var(--ink);
     }
     h1 em {
@@ -386,7 +373,7 @@
       font-size: 1.18rem;
       line-height: 1.25;
       font-weight: 800;
-      letter-spacing: -0.012em;
+      letter-spacing: 0;
       color: var(--ink);
     }
     h2 small {
@@ -441,7 +428,7 @@
       font-size: 0.72rem;
       margin-bottom: 5px;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
     .proof-item strong {
@@ -522,7 +509,7 @@
       font-family: "Fraunces", serif;
       font-weight: 700;
       font-size: 1.5rem;
-      letter-spacing: -0.015em;
+      letter-spacing: 0;
     }
     .visual-caption span {
       color: rgba(255, 255, 255, 0.85);
@@ -571,7 +558,7 @@
       font-size: 0.78rem;
       line-height: 1.3;
       font-weight: 600;
-      letter-spacing: 0.01em;
+      letter-spacing: 0;
     }
     .metric-card strong {
       display: block;
@@ -579,7 +566,7 @@
       font-size: 2.4rem;
       line-height: 1;
       font-weight: 700;
-      letter-spacing: -0.025em;
+      letter-spacing: 0;
       color: var(--ink);
       font-variant-numeric: tabular-nums;
     }
@@ -601,7 +588,7 @@
       font-weight: 800;
       background: var(--ok-soft);
       color: var(--ok);
-      letter-spacing: 0.01em;
+      letter-spacing: 0;
     }
     .delta.warn { background: var(--warning-soft); color: #b56a05; }
     .delta.danger { background: var(--danger-soft); color: var(--danger); }
@@ -819,7 +806,7 @@
       font-weight: 800;
       background: var(--surface-soft);
       font-size: 0.74rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
     .mini-table tr:hover td { background: rgba(0, 157, 224, 0.025); }
@@ -837,7 +824,7 @@
       font-size: 0.74rem;
       font-weight: 700;
       white-space: nowrap;
-      letter-spacing: 0.005em;
+      letter-spacing: 0;
     }
     .status-pill.high {
       background: var(--danger-soft);
@@ -874,7 +861,7 @@
       font-size: 1.6rem;
       line-height: 1;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: 0;
       font-variant-numeric: tabular-nums;
     }
     .zone-cell.danger {
@@ -981,7 +968,7 @@
       color: var(--blue-deep);
       font-weight: 800;
       font-size: 0.7rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
     .scenario-card h3 { font-size: 1.02rem; }
@@ -1192,7 +1179,7 @@
     .urgent-bar .ub-label {
       font-size: 0.7rem;
       color: rgba(255, 255, 255, 0.6);
-      letter-spacing: 0.05em;
+      letter-spacing: 0;
       text-transform: uppercase;
       font-weight: 700;
       margin-bottom: 2px;
@@ -1256,6 +1243,7 @@
       .app { padding: 12px; }
       .topbar { top: 8px; padding: 10px; }
       .brand { min-width: 0; }
+      h1 { font-size: 2.45rem; }
       .hero-copy { padding: 24px; }
       .hero-visual, .hero-visual img { min-height: 320px; }
       .metric-grid, .hero-proof, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
@@ -1520,7 +1508,7 @@
             <div>
               <span class="eyebrow">Demo viva</span>
               <h2 id="simulator-title">Cinco escenas tangibles para O2</h2>
-              <p>Cada escena actualiza KPIs, tareas, artefactos y cronología. Pulsa una tarjeta o usa <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span><span class="kbd">5</span>.</p>
+              <p>Cada escena actualiza KPIs, tareas, artefactos y cronología para enseñar una cadena operativa completa.</p>
             </div>
             <button class="button secondary reset-only" type="button" data-reset>↻ Reset local</button>
           </div>
@@ -1528,7 +1516,7 @@
           <div class="narrative-row">
             <div class="text">
               <strong>Narrativa guiada</strong>
-              <span>Reproduce las 5 escenas en cascada, con pausas de 4 segundos entre ellas. Ideal para abrir la reunión.</span>
+              <span>Secuencia ejecutiva de retención, voz del cliente, comercial, mantenimiento y aforo para abrir la reunión con ritmo.</span>
             </div>
             <button class="button primary" type="button" data-narrative>▶ Reproducir narrativa</button>
           </div>
