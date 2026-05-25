@@ -840,7 +840,7 @@
           <span class="score ${scoreClass(member.churnScore)}">${member.churnScore}</span>
         </div>
         <div class="progress"><i style="width:${member.churnScore}%"></i></div>
-        <p style="color: var(--muted); line-height: 1.5; margin-top: 10px; font-size: 0.88rem;">${member.reason}</p>
+        <p style="color: #4b667b; line-height: 1.5; margin-top: 10px; font-size: 0.88rem; font-weight: 600;">${member.reason}</p>
       </article>
     `).join("");
 
@@ -1146,31 +1146,97 @@
       options: { ...chartOptions(), plugins: { ...chartOptions().plugins, legend: { display: false } } }
     });
 
+    const occupancyClubLabel = (club) => club
+      .replace("O2CW ", "")
+      .replace("Manuel Becerra", "Manuel B.")
+      .replace("Boutique Barcelona", "Boutique BCN")
+      .replace("Parc del Migdia", "Parc Migdia");
+    const occupancyIsCompact = window.innerWidth < 720;
+    const occupancyScaleText = "rgba(234, 247, 255, 0.78)";
+    const occupancyGrid = "rgba(218, 241, 250, 0.22)";
+    const occupancyScales = occupancyIsCompact ? {
+      x: {
+        min: 0,
+        max: 110,
+        grid: { color: occupancyGrid },
+        ticks: {
+          color: occupancyScaleText,
+          font: { family: "Inter", size: 11, weight: "700" },
+          padding: 6
+        }
+      },
+      y: {
+        grid: { display: false },
+        ticks: {
+          color: "rgba(234, 247, 255, 0.88)",
+          font: { family: "Inter", size: 11, weight: "800" },
+          padding: 8
+        }
+      }
+    } : {
+      x: {
+        grid: { display: false },
+        ticks: {
+          color: occupancyScaleText,
+          font: { family: "Inter", size: 11, weight: "700" },
+          maxRotation: 0,
+          minRotation: 0,
+          padding: 8
+        }
+      },
+      y: {
+        min: 0,
+        max: 110,
+        grid: { color: occupancyGrid },
+        ticks: {
+          color: occupancyScaleText,
+          font: { family: "Inter", size: 11, weight: "700" },
+          padding: 6
+        }
+      }
+    };
+
     makeChart("occupancy-chart", {
       type: "bar",
       data: {
-        labels: state.occupancy.map((item) => `${item.zone} · ${item.club.replace("O2CW ", "")}`),
+        labels: state.occupancy.map((item) => [item.zone, occupancyClubLabel(item.club)]),
         datasets: [
           {
             label: "Ocupación",
             data: state.occupancy.map((item) => item.now),
             backgroundColor: state.occupancy.map((it) => it.now >= it.threshold + 5 ? "#d84b55" : it.now >= it.threshold - 3 ? "#ef9b3a" : "#009de0"),
-            borderRadius: 6
+            borderRadius: 8,
+            borderSkipped: false,
+            maxBarThickness: occupancyIsCompact ? 28 : 48
           },
           {
             label: "Umbral",
             data: state.occupancy.map((item) => item.threshold),
-            backgroundColor: "rgba(10, 26, 42, 0.16)",
-            borderRadius: 6
+            backgroundColor: "rgba(255, 255, 255, 0.14)",
+            borderColor: "rgba(255, 255, 255, 0.22)",
+            borderWidth: 1,
+            borderRadius: 8,
+            borderSkipped: false,
+            maxBarThickness: occupancyIsCompact ? 28 : 48
           }
         ]
       },
       options: {
         ...chartOptions(),
-        scales: {
-          ...chartOptions().scales,
-          y: { min: 0, max: 110, grid: { color: "rgba(184, 200, 214, 0.35)" }, ticks: { color: "#5b768a", font: { family: "Inter", size: 11 } } }
-        }
+        indexAxis: occupancyIsCompact ? "y" : "x",
+        plugins: {
+          ...chartOptions().plugins,
+          legend: {
+            position: "top",
+            labels: {
+              boxWidth: 12,
+              color: "rgba(234, 247, 255, 0.92)",
+              font: { size: 12, family: "Inter", weight: "800" },
+              padding: 18
+            }
+          }
+        },
+        scales: occupancyScales
       }
     });
 
