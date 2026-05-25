@@ -1,6 +1,6 @@
 (() => {
   const STORAGE_KEY = "o2_runtime_v2";
-  const BACKEND_URL = ""; // Pegar aquí la URL /exec del Apps Script cuando esté desplegado
+  const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
   const IS_PRESENT_MODE = new URLSearchParams(window.location.search).get("mode") === "present";
