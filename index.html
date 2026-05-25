@@ -904,9 +904,9 @@
       border-radius: var(--radius);
       border: 1px solid rgba(10, 26, 42, 0.10);
       background:
-        linear-gradient(135deg, rgba(10, 26, 42, 0.96), rgba(0, 72, 103, 0.88)),
         repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 42px),
-        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 42px);
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 42px),
+        linear-gradient(135deg, rgba(10, 26, 42, 0.96), rgba(0, 72, 103, 0.88));
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
     }
     .network-map::before {
@@ -1022,6 +1022,47 @@
       font-size: 0.82rem;
       margin-top: 7px;
       font-weight: 600;
+    }
+
+    #lifetime > .two-col > .panel:first-child,
+    #voice > .two-col > .panel:first-child,
+    #sales > .two-col > .panel:first-child,
+    #operations > .two-col > .panel:first-child,
+    #simulator > .panel:first-child {
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 56px),
+        linear-gradient(135deg, rgba(7, 25, 40, 0.98), rgba(0, 82, 116, 0.92));
+      border-color: rgba(0, 157, 224, 0.22);
+      color: #fff;
+      box-shadow: 0 20px 54px rgba(10, 26, 42, 0.16);
+    }
+    #lifetime > .two-col > .panel:first-child h2,
+    #voice > .two-col > .panel:first-child h2,
+    #sales > .two-col > .panel:first-child h2,
+    #operations > .two-col > .panel:first-child h2,
+    #simulator > .panel:first-child h2 {
+      color: #fff;
+    }
+    #lifetime > .two-col > .panel:first-child .panel-head p,
+    #voice > .two-col > .panel:first-child .panel-head p,
+    #sales > .two-col > .panel:first-child .panel-head p,
+    #operations > .two-col > .panel:first-child .panel-head p,
+    #simulator > .panel:first-child .panel-head p,
+    #lifetime > .two-col > .panel:first-child h2 small,
+    #voice > .two-col > .panel:first-child h2 small,
+    #sales > .two-col > .panel:first-child h2 small,
+    #operations > .two-col > .panel:first-child h2 small,
+    #simulator > .panel:first-child h2 small {
+      color: rgba(255, 255, 255, 0.72);
+    }
+    #lifetime > .two-col > .panel:first-child .eyebrow,
+    #voice > .two-col > .panel:first-child .eyebrow,
+    #sales > .two-col > .panel:first-child .eyebrow,
+    #operations > .two-col > .panel:first-child .eyebrow,
+    #simulator > .panel:first-child .eyebrow {
+      background: rgba(227, 243, 252, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #d9f5ff;
     }
 
     .network-grid {
@@ -1749,8 +1790,44 @@
             <span class="status-pill medium" id="network-summary">— alertas activas</span>
           </div>
           <div class="network-stage">
-            <div class="network-map" id="network-map" aria-label="Mapa operativo de clubes O2"></div>
-            <div class="network-brief" id="network-brief"></div>
+            <div class="network-map" id="network-map" aria-label="Mapa operativo de clubes O2">
+              <svg class="network-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="35%" y1="24%" x2="44%" y2="30%" />
+                <line x1="44%" y1="30%" x2="53%" y2="22%" />
+                <line x1="44%" y1="30%" x2="50%" y2="62%" />
+                <line x1="50%" y1="62%" x2="45%" y2="76%" />
+                <line x1="50%" y1="62%" x2="31%" y2="69%" />
+                <line x1="53%" y1="22%" x2="83%" y2="49%" />
+                <line x1="83%" y1="49%" x2="76%" y2="35%" />
+                <line x1="76%" y1="35%" x2="84%" y2="30%" />
+              </svg>
+              <button class="map-node danger" type="button" data-tab-jump="operations" style="left:44%; top:30%"><strong>Manuel Becerra</strong><span>Madrid · 4 alertas</span></button>
+              <button class="map-node warn" type="button" data-tab-jump="operations" style="left:35%; top:24%"><strong>Sexta Avenida</strong><span>Madrid · 2 alertas</span></button>
+              <button class="map-node ok" type="button" data-tab-jump="operations" style="left:53%; top:22%"><strong>Boutique Madrid</strong><span>Madrid · 0 alertas</span></button>
+              <button class="map-node danger" type="button" data-tab-jump="operations" style="left:45%; top:76%"><strong>Málaga</strong><span>Málaga · 5 alertas</span></button>
+              <button class="map-node warn" type="button" data-tab-jump="operations" style="left:50%; top:62%"><strong>Granada</strong><span>Granada · 3 alertas</span></button>
+              <button class="map-node ok" type="button" data-tab-jump="operations" style="left:31%; top:69%"><strong>Huelva</strong><span>Huelva · 1 alerta</span></button>
+              <button class="map-node ok" type="button" data-tab-jump="operations" style="left:76%; top:35%"><strong>Parc del Migdia</strong><span>Girona · 0 alertas</span></button>
+              <button class="map-node ok" type="button" data-tab-jump="operations" style="left:84%; top:30%"><strong>Boutique Girona</strong><span>Girona · 0 alertas</span></button>
+              <button class="map-node warn" type="button" data-tab-jump="operations" style="left:83%; top:49%"><strong>Boutique Barcelona</strong><span>Barcelona · 2 alertas</span></button>
+            </div>
+            <div class="network-brief" id="network-brief">
+              <article class="brief-tile">
+                <span>Red O2</span>
+                <strong>9 clubs</strong>
+                <p>Madrid, Málaga, Granada, Huelva, Girona y Barcelona conectados en una sola lectura.</p>
+              </article>
+              <article class="brief-tile">
+                <span>Prioridad ahora</span>
+                <strong>2 críticos</strong>
+                <p>17 alertas vivas con responsable y siguiente acción.</p>
+              </article>
+              <article class="brief-tile">
+                <span>Retención media</span>
+                <strong>86%</strong>
+                <p>Frecuencia, sentimiento y aforo cruzados por club.</p>
+              </article>
+            </div>
           </div>
           <div class="network-grid" id="network-grid"></div>
         </section>

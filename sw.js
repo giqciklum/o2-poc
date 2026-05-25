@@ -1,4 +1,4 @@
-const CACHE_VERSION = "o2-poc-v6";
+const CACHE_VERSION = "o2-poc-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
