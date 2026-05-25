@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O2 Centro Wellness x Ciklum | Intelligence Hub</title>
+  <meta name="description" content="POC O2 Centro Wellness: centro de mando para retencion, voz del cliente, comercial, aforos y mantenimiento predictivo.">
+  <meta name="theme-color" content="#009de0">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <script src="assets/chart.umd.min.js"></script>
+  <script>
+    if (typeof Chart === "undefined") {
+      var chartFallback = document.createElement("script");
+      chartFallback.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js";
+      document.head.appendChild(chartFallback);
+    }
+  </script>
+  <style>
+    :root {
+      --ink: #071016;
+      --ink-soft: #26343d;
+      --muted: #687985;
+      --line: #d9e2e8;
+      --line-strong: #afc0cb;
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --surface-soft: #eef5f9;
+      --blue: #009de0;
+      --blue-deep: #006f9f;
+      --green: #7ed957;
+      --gold: #d6a94a;
+      --danger: #d84b55;
+      --warning: #f3a53b;
+      --ok: #2f9d62;
+      --radius: 8px;
+      --shadow: 0 18px 42px rgba(7, 16, 22, 0.08);
+      --max: 1440px;
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 16px;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(0, 157, 224, 0.08), rgba(126, 217, 87, 0.04) 34%, rgba(246, 248, 251, 1) 74%),
+        var(--bg);
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app {
+      width: min(100%, var(--max));
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 245px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--surface);
+      font-weight: 900;
+      font-size: 1.08rem;
+    }
+
+    .brand strong,
+    .brand span {
+      display: block;
+    }
+
+    .brand strong {
+      font-size: 0.96rem;
+      line-height: 1.15;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      justify-content: center;
+    }
+
+    .nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav button,
+    .utility button,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 13px;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--ink-soft);
+      border: 1px solid transparent;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .nav button.active {
+      background: var(--ink);
+      color: var(--surface);
+    }
+
+    .utility {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .button.primary {
+      background: var(--blue);
+      color: var(--surface);
+      border-color: var(--blue);
+    }
+
+    .button.secondary {
+      background: var(--surface-soft);
+      border-color: var(--line);
+    }
+
+    .backend-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .backend-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--line-strong);
+    }
+
+    .backend-badge.live {
+      color: var(--ok);
+      border-color: rgba(47, 157, 98, 0.28);
+      background: rgba(47, 157, 98, 0.08);
+    }
+
+    .backend-badge.live::before {
+      background: var(--ok);
+    }
+
+    .backend-badge.syncing {
+      color: var(--blue-deep);
+      border-color: rgba(0, 157, 224, 0.28);
+      background: rgba(0, 157, 224, 0.08);
+    }
+
+    .backend-badge.syncing::before {
+      background: var(--blue);
+    }
+
+    .present-mode [data-reset],
+    .present-mode .reset-only {
+      display: none !important;
+    }
+
+    .present-watermark {
+      position: fixed;
+      right: 14px;
+      bottom: 12px;
+      z-index: 100;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(7, 16, 22, 0.1);
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 800;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+      padding: 18px 0 32px;
+    }
+
+    .view {
+      display: none;
+      gap: 18px;
+      animation: appear 180ms ease;
+    }
+
+    .view.active {
+      display: grid;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+      gap: 18px;
+      align-items: stretch;
+      min-height: 430px;
+    }
+
+    .hero-copy {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      justify-self: start;
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      background: rgba(0, 157, 224, 0.1);
+      color: var(--blue-deep);
+      font-weight: 850;
+      font-size: 0.78rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 12ch;
+      font-size: 3.6rem;
+      line-height: 0.95;
+      font-weight: 940;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1rem;
+      line-height: 1.25;
+    }
+
+    .hero-copy p {
+      max-width: 70ch;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 1.02rem;
+    }
+
+    .hero-actions,
+    .scenario-actions,
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero-proof {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .proof-item {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+    }
+
+    .proof-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-bottom: 6px;
+    }
+
+    .proof-item strong {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid rgba(7, 16, 22, 0.16);
+      box-shadow: var(--shadow);
+      background: var(--ink);
+    }
+
+    .hero-visual img {
+      width: 100%;
+      height: 100%;
+      min-height: 430px;
+      object-fit: cover;
+    }
+
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7, 16, 22, 0.06), rgba(7, 16, 22, 0.72));
+      pointer-events: none;
+    }
+
+    .visual-caption {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      z-index: 1;
+      display: grid;
+      gap: 10px;
+      color: var(--surface);
+    }
+
+    .visual-caption strong {
+      font-size: 1.4rem;
+    }
+
+    .visual-caption span {
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.45;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card,
+    .panel,
+    .artifact-card,
+    .scenario-card,
+    .feed-item,
+    .task-row,
+    .member-card,
+    .zone-cell,
+    .insight-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 12px 30px rgba(7, 16, 22, 0.05);
+    }
+
+    .metric-card {
+      min-height: 138px;
+      padding: 16px;
+      display: grid;
+      align-content: space-between;
+      gap: 12px;
+    }
+
+    .metric-card span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+    }
+
+    .metric-card strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      margin-top: 8px;
+    }
+
+    .delta {
+      display: inline-flex;
+      align-items: center;
+      justify-self: start;
+      min-height: 28px;
+      padding: 5px 8px;
+      border-radius: var(--radius);
+      font-size: 0.78rem;
+      font-weight: 850;
+      background: rgba(47, 157, 98, 0.1);
+      color: var(--ok);
+    }
+
+    .delta.warn {
+      background: rgba(243, 165, 59, 0.12);
+      color: #9a5b05;
+    }
+
+    .delta.danger {
+      background: rgba(216, 75, 85, 0.1);
+      color: var(--danger);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+      gap: 18px;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+      min-width: 0;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel-head p {
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 6px;
+      font-size: 0.92rem;
+    }
+
+    .chart-box {
+      position: relative;
+      min-height: 300px;
+      height: 300px;
+    }
+
+    .chart-box.small {
+      min-height: 230px;
+      height: 230px;
+    }
+
+    .member-grid,
+    .feed-list,
+    .task-list,
+    .artifact-grid,
+    .insight-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .member-card,
+    .feed-item,
+    .task-row,
+    .artifact-card,
+    .insight-card {
+      padding: 14px;
+    }
+
+    .member-card.active {
+      border-color: rgba(0, 157, 224, 0.45);
+      background: linear-gradient(180deg, rgba(0, 157, 224, 0.08), var(--surface));
+    }
+
+    .member-top,
+    .feed-top,
+    .task-top,
+    .artifact-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .member-top strong,
+    .feed-top strong,
+    .task-top strong,
+    .artifact-top strong {
+      display: block;
+      line-height: 1.25;
+    }
+
+    .member-top span,
+    .feed-top span,
+    .task-top span,
+    .artifact-top span {
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.35;
+    }
+
+    .score {
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 46px;
+      height: 36px;
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--surface);
+      font-weight: 900;
+    }
+
+    .score.danger {
+      background: var(--danger);
+    }
+
+    .score.warn {
+      background: var(--warning);
+      color: var(--ink);
+    }
+
+    .score.ok {
+      background: var(--ok);
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .mini-table th,
+    .mini-table td {
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      color: var(--muted);
+      font-weight: 850;
+      background: var(--surface-soft);
+    }
+
+    .status-pill,
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 5px 8px;
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      color: var(--ink-soft);
+      border: 1px solid var(--line);
+      font-size: 0.78rem;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .status-pill.high {
+      background: rgba(216, 75, 85, 0.1);
+      color: var(--danger);
+      border-color: rgba(216, 75, 85, 0.22);
+    }
+
+    .status-pill.medium {
+      background: rgba(243, 165, 59, 0.12);
+      color: #9a5b05;
+      border-color: rgba(243, 165, 59, 0.24);
+    }
+
+    .status-pill.low {
+      background: rgba(47, 157, 98, 0.1);
+      color: var(--ok);
+      border-color: rgba(47, 157, 98, 0.22);
+    }
+
+    .zone-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .zone-cell {
+      min-height: 118px;
+      padding: 13px;
+      display: grid;
+      align-content: space-between;
+      gap: 10px;
+    }
+
+    .zone-cell strong {
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+
+    .zone-cell.danger {
+      border-color: rgba(216, 75, 85, 0.3);
+      background: rgba(216, 75, 85, 0.06);
+    }
+
+    .zone-cell.warn {
+      border-color: rgba(243, 165, 59, 0.3);
+      background: rgba(243, 165, 59, 0.08);
+    }
+
+    .zone-cell.ok {
+      border-color: rgba(47, 157, 98, 0.24);
+      background: rgba(47, 157, 98, 0.06);
+    }
+
+    .media-tile {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--ink);
+    }
+
+    .media-tile img {
+      width: 100%;
+      height: 100%;
+      min-height: 260px;
+      object-fit: cover;
+    }
+
+    .media-tile span {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      color: var(--surface);
+      background: rgba(7, 16, 22, 0.7);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      font-weight: 800;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .scenario-card {
+      min-height: 176px;
+      padding: 14px;
+      text-align: left;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .scenario-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 157, 224, 0.45);
+    }
+
+    .scenario-card.active {
+      border-color: rgba(0, 157, 224, 0.58);
+      background: rgba(0, 157, 224, 0.08);
+    }
+
+    .scenario-card small {
+      color: var(--blue-deep);
+      font-weight: 850;
+    }
+
+    .scenario-card p {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.88rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    .timeline-item time {
+      color: var(--blue-deep);
+      font-weight: 850;
+      font-size: 0.82rem;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 4px;
+      font-size: 0.9rem;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 80;
+      width: min(420px, calc(100% - 32px));
+      padding: 14px;
+      transform: translate(-50%, 120%);
+      opacity: 0;
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--surface);
+      box-shadow: var(--shadow);
+      transition: 180ms ease;
+    }
+
+    .toast.visible {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+
+    .toast p {
+      color: rgba(255, 255, 255, 0.78);
+      margin-top: 4px;
+      line-height: 1.4;
+      font-size: 0.9rem;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(7, 16, 22, 0.54);
+    }
+
+    .modal[hidden] {
+      display: none;
+    }
+
+    .modal-card {
+      width: min(760px, 100%);
+      max-height: min(760px, calc(100vh - 36px));
+      overflow: auto;
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-body {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      color: var(--ink-soft);
+      line-height: 1.58;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      color: var(--ink);
+      font-weight: 900;
+    }
+
+    .empty {
+      padding: 18px;
+      border: 1px dashed var(--line-strong);
+      border-radius: var(--radius);
+      color: var(--muted);
+      line-height: 1.5;
+      background: var(--surface-soft);
+    }
+
+    @media (max-width: 1160px) {
+      .topbar,
+      .hero,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        justify-content: start;
+      }
+
+      .metric-grid,
+      .hero-proof,
+      .zone-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .scenario-grid,
+      .three-col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .app {
+        padding: 10px;
+      }
+
+      .topbar {
+        top: 6px;
+        padding: 10px;
+      }
+
+      .brand {
+        min-width: 0;
+      }
+
+      h1 {
+        font-size: 2.35rem;
+      }
+
+      .hero-copy {
+        padding: 20px;
+      }
+
+      .hero-visual,
+      .hero-visual img {
+        min-height: 320px;
+      }
+
+      .metric-grid,
+      .hero-proof,
+      .zone-grid,
+      .scenario-grid,
+      .three-col {
+        grid-template-columns: 1fr;
+      }
+
+      .utility {
+        justify-content: start;
+        flex-wrap: wrap;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand" aria-label="O2 Centro Wellness por Ciklum">
+        <div class="brand-mark">O2</div>
+        <div>
+          <strong>O2 Centro Wellness</strong>
+          <span>Ciklum Intelligence Hub</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Vistas principales">
+        <button class="active" type="button" data-tab="dashboard">Dashboard</button>
+        <button type="button" data-tab="lifetime">Socio 360</button>
+        <button type="button" data-tab="voice">Voz cliente</button>
+        <button type="button" data-tab="sales">Comercial</button>
+        <button type="button" data-tab="operations">Operaciones</button>
+        <button type="button" data-tab="simulator">Simulador</button>
+      </nav>
+
+      <div class="utility">
+        <span id="backend-badge" class="backend-badge">Modo local</span>
+        <button class="button secondary reset-only" type="button" data-reset>Reset</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="dashboard" class="view active" aria-labelledby="dashboard-title">
+        <div class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">Well Living Intelligence</span>
+            <h1 id="dashboard-title">Centro de mando O2</h1>
+            <p>Una lectura ejecutiva y operativa de lo que ya pasa en el club: vida del socio, feedback real, captacion, aforos y mantenimiento. Cada alerta termina en una accion concreta para sede, comercial o direccion.</p>
+            <div class="hero-actions">
+              <button class="button primary" type="button" data-tab-jump="simulator">Lanzar demo viva</button>
+              <button class="button secondary" type="button" data-tab-jump="lifetime">Ver socio en riesgo</button>
+            </div>
+            <div class="hero-proof" id="hero-proof"></div>
+          </div>
+          <figure class="hero-visual">
+            <img src="assets/o2-hero-pool.webp" alt="Piscina exterior de O2 Centro Wellness Manuel Becerra">
+            <figcaption class="visual-caption">
+              <strong>Premium wellness, medido en tiempo real</strong>
+              <span>Retencion, experiencia y operacion fisica en una sola pantalla para el comite de O2.</span>
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="metric-grid" id="metric-grid"></div>
+
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Radar de retencion</h2>
+                <p>Frecuencia, recurrencia de servicios premium y senales de friccion por club.</p>
+              </div>
+              <span class="status-pill high" id="retention-alert">Riesgo alto</span>
+            </div>
+            <div class="chart-box"><canvas id="retention-chart"></canvas></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Incidencias accionables</h2>
+                <p>La lista cambia con cada trigger del simulador.</p>
+              </div>
+              <span class="status-pill medium" id="open-task-count">0 abiertas</span>
+            </div>
+            <div class="task-list" id="task-list"></div>
+          </section>
+        </div>
+
+        <div class="three-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Sentimiento</h2>
+                <p>Resenas, reclamaciones y sugerencias clasificadas.</p>
+              </div>
+            </div>
+            <div class="chart-box small"><canvas id="sentiment-chart"></canvas></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Aforo ahora</h2>
+                <p>Zonas con mayor presion de experiencia.</p>
+              </div>
+            </div>
+            <div class="zone-grid" id="zone-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Impacto</h2>
+                <p>Valor estimado de actuar antes de la baja, la queja o la averia.</p>
+              </div>
+            </div>
+            <div class="insight-grid" id="impact-grid"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="lifetime" class="view" aria-labelledby="lifetime-title">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Lifetime del socio</span>
+                <h2 id="lifetime-title">Socios con riesgo explicable</h2>
+                <p>Prioridad, motivo probable, accion recomendada y valor protegido.</p>
+              </div>
+            </div>
+            <div class="member-grid" id="member-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Plan de recuperacion</h2>
+                <p>Playbook listo para que direccion vea que no es una alerta generica.</p>
+              </div>
+              <span class="status-pill high" id="playbook-status">Accion hoy</span>
+            </div>
+            <div id="playbook-detail"></div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Variables que explican churn</h2>
+              <p>El modelo sintetico cruza frecuencia, uso de servicios, feedback y saturacion de zonas.</p>
+            </div>
+          </div>
+          <table class="mini-table" id="drivers-table"></table>
+        </section>
+      </section>
+
+      <section id="voice" class="view" aria-labelledby="voice-title">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Voz del cliente</span>
+                <h2 id="voice-title">Feedback clasificado por IA</h2>
+                <p>Google Reviews, hojas de reclamacion, sugerencias escritas y recepcion.</p>
+              </div>
+            </div>
+            <div class="feed-list" id="voice-feed"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Temas por urgencia</h2>
+                <p>Deteccion de temas que degradan experiencia premium.</p>
+              </div>
+            </div>
+            <div class="chart-box"><canvas id="voice-chart"></canvas></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="sales" class="view" aria-labelledby="sales-title">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Inteligencia comercial</span>
+                <h2 id="sales-title">Entrevistas de captacion</h2>
+                <p>Resumen, motivacion, objeciones y siguiente accion para el equipo comercial.</p>
+              </div>
+            </div>
+            <div class="feed-list" id="sales-feed"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Pipeline y objeciones</h2>
+                <p>Lectura de conversion por canal y motivo de decision.</p>
+              </div>
+            </div>
+            <div class="chart-box"><canvas id="sales-chart"></canvas></div>
+            <div class="chip-row" id="objection-chips"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="operations" class="view" aria-labelledby="operations-title">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Operacion fisica</span>
+                <h2 id="operations-title">Aforos y mantenimiento</h2>
+                <p>Club, zona, umbral, accion recomendada y responsable.</p>
+              </div>
+            </div>
+            <table class="mini-table" id="operations-table"></table>
+          </section>
+
+          <div class="media-tile">
+            <img src="assets/o2-padel.webp" alt="Pistas de padel O2 Centro Wellness">
+            <span>Padel, piscina, spa y sala fitness dejan de ser puntos ciegos de experiencia.</span>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Saturacion por franja</h2>
+                <p>La demo muestra picos que ya tienen accion sugerida.</p>
+              </div>
+            </div>
+            <div class="chart-box"><canvas id="occupancy-chart"></canvas></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Riesgo tecnico</h2>
+                <p>Horas de uso frente a umbral preventivo.</p>
+              </div>
+            </div>
+            <div class="chart-box"><canvas id="maintenance-chart"></canvas></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="simulator" class="view" aria-labelledby="simulator-title">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Demo viva</span>
+              <h2 id="simulator-title">Cinco escenas tangibles para O2</h2>
+              <p>Elige una escena y la POC actualiza KPIs, tareas, artefactos y cronologia.</p>
+            </div>
+            <button class="button secondary reset-only" type="button" data-reset>Reset local</button>
+          </div>
+          <div class="scenario-grid" id="scenario-grid"></div>
+        </section>
+
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Artefactos generados</h2>
+                <p>Outputs listos para abrir en reunion.</p>
+              </div>
+            </div>
+            <div class="artifact-grid" id="artifact-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Cronologia</h2>
+                <p>El relato queda ordenado por evento operativo.</p>
+              </div>
+            </div>
+            <div class="timeline" id="timeline"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="artifact-modal" hidden>
+    <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow" id="modal-kind">Artefacto</span>
+          <h2 id="modal-title">Detalle</h2>
+        </div>
+        <button class="close-btn" type="button" data-close-modal aria-label="Cerrar">X</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </article>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/demo-runtime.js"></script>
+</body>
+</html>
