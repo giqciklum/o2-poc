@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v6";
+  const STORAGE_KEY = "o2_runtime_v7";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -956,7 +956,7 @@
       artifacts: [
         {
           id: "a-sales-summary",
-          kind: "Resumen IA",
+          kind: "Resumen comercial",
           title: "Entrevista Carlos Medina",
           summary: "Motivación, objeciones, probabilidad de alta y próximo paso.",
           meta: ["Intent 88", "Objeción precio", "Cita fisio"],
@@ -1163,6 +1163,42 @@
       .filter(Boolean);
   }
 
+  function pretty(value) {
+    return String(value || "")
+      .replace(/\bMalaga\b/g, "Málaga")
+      .replace(/\bmalaga\b/g, "málaga")
+      .replace(/\bAnton\b/g, "Antón")
+      .replace(/\bGomez\b/g, "Gómez")
+      .replace(/\bPadel\b/g, "Pádel")
+      .replace(/\bpadel\b/g, "pádel")
+      .replace(/\bbanos\b/gi, "baños")
+      .replace(/\bbano\b/gi, "baño")
+      .replace(/\bRevision\b/g, "Revisión")
+      .replace(/\brevision\b/g, "revisión")
+      .replace(/\bSensor\b/g, "Sensor")
+      .replace(/\bInvitacion\b/g, "Invitación")
+      .replace(/\binvitacion\b/g, "invitación")
+      .replace(/\baccion\b/g, "acción")
+      .replace(/\bAccion\b/g, "Acción")
+      .replace(/\bresena\b/g, "reseña")
+      .replace(/\bResena\b/g, "Reseña")
+      .replace(/\bsaturacion\b/g, "saturación")
+      .replace(/\bSaturacion\b/g, "Saturación")
+      .replace(/\bocupacion\b/g, "ocupación")
+      .replace(/\bOcupacion\b/g, "Ocupación")
+      .replace(/\bintencion\b/g, "intención")
+      .replace(/\bnutricion\b/g, "nutrición")
+      .replace(/\bNutricion\b/g, "Nutrición")
+      .replace(/\bprogramacion\b/g, "programación")
+      .replace(/\bmonitorizacion\b/g, "monitorización")
+      .replace(/\bMonitorizacion\b/g, "Monitorización")
+      .replace(/\bcomunicacion\b/g, "comunicación")
+      .replace(/\bComunicacion\b/g, "Comunicación")
+      .replace(/\bfisioterapia\b/g, "fisioterapia")
+      .replace(/\bdespues\b/g, "después")
+      .replace(/\bDespues\b/g, "Después");
+  }
+
   function upsertById(baseItems, incomingItems, idKey) {
     const byId = new Map(baseItems.map((item) => [String(item[idKey]), { ...item }]));
     incomingItems.forEach((item) => {
@@ -1248,6 +1284,29 @@
         <span>${label}</span>
         <strong>${value}</strong>
       </div>
+    `).join("");
+  }
+
+  function renderSignalStrip() {
+    const strip = byId("signal-strip");
+    if (!strip) return;
+    const now = new Date();
+    const hour = now.getHours();
+    const shift = hour < 14 ? "Turno mañana" : hour < 18 ? "Cambio de turno" : "Turno tarde";
+    const lastSync = state.lastSheetSync || "preparando lectura";
+    const liveSignals = state.voice.length + state.sales.length + state.occupancy.length + state.maintenance.length + state.tasks.length;
+    const criticalTasks = state.tasks.filter((task) => priorityWeight(task.priority || task.status) >= 4).length;
+    const items = [
+      ["Última lectura", lastSync],
+      ["Ritmo de club", `${shift} · ${state.clubs.length} sedes`],
+      ["Señales en cola", `${liveSignals} eventos · ${criticalTasks} críticos`],
+      ["Modo demo", "Datos sintéticos · trazabilidad Sheet"]
+    ];
+    strip.innerHTML = items.map(([label, value]) => `
+      <article class="signal-chip">
+        <span>${label}</span>
+        <strong>${value}</strong>
+      </article>
     `).join("");
   }
 
@@ -1437,7 +1496,7 @@
     detail.innerHTML = `
       <div class="detail-title-row">
         <div>
-          <span class="eyebrow">Matriz viva</span>
+          <span class="eyebrow">Matriz operativa</span>
           <h3>${selected.need}</h3>
         </div>
         <span class="detail-score ok">${averageStrength}</span>
@@ -1450,7 +1509,7 @@
       </div>
       <div class="decision-path">
         <div class="decision-step"><b>1</b><div><span>Señal</span><strong>${selected.signals.join(" · ")}</strong></div></div>
-        <div class="decision-step"><b>2</b><div><span>Lectura IA</span><strong>Clasifica, cruza tendencia y explica prioridad por sede.</strong></div></div>
+        <div class="decision-step"><b>2</b><div><span>Lectura operativa</span><strong>Clasifica, cruza tendencia y explica prioridad por sede.</strong></div></div>
         <div class="decision-step"><b>3</b><div><span>Acción</span><strong>${selected.output}</strong></div></div>
       </div>
       <div class="source-focus">
@@ -2115,15 +2174,19 @@
     badge.className = `backend-badge ${backend.mode === "live" ? "live" : backend.mode === "syncing" ? "syncing" : ""}`;
     if (backend.mode === "live") {
       badge.textContent = `Backend vivo${backend.version ? ` · ${backend.version}` : ""}`;
+      badge.title = state.lastSheetSync ? `Última lectura de Google Sheet: ${state.lastSheetSync}` : "Conexión activa con Google Sheet";
     } else if (backend.mode === "syncing") {
       badge.textContent = "Conectando backend";
+      badge.title = "Conectando con la hoja operativa";
     } else {
       badge.textContent = "Modo local";
+      badge.title = "Fallback local activo";
     }
   }
 
   function renderAll() {
     renderMetrics();
+    renderSignalStrip();
     renderCoverage();
     renderNetwork();
     renderTasks();
@@ -2170,20 +2233,20 @@
     const delta = visitsPrev ? Math.round(((visits30 - visitsPrev) / visitsPrev) * 100) : 0;
     return {
       id: row.id_socio,
-      name: row.nombre || "Socio O2",
-      club: row.club || "O2CW",
-      plan: row.plan || row.programa || "Well Living",
-      status: row.estado || (churn >= 70 ? "Riesgo alto" : churn >= 50 ? "Riesgo medio" : "Estable"),
+      name: pretty(row.nombre || "Socio O2"),
+      club: pretty(row.club || "O2CW"),
+      plan: pretty(row.plan || row.programa || "Well Living"),
+      status: pretty(row.estado || (churn >= 70 ? "Riesgo alto" : churn >= 50 ? "Riesgo medio" : "Estable")),
       churnScore: churn,
       visits30,
       visitsPrev,
       ltv: num(row.ltv_estimado, 0),
-      nextAction: row.accion_recomendada || "Asignar siguiente mejor acción",
-      reason: `${visits30} accesos en 30 días frente a ${visitsPrev || "sin histórico"}; ${row.programa || "servicios O2"} · ${row.estado || "estado activo"}.`,
+      nextAction: pretty(row.accion_recomendada || "Asignar siguiente mejor acción"),
+      reason: pretty(`${visits30} accesos en 30 días frente a ${visitsPrev || "sin histórico"}; ${row.programa || "servicios O2"} · ${row.estado || "estado activo"}.`),
       drivers: [
         ["Accesos", `${visits30} visitas vs ${visitsPrev || "sin histórico"} (${delta > 0 ? "+" : ""}${delta}%)`, Math.min(96, Math.max(18, Math.abs(delta) + 35))],
-        ["Estado", row.estado || "Sin alerta abierta", Math.min(96, Math.max(20, churn))],
-        ["Servicios utilizados", row.programa || "Wellness", Math.min(88, Math.max(28, churn - 8))],
+        ["Estado", pretty(row.estado || "Sin alerta abierta"), Math.min(96, Math.max(20, churn))],
+        ["Servicios utilizados", pretty(row.programa || "Wellness"), Math.min(88, Math.max(28, churn - 8))],
         ["Valor protegido", `${euro(num(row.ltv_estimado, 0))} LTV estimado`, Math.min(90, Math.max(30, Math.round(num(row.ltv_estimado, 0) / 55)))]
       ]
     };
@@ -2192,75 +2255,75 @@
   function mapSheetVoice(row) {
     return {
       id: row.id_feedback,
-      channel: row.canal || "Voz cliente",
-      rating: row.rating || "Feedback",
-      club: row.club || "O2CW",
-      topic: row.tema || "Experiencia",
+      channel: pretty(row.canal || "Voz cliente"),
+      rating: pretty(row.rating || "Feedback"),
+      club: pretty(row.club || "O2CW"),
+      topic: pretty(row.tema || "Experiencia"),
       sentiment: num(row.sentimiento, 0),
-      priority: row.prioridad || "Media",
-      status: row.estado || "Nueva",
-      text: row.texto || "Feedback registrado en hoja operativa.",
-      action: row.accion || "Clasificar y asignar responsable."
+      priority: pretty(row.prioridad || "Media"),
+      status: pretty(row.estado || "Nueva"),
+      text: pretty(row.texto || "Feedback registrado en hoja operativa."),
+      action: pretty(row.accion || "Clasificar y asignar responsable.")
     };
   }
 
   function mapSheetSales(row) {
     return {
       id: row.id_entrevista,
-      name: row.lead || "Lead O2",
-      club: row.club || "O2CW",
-      channel: row.canal || "Comercial",
+      name: pretty(row.lead || "Lead O2"),
+      club: pretty(row.club || "O2CW"),
+      channel: pretty(row.canal || "Comercial"),
       intent: num(row.intencion_compra, 0),
-      status: row.estado || "Seguimiento",
-      motivation: row.motivacion || "Motivación pendiente de completar.",
-      objections: splitList(row.objeciones || "Sin objeción registrada"),
-      nextAction: row.siguiente_accion || "Definir siguiente mejor acción."
+      status: pretty(row.estado || "Seguimiento"),
+      motivation: pretty(row.motivacion || "Motivación pendiente de completar."),
+      objections: splitList(row.objeciones || "Sin objeción registrada").map(pretty),
+      nextAction: pretty(row.siguiente_accion || "Definir siguiente mejor acción.")
     };
   }
 
   function mapSheetOccupancy(row) {
-    const club = row.club || "O2CW";
-    const zone = row.zona || row.tipo_zona || "Zona";
+    const club = pretty(row.club || "O2CW");
+    const zone = pretty(row.zona || row.tipo_zona || "Zona");
     return {
       id: operationId("occ", club, zone),
       club,
       zone,
       now: num(row.ocupacion_pct, 0),
       threshold: num(row.umbral_pct, 80),
-      status: row.estado || "Controlado",
-      action: row.accion_recomendada || "Monitorizar zona."
+      status: pretty(row.estado || "Controlado"),
+      action: pretty(row.accion_recomendada || "Monitorizar zona.")
     };
   }
 
   function mapSheetMaintenance(row) {
     return {
       id: row.id_activo || operationId("mnt", row.club, row.instalacion),
-      club: row.club || "O2CW",
-      asset: row.instalacion || "Activo",
+      club: pretty(row.club || "O2CW"),
+      asset: pretty(row.instalacion || "Activo"),
       risk: num(row.riesgo_averia, 0),
       hours: num(row.horas_uso, 0),
       threshold: num(row.umbral_aviso, 0),
-      status: row.estado || "Normal",
-      action: row.accion || "Mantenimiento programado"
+      status: pretty(row.estado || "Normal"),
+      action: pretty(row.accion || "Mantenimiento programado")
     };
   }
 
   function mapSheetTask(row) {
     return {
       id: row.id_tarea,
-      category: row.categoria || "Acción",
-      club: row.club || "O2CW",
-      owner: row.responsable || "Equipo O2",
-      priority: row.prioridad || "Media",
-      status: row.estado || "Pendiente",
-      text: row.descripcion || "Tarea operativa"
+      category: pretty(row.categoria || "Acción"),
+      club: pretty(row.club || "O2CW"),
+      owner: pretty(row.responsable || "Equipo O2"),
+      priority: pretty(row.prioridad || "Media"),
+      status: pretty(row.estado || "Pendiente"),
+      text: pretty(row.descripcion || "Tarea operativa")
     };
   }
 
   function mapSheetImpact(row) {
-    const label = row.categoria || row.tipo || "Impacto";
-    const value = num(row.importe_estimado, 0) || row.estado || "Activo";
-    const detail = `${row.club || "Red O2"} · ${row.comentario || row.origen || "trazabilidad en Google Sheet"}`;
+    const label = pretty(row.categoria || row.tipo || "Impacto");
+    const value = num(row.importe_estimado, 0) || pretty(row.estado || "Activo");
+    const detail = pretty(`${row.club || "Red O2"} · ${row.comentario || row.origen || "trazabilidad en Google Sheet"}`);
     return [label, value, detail];
   }
 
