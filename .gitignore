@@ -1,0 +1,15 @@
+.DS_Store
+node_modules
+node_modules/
+*.log
+data/*preview*.png
+data/*verification*.png
+data/verification*/
+
+# Internal discovery notes. Keep these local; do not publish client/team notes.
+chat.txt
+*.pdf
+PRIVATE_*.md
+LOCAL_*.md
+*_PRIVADO.md
+*_PRIVADA.md
