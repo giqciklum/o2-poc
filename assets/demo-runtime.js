@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v4";
+  const STORAGE_KEY = "o2_runtime_v5";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -106,6 +106,10 @@
     currentTab: "dashboard",
     currentScenario: null,
     selectedMemberId: "S-1748",
+    selectedVoiceId: "V-104",
+    selectedSalesId: "C-2401",
+    selectedCoverageIndex: 0,
+    selectedSourceLabel: "Accesos",
     kpis: {
       activeMembers: 18420,
       churnRisk: 14.8,
@@ -881,6 +885,7 @@
           text: "Pago un club premium y la sauna vuelve a estar cerrada sin aviso.",
           action: "Responder, abrir mantenimiento y marcar Spa como área de mejora en Málaga."
         });
+        next.selectedVoiceId = "V-117";
         next.tasks.unshift({
           id: "T-825",
           category: "Reclamación",
@@ -933,6 +938,7 @@
           objections: ["Precio", "Parking"],
           nextAction: "Enviar comparativa de valor premium y cita con fisioterapeuta."
         });
+        next.selectedSalesId = "C-2418";
         next.salesFunnel.values = [172, 124, 76, 49];
         next.tasks.unshift({
           id: "T-831",
@@ -1071,7 +1077,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : null;
       // If structure looks stale (no clubs/sparklines field), reset
-      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources) {
+      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined) {
         return deepClone(baseState);
       }
       return parsed;
@@ -1327,13 +1333,44 @@
     }).join("");
   }
 
+  function sourceMatchesSignal(source, signal) {
+    const s = String(signal || "").toLowerCase();
+    const label = String(source.label || "").toLowerCase();
+    const detail = String(source.detail || "").toLowerCase();
+    if (!s) return false;
+    if (label.includes(s) || detail.includes(s) || s.includes(label.split(" ")[0])) return true;
+    if (s.includes("whatsapp") && label.includes("whatsapp")) return true;
+    if (s.includes("llamadas") && label.includes("teléfono")) return true;
+    if (s.includes("reseñas") && detail.includes("sentimiento")) return true;
+    if (s.includes("reclamaciones") && label.includes("sugerencias")) return true;
+    if (s.includes("encuestas") && label.includes("encuestas")) return true;
+    if (s.includes("reservas") && label.includes("aforos")) return true;
+    if (s.includes("soy") && label.includes("soyo2")) return true;
+    if (s.includes("crm") && label.includes("acciones comerciales")) return true;
+    return false;
+  }
+
+  function sourcesForCoverage(coverage) {
+    const matched = state.dataSources.filter((source) =>
+      coverage.signals.some((signal) => sourceMatchesSignal(source, signal))
+    );
+    return matched.length ? matched : state.dataSources.slice(0, 3);
+  }
+
   function renderCoverage() {
     const coverageGrid = byId("coverage-grid");
     const sourceGrid = byId("source-grid");
-    if (!coverageGrid || !sourceGrid) return;
+    const detail = byId("coverage-detail");
+    if (!coverageGrid || !sourceGrid || !detail) return;
+
+    const selectedIndex = Math.min(Math.max(Number(state.selectedCoverageIndex) || 0, 0), state.coverage.length - 1);
+    const selected = state.coverage[selectedIndex];
+    const selectedSources = sourcesForCoverage(selected);
+    const sourceFocus = state.dataSources.find((source) => source.label === state.selectedSourceLabel) || selectedSources[0] || state.dataSources[0];
+    const averageStrength = Math.round(selectedSources.reduce((sum, source) => sum + source.strength, 0) / selectedSources.length);
 
     coverageGrid.innerHTML = state.coverage.map((item, index) => `
-      <article class="coverage-card">
+      <button class="coverage-card ${index === selectedIndex ? "active" : ""}" type="button" data-coverage-card="${index}" aria-pressed="${index === selectedIndex}">
         <div class="coverage-index">${String(index + 1).padStart(2, "0")}</div>
         <div>
           <strong>${item.need}</strong>
@@ -1343,18 +1380,44 @@
           </div>
           <span class="coverage-owner">${item.owner}</span>
         </div>
-      </article>
+      </button>
     `).join("");
 
+    detail.innerHTML = `
+      <div class="detail-title-row">
+        <div>
+          <span class="eyebrow">Matriz viva</span>
+          <h3>${selected.need}</h3>
+        </div>
+        <span class="detail-score ok">${averageStrength}</span>
+      </div>
+      <p>${selected.output}</p>
+      <div class="detail-kpis">
+        <div class="detail-kpi"><span>Fuentes</span><strong>${selectedSources.length}</strong></div>
+        <div class="detail-kpi"><span>Dueño</span><strong>${selected.owner.split(" ")[0]}</strong></div>
+        <div class="detail-kpi"><span>Cobertura</span><strong>${averageStrength}%</strong></div>
+      </div>
+      <div class="decision-path">
+        <div class="decision-step"><b>1</b><div><span>Señal</span><strong>${selected.signals.join(" · ")}</strong></div></div>
+        <div class="decision-step"><b>2</b><div><span>Lectura IA</span><strong>Clasifica, cruza tendencia y explica prioridad por sede.</strong></div></div>
+        <div class="decision-step"><b>3</b><div><span>Acción</span><strong>${selected.output}</strong></div></div>
+      </div>
+      <div class="source-focus">
+        <span>Fuente enfocada</span>
+        <strong>${sourceFocus.label} · ${sourceFocus.strength}% lista</strong>
+        <p>${sourceFocus.detail}</p>
+      </div>
+    `;
+
     sourceGrid.innerHTML = state.dataSources.map((source) => `
-      <article class="source-card">
+      <button class="source-card ${source.label === sourceFocus.label ? "active" : ""}" type="button" data-source-card="${source.label}" aria-pressed="${source.label === sourceFocus.label}">
         <div class="source-top">
           <strong>${source.label}</strong>
           <span>${source.strength}%</span>
         </div>
         <p>${source.detail}</p>
         <div class="progress"><i style="width:${source.strength}%"></i></div>
-      </article>
+      </button>
     `).join("");
   }
 
@@ -1377,14 +1440,38 @@
     byId("playbook-status").textContent = selected.status;
     byId("playbook-status").className = `status-pill ${priorityClass(selected.status)}`;
     byId("playbook-detail").innerHTML = `
-      <article class="insight-card">
-        <span class="tag">${selected.club}</span>
-        <h3 style="margin-top: 12px;">${selected.nextAction}</h3>
-        <p style="color: var(--muted); line-height: 1.6; margin-top: 12px; font-size: 0.92rem;">${selected.reason}</p>
-        <div class="metric-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 14px;">
-          <div class="proof-item"><span>Visitas 30d</span><strong>${selected.visits30}</strong></div>
-          <div class="proof-item"><span>Mes anterior</span><strong>${selected.visitsPrev}</strong></div>
-          <div class="proof-item"><span>LTV estimado</span><strong>${euro(selected.ltv)}</strong></div>
+      <article class="detail-panel">
+        <div class="detail-title-row">
+          <div>
+            <span class="tag">${selected.club}</span>
+            <h3 style="margin-top: 12px;">${selected.name}</h3>
+            <p>${selected.plan} · ${selected.reason}</p>
+          </div>
+          <span class="detail-score ${scoreClass(selected.churnScore)}">${selected.churnScore}</span>
+        </div>
+        <div class="detail-kpis">
+          <div class="detail-kpi"><span>Visitas 30d</span><strong>${selected.visits30}</strong></div>
+          <div class="detail-kpi"><span>Mes anterior</span><strong>${selected.visitsPrev}</strong></div>
+          <div class="detail-kpi"><span>LTV</span><strong>${euro(selected.ltv)}</strong></div>
+        </div>
+        <div class="source-focus">
+          <span>Siguiente mejor acción</span>
+          <strong>${selected.nextAction}</strong>
+          <p>El club recibe una acción humana concreta, no una alerta genérica.</p>
+        </div>
+        <div class="playbook-steps">
+          <div class="playbook-step"><span>1 · Preparar contacto</span><strong>Revisar motivo probable, últimas visitas y canal preferido antes de llamar.</strong></div>
+          <div class="playbook-step"><span>2 · Recuperar hábito</span><strong>${selected.nextAction}</strong></div>
+          <div class="playbook-step"><span>3 · Medir resultado</span><strong>Comprobar vuelta al club en 7 días y cambio de score en el siguiente ciclo.</strong></div>
+        </div>
+        <div class="driver-list">
+          ${selected.drivers.map(([name, detail, weight]) => `
+            <div class="driver-row">
+              <span>${name} · peso ${weight}</span>
+              <strong>${detail}</strong>
+              <div class="driver-bar"><i style="width:${weight}%"></i></div>
+            </div>
+          `).join("")}
         </div>
       </article>
     `;
@@ -1400,8 +1487,10 @@
   }
 
   function renderVoice() {
+    const selected = state.voice.find((item) => item.id === state.selectedVoiceId) || state.voice[0];
+    state.selectedVoiceId = selected.id;
     byId("voice-feed").innerHTML = state.voice.map((item) => `
-      <article class="feed-item">
+      <button class="feed-item ${item.id === selected.id ? "active" : ""}" type="button" data-voice-item="${item.id}" aria-pressed="${item.id === selected.id}">
         <div class="feed-top">
           <div>
             <strong>${item.topic}</strong>
@@ -1411,8 +1500,41 @@
         </div>
         <p style="color: var(--ink-soft); line-height: 1.55; margin-top: 10px; font-size: 0.94rem;">"${item.text}"</p>
         <p style="color: var(--muted); line-height: 1.45; margin-top: 10px; font-size: 0.86rem;"><strong style="color: var(--blue-deep);">Acción:</strong> ${item.action}</p>
-      </article>
+      </button>
     `).join("");
+
+    const related = state.voice.filter((item) => item.topic === selected.topic || item.club === selected.club).length;
+    const sentimentTone = selected.sentiment < -40 ? "danger" : selected.sentiment < 20 ? "warn" : "ok";
+    const voiceDetail = byId("voice-detail");
+    if (voiceDetail) {
+      voiceDetail.innerHTML = `
+        <article class="detail-panel">
+          <div class="detail-title-row">
+            <div>
+              <span class="tag">${selected.channel} · ${selected.club}</span>
+              <h3 style="margin-top: 12px;">${selected.topic}</h3>
+              <p>"${selected.text}"</p>
+            </div>
+            <span class="detail-score ${sentimentTone}">${selected.sentiment}</span>
+          </div>
+          <div class="detail-kpis">
+            <div class="detail-kpi"><span>Prioridad</span><strong>${selected.priority}</strong></div>
+            <div class="detail-kpi"><span>Estado</span><strong>${selected.status}</strong></div>
+            <div class="detail-kpi"><span>Señales</span><strong>${related}</strong></div>
+          </div>
+          <div class="source-focus">
+            <span>Acción recomendada</span>
+            <strong>${selected.action}</strong>
+            <p>La señal alimenta experiencia, operación y respuesta por sede.</p>
+          </div>
+          <div class="decision-path">
+            <div class="decision-step"><b>1</b><div><span>Captura</span><strong>${selected.channel} normalizado con sentimiento y tema.</strong></div></div>
+            <div class="decision-step"><b>2</b><div><span>Prioridad</span><strong>${selected.priority} · ${selected.rating} · ${selected.club}</strong></div></div>
+            <div class="decision-step"><b>3</b><div><span>Cierre</span><strong>Responsable, respuesta y tarea vinculada para no perder trazabilidad.</strong></div></div>
+          </div>
+        </article>
+      `;
+    }
 
     const chips = byId("voice-chips");
     if (chips) {
@@ -1426,8 +1548,10 @@
   }
 
   function renderSales() {
+    const selected = state.sales.find((item) => item.id === state.selectedSalesId) || state.sales[0];
+    state.selectedSalesId = selected.id;
     byId("sales-feed").innerHTML = state.sales.map((item) => `
-      <article class="feed-item">
+      <button class="feed-item ${item.id === selected.id ? "active" : ""}" type="button" data-sales-item="${item.id}" aria-pressed="${item.id === selected.id}">
         <div class="feed-top">
           <div>
             <strong>${item.name}</strong>
@@ -1440,8 +1564,42 @@
           ${item.objections.map((objection) => `<span class="tag">${objection}</span>`).join("")}
         </div>
         <p style="color: var(--muted); line-height: 1.45; margin-top: 10px; font-size: 0.86rem;"><strong style="color: var(--blue-deep);">Siguiente:</strong> ${item.nextAction}</p>
-      </article>
+      </button>
     `).join("");
+
+    const salesDetail = byId("sales-detail");
+    if (salesDetail) {
+      const similar = state.sales.filter((item) =>
+        item.club === selected.club || item.objections.some((objection) => selected.objections.includes(objection))
+      ).length;
+      salesDetail.innerHTML = `
+        <article class="detail-panel">
+          <div class="detail-title-row">
+            <div>
+              <span class="tag">${selected.channel} · ${selected.status}</span>
+              <h3 style="margin-top: 12px;">${selected.name}</h3>
+              <p>${selected.club} · ${selected.motivation}</p>
+            </div>
+            <span class="detail-score ${scoreClass(selected.intent)}">${selected.intent}</span>
+          </div>
+          <div class="detail-kpis">
+            <div class="detail-kpi"><span>Intención</span><strong>${selected.intent}%</strong></div>
+            <div class="detail-kpi"><span>Objeciones</span><strong>${selected.objections.length}</strong></div>
+            <div class="detail-kpi"><span>Casos afines</span><strong>${similar}</strong></div>
+          </div>
+          <div class="source-focus">
+            <span>Siguiente mejor acción</span>
+            <strong>${selected.nextAction}</strong>
+            <p>El comercial ve motivación, frenos y argumento recomendado para cerrar con valor premium.</p>
+          </div>
+          <div class="decision-path">
+            <div class="decision-step"><b>1</b><div><span>Motivación</span><strong>${selected.motivation}</strong></div></div>
+            <div class="decision-step"><b>2</b><div><span>Objeciones</span><strong>${selected.objections.join(" · ")}</strong></div></div>
+            <div class="decision-step"><b>3</b><div><span>Estrategia</span><strong>Comparar canales, frenos y mensajes que convierten por sede.</strong></div></div>
+          </div>
+        </article>
+      `;
+    }
 
     const objections = new Map();
     state.sales.forEach((item) => item.objections.forEach((objection) => {
@@ -2071,6 +2229,37 @@
         state.selectedMemberId = member.dataset.memberCard;
         saveState();
         renderMembers();
+      }
+
+      const coverage = event.target.closest("[data-coverage-card]");
+      if (coverage) {
+        state.selectedCoverageIndex = Number(coverage.dataset.coverageCard) || 0;
+        const selected = state.coverage[state.selectedCoverageIndex];
+        const firstSource = selected ? sourcesForCoverage(selected)[0] : null;
+        if (firstSource) state.selectedSourceLabel = firstSource.label;
+        saveState();
+        renderCoverage();
+      }
+
+      const source = event.target.closest("[data-source-card]");
+      if (source) {
+        state.selectedSourceLabel = source.dataset.sourceCard;
+        saveState();
+        renderCoverage();
+      }
+
+      const voice = event.target.closest("[data-voice-item]");
+      if (voice) {
+        state.selectedVoiceId = voice.dataset.voiceItem;
+        saveState();
+        renderVoice();
+      }
+
+      const sales = event.target.closest("[data-sales-item]");
+      if (sales) {
+        state.selectedSalesId = sales.dataset.salesItem;
+        saveState();
+        renderSales();
       }
 
       const modal = byId("artifact-modal");
