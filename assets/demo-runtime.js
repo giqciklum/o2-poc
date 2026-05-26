@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v7";
+  const STORAGE_KEY = "o2_runtime_v8";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -355,6 +355,29 @@
       { id: "T-801", category: "Retención", club: "O2CW Manuel Becerra", owner: "Customer Success", priority: "Alta", status: "Hoy", text: "Llamar a Clara Valera con propuesta de spa + reajuste de rutina." },
       { id: "T-790", category: "Experiencia", club: "O2CW Málaga", owner: "Club manager", priority: "Alta", status: "En curso", text: "Responder reseña sobre sauna y validar mantenimiento preventivo." },
       { id: "T-772", category: "Aforo", club: "O2CW Málaga", owner: "Operaciones", priority: "Media", status: "Pendiente", text: "Redistribuir reservas de pádel en hora punta." }
+    ],
+    surveys: [
+      { id: "E-001", date: "2026-05-24", memberId: "S-1748", memberName: "Clara Valera", club: "O2CW Manuel Becerra", nps: 6, satisfaction: "Media", painPoint: "Saturación de vestuarios y spa en hora punta", improvement: "Experiencia premium en franja pico", action: "Circuito spa en franja valle + revisión vestuarios" },
+      { id: "E-002", date: "2026-05-22", memberId: "S-0832", memberName: "Javier Antón", club: "O2CW Granada", nps: 7, satisfaction: "Media", painPoint: "Pistas de pádel sin huecos reales", improvement: "Aforos y reservas transparentes", action: "Redistribuir huecos y comunicar disponibilidad SoyO2" },
+      { id: "E-003", date: "2026-05-21", memberId: "S-2214", memberName: "Marta Roca", club: "Boutique Barcelona", nps: 10, satisfaction: "Alta", painPoint: "Ninguno", improvement: "Mantener calidad Body&Soul", action: "Usar como promotora y referral" },
+      { id: "E-004", date: "2026-05-20", memberId: "S-2602", memberName: "Lucía Marín", club: "O2CW Málaga", nps: 5, satisfaction: "Baja", painPoint: "Sauna y duchas con incidencias repetidas", improvement: "Mantenimiento preventivo spa", action: "Plan preventivo sauna + comunicación SoyO2" },
+      { id: "E-005", date: "2026-05-19", memberId: "S-1905", memberName: "Sergio Bravo", club: "O2CW Málaga", nps: 8, satisfaction: "Alta", painPoint: "Piscina con poco aforo libre por las mañanas", improvement: "Refuerzo de monitores", action: "Programar carril libre 07:00-08:30" },
+      { id: "E-006", date: "2026-05-18", memberId: "S-1511", memberName: "Diego Pardo", club: "Boutique Madrid", nps: 9, satisfaction: "Alta", painPoint: "Reformer con lista de espera", improvement: "Más franjas Pilates Reformer", action: "Abrir clase Reformer 19:30 entre semana" }
+    ],
+    communications: [
+      { id: "COM-001", date: "2026-05-23", memberId: "S-1748", memberName: "Clara Valera", club: "O2CW Manuel Becerra", channel: "WhatsApp", reason: "Saturación vestuarios y cambio de rutina", sentiment: -34, result: "Sin resolver", nextAction: "Llamada humana + propuesta franja valle" },
+      { id: "COM-002", date: "2026-05-22", memberId: "S-0832", memberName: "Javier Antón", club: "O2CW Granada", channel: "Teléfono", reason: "Disponibilidad pádel familiar", sentiment: 12, result: "Interés activo", nextAction: "Enviar huecos alternativos por SoyO2" },
+      { id: "COM-003", date: "2026-05-21", memberId: "S-2214", memberName: "Marta Roca", club: "Boutique Barcelona", channel: "App SoyO2", reason: "Felicitación clase Body&Soul", sentiment: 82, result: "Promotora", nextAction: "Recomendación personalizada y referral" },
+      { id: "COM-004", date: "2026-05-24", memberId: "S-2602", memberName: "Lucía Marín", club: "O2CW Málaga", channel: "WhatsApp", reason: "Queja por sauna fuera de servicio", sentiment: -68, result: "Abierto", nextAction: "Respuesta humana + invitación recovery" },
+      { id: "COM-005", date: "2026-05-24", memberId: "S-1189", memberName: "Óscar Vidal", club: "O2CW Sexta Avenida", channel: "Teléfono", reason: "Cambio horario laboral", sentiment: -8, result: "Contactado", nextAction: "Enviar ZONE 20:30 y plan corporate" },
+      { id: "COM-006", date: "2026-05-23", memberId: "S-2334", memberName: "Andrea Solís", club: "O2CW Huelva", channel: "Teléfono", reason: "Dolor lumbar y abandono fisio", sentiment: -38, result: "Sin respuesta", nextAction: "Reintentar llamada con fisio asignada" }
+    ],
+    habits: [
+      { id: "H-001", memberId: "S-1748", memberName: "Clara Valera", club: "O2CW Manuel Becerra", period: "Últimos 30 días", accesses: 3, accessesPrev: 11, bookings: 2, bookingsPrev: 7, servicesUsed: "Spa (1) · Fitness (2)", trend: "Caída crítica", reading: "Pérdida de hábito tras saturación; activar retención" },
+      { id: "H-002", memberId: "S-0832", memberName: "Javier Antón", club: "O2CW Granada", period: "Últimos 30 días", accesses: 5, accessesPrev: 8, bookings: 3, bookingsPrev: 5, servicesUsed: "Pádel (2) · Piscina (1)", trend: "Cambio a franja valle", reading: "Migración de hábito; ajustar oferta de pádel" },
+      { id: "H-003", memberId: "S-2214", memberName: "Marta Roca", club: "Boutique Barcelona", period: "Últimos 30 días", accesses: 13, accessesPrev: 12, bookings: 11, bookingsPrev: 10, servicesUsed: "Body&Soul (6) · Yoga (3) · Spa (2)", trend: "Estable creciente", reading: "Patrón premium consolidado; usar como referencia" },
+      { id: "H-004", memberId: "S-2602", memberName: "Lucía Marín", club: "O2CW Málaga", period: "Últimos 30 días", accesses: 4, accessesPrev: 12, bookings: 1, bookingsPrev: 6, servicesUsed: "Piscina (1)", trend: "Caída crítica", reading: "Sin recovery ni fisio en 38 días" },
+      { id: "H-005", memberId: "segmento-padel", memberName: "Segmento pádel hora punta", club: "O2CW Málaga", period: "Hora punta", accesses: 97, accessesPrev: 78, bookings: 142, bookingsPrev: 118, servicesUsed: "Pádel (97%)", trend: "Saturación creciente", reading: "Redistribuir demanda y abrir lista de espera" }
     ],
     impact: [
       ["Revenue protegido", 42800, "Socios con LTV alto priorizados antes de baja."],
@@ -1081,7 +1104,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : null;
       // If structure looks stale (no clubs/sparklines field), reset
-      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined || parsed.selectedOperationId === undefined) {
+      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined || parsed.selectedOperationId === undefined || !Array.isArray(parsed.surveys) || !Array.isArray(parsed.communications) || !Array.isArray(parsed.habits)) {
         return deepClone(baseState);
       }
       return parsed;
@@ -1671,6 +1694,130 @@
     }
   }
 
+  function npsTone(value) {
+    if (value >= 9) return "ok";
+    if (value >= 7) return "warn";
+    return "danger";
+  }
+
+  function trendTone(label) {
+    const s = String(label || "").toLowerCase();
+    if (s.includes("caída") || s.includes("caida") || s.includes("crítica") || s.includes("critica") || s.includes("saturación") || s.includes("saturacion")) return "danger";
+    if (s.includes("cambio") || s.includes("franja") || s.includes("migra")) return "warn";
+    return "ok";
+  }
+
+  function renderSurveys() {
+    const surveysTable = byId("surveys-table");
+    if (!surveysTable) return;
+    const surveys = (state.surveys || []).slice().sort((a, b) => (a.nps || 0) - (b.nps || 0));
+    if (!surveys.length) {
+      surveysTable.innerHTML = `<thead><tr><th>Encuesta</th><th>NPS</th><th>Punto de dolor</th><th>Área de mejora</th><th>Acción</th></tr></thead><tbody><tr><td colspan="5" style="color: var(--muted); padding: 16px;">Sin encuestas registradas todavía.</td></tr></tbody>`;
+      return;
+    }
+    surveysTable.innerHTML = `
+      <thead>
+        <tr>
+          <th>Socio · sede</th>
+          <th>NPS</th>
+          <th>Satisfacción</th>
+          <th>Punto de dolor</th>
+          <th>Área de mejora</th>
+          <th>Acción recomendada</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${surveys.map((survey) => `
+          <tr>
+            <td><strong>${survey.memberName}</strong><br><span style="color: var(--muted); font-size: 0.85em;">${survey.club} · ${survey.date}</span></td>
+            <td><span class="status-pill ${npsTone(survey.nps)}">${survey.nps}/10</span></td>
+            <td>${survey.satisfaction}</td>
+            <td>${survey.painPoint}</td>
+            <td>${survey.improvement}</td>
+            <td><strong style="color: var(--blue-deep);">${survey.action}</strong></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    `;
+  }
+
+  function renderCommunications() {
+    const feed = byId("communications-feed");
+    if (!feed) return;
+    const all = state.communications || [];
+    const selectedId = state.selectedMemberId;
+    const filtered = selectedId ? all.filter((c) => c.memberId === selectedId) : [];
+    const items = (filtered.length ? filtered : all).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    if (!items.length) {
+      feed.innerHTML = `<p style="color: var(--muted); padding: 12px;">Sin comunicaciones registradas para este socio.</p>`;
+      return;
+    }
+    feed.innerHTML = items.slice(0, 8).map((c) => {
+      const tone = c.sentiment < -30 ? "danger" : c.sentiment > 30 ? "ok" : "warn";
+      const filterTag = selectedId && filtered.length ? `<span class="tag">Socio seleccionado</span>` : `<span class="tag">Red O2</span>`;
+      return `
+        <article class="feed-item">
+          <div class="feed-top">
+            <div>
+              <strong>${c.memberName}</strong>
+              <span>${c.channel} · ${c.club} · ${c.date}</span>
+            </div>
+            <span class="status-pill ${tone}">${c.sentiment > 0 ? "+" : ""}${c.sentiment}</span>
+          </div>
+          <p style="color: var(--ink-soft); line-height: 1.5; margin-top: 8px; font-size: 0.92rem;">${c.reason}</p>
+          <div class="chip-row" style="margin-top: 8px;">
+            ${filterTag}
+            <span class="tag">${c.result}</span>
+          </div>
+          <p style="color: var(--muted); line-height: 1.45; margin-top: 8px; font-size: 0.86rem;"><strong style="color: var(--blue-deep);">Siguiente:</strong> ${c.nextAction}</p>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function renderHabits() {
+    const table = byId("habits-table");
+    if (!table) return;
+    const all = state.habits || [];
+    const selectedId = state.selectedMemberId;
+    const filtered = selectedId ? all.filter((h) => h.memberId === selectedId) : [];
+    const rows = filtered.length ? filtered : all;
+    if (!rows.length) {
+      table.innerHTML = `<thead><tr><th>Socio</th><th>Accesos</th><th>Reservas</th><th>Servicios</th><th>Tendencia</th></tr></thead><tbody><tr><td colspan="5" style="color: var(--muted); padding: 16px;">Sin hábitos registrados todavía.</td></tr></tbody>`;
+      return;
+    }
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Socio · sede</th>
+          <th>Periodo</th>
+          <th>Accesos vs prev</th>
+          <th>Reservas vs prev</th>
+          <th>Servicios usados</th>
+          <th>Cambio de tendencia</th>
+          <th>Lectura operativa</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((h) => {
+          const accDelta = h.accessesPrev ? Math.round(((h.accesses - h.accessesPrev) / h.accessesPrev) * 100) : 0;
+          const bookDelta = h.bookingsPrev ? Math.round(((h.bookings - h.bookingsPrev) / h.bookingsPrev) * 100) : 0;
+          return `
+            <tr>
+              <td><strong>${h.memberName}</strong><br><span style="color: var(--muted); font-size: 0.85em;">${h.club}</span></td>
+              <td>${h.period}</td>
+              <td>${h.accesses} <span style="color: var(--muted); font-size: 0.85em;">(${accDelta > 0 ? "+" : ""}${accDelta}%)</span></td>
+              <td>${h.bookings} <span style="color: var(--muted); font-size: 0.85em;">(${bookDelta > 0 ? "+" : ""}${bookDelta}%)</span></td>
+              <td>${h.servicesUsed}</td>
+              <td><span class="status-pill ${trendTone(h.trend)}">${h.trend}</span></td>
+              <td><strong style="color: var(--blue-deep);">${h.reading}</strong></td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    `;
+  }
+
   function renderSales() {
     const salesItems = state.sales
       .slice()
@@ -2193,7 +2340,10 @@
     renderZones();
     renderImpact();
     renderMembers();
+    renderCommunications();
+    renderHabits();
     renderVoice();
+    renderSurveys();
     renderSales();
     renderOperations();
     renderScenarios();
@@ -2327,6 +2477,54 @@
     return [label, value, detail];
   }
 
+  function mapSheetSurvey(row) {
+    const memberId = pretty(row.id_socio || "");
+    return {
+      id: row.id_encuesta || `E-${memberId}`,
+      date: pretty(row.fecha || ""),
+      memberId,
+      memberName: pretty(row.nombre || row.id_socio || "Socio O2"),
+      club: pretty(row.club || "O2CW"),
+      nps: num(row.nps, 0),
+      satisfaction: pretty(row.satisfaccion || "Media"),
+      painPoint: pretty(row.puntos_dolor || "Sin punto de dolor"),
+      improvement: pretty(row.area_mejora || "Mejora pendiente de detectar"),
+      action: pretty(row.accion_recomendada || "Asignar siguiente mejor acción")
+    };
+  }
+
+  function mapSheetCommunication(row) {
+    return {
+      id: row.id_comunicacion,
+      date: pretty(row.fecha || ""),
+      memberId: pretty(row.id_socio || ""),
+      memberName: pretty(row.nombre || row.id_socio || "Socio O2"),
+      club: pretty(row.club || "O2CW"),
+      channel: pretty(row.canal || "WhatsApp"),
+      reason: pretty(row.motivo || "Comunicación registrada"),
+      sentiment: num(row.sentimiento, 0),
+      result: pretty(row.resultado || "Sin resolver"),
+      nextAction: pretty(row.siguiente_accion || "Definir siguiente paso")
+    };
+  }
+
+  function mapSheetHabit(row) {
+    return {
+      id: row.id_habito,
+      memberId: pretty(row.id_socio || ""),
+      memberName: pretty(row.nombre || row.id_socio || "Socio O2"),
+      club: pretty(row.club || "O2CW"),
+      period: pretty(row.periodo || "Últimos 30 días"),
+      accesses: num(row.accesos, 0),
+      accessesPrev: num(row.accesos_prev, 0),
+      bookings: num(row.reservas, 0),
+      bookingsPrev: num(row.reservas_prev, 0),
+      servicesUsed: pretty(row.servicios_usados || "Sin servicios registrados"),
+      trend: pretty(row.cambio_tendencia || "Sin cambio"),
+      reading: pretty(row.lectura || "Sin lectura disponible")
+    };
+  }
+
   function syncArrayFromSheet(current, incoming, mapper, idKey, minimumToReplace = 0) {
     if (!Array.isArray(incoming) || !incoming.length) return current;
     const mapped = incoming.map(mapper).filter((item) => item && item[idKey]);
@@ -2358,6 +2556,9 @@
     );
     state.maintenance = syncArrayFromSheet(state.maintenance, snapshot.mantenimiento, mapSheetMaintenance, "id");
     state.tasks = syncArrayFromSheet(state.tasks, snapshot.tareas, mapSheetTask, "id");
+    state.surveys = syncArrayFromSheet(state.surveys || [], snapshot.encuestas, mapSheetSurvey, "id");
+    state.communications = syncArrayFromSheet(state.communications || [], snapshot.comunicaciones, mapSheetCommunication, "id");
+    state.habits = syncArrayFromSheet(state.habits || [], snapshot.habitos_uso, mapSheetHabit, "id");
 
     if (Array.isArray(snapshot.agenda_impacto) && snapshot.agenda_impacto.length >= 3) {
       const sheetImpact = snapshot.agenda_impacto.slice(0, 5).map(mapSheetImpact);
