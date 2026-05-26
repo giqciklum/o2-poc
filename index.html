@@ -177,6 +177,12 @@
       color: #fff;
       box-shadow: 0 6px 16px rgba(10, 26, 42, 0.18);
     }
+    .topbar .nav button.active {
+      background-color: #0a1a2a !important;
+      background-image: none !important;
+      color: #fff !important;
+      box-shadow: 0 6px 16px rgba(10, 26, 42, 0.18) !important;
+    }
 
     .utility {
       display: flex;
@@ -1102,8 +1108,8 @@
 
     .coverage-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-      gap: 14px;
+      grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+      gap: 18px;
       align-items: start;
     }
     .coverage-grid,
@@ -1116,8 +1122,8 @@
       display: grid;
       grid-template-columns: 46px 1fr;
       gap: 12px;
-      min-height: 118px;
-      padding: 14px;
+      min-height: 98px;
+      padding: 12px 14px;
       border: 1px solid rgba(0, 157, 224, 0.20);
       border-radius: var(--radius-sm);
       background:
@@ -1154,6 +1160,11 @@
       font-weight: 600;
     }
     .coverage-card .chip-row { margin-top: 10px; }
+    .coverage-card .tag {
+      min-height: 22px;
+      padding: 3px 8px;
+      font-size: 0.68rem;
+    }
     .coverage-owner {
       display: inline-block;
       color: var(--blue-deep);
@@ -1163,8 +1174,8 @@
       text-transform: uppercase;
     }
     .source-card {
-      min-height: 92px;
-      padding: 13px;
+      min-height: 78px;
+      padding: 11px;
       border: 1px solid var(--line);
       border-radius: var(--radius-sm);
       background: var(--surface);
@@ -1213,18 +1224,31 @@
     }
     .matrix-side {
       display: grid;
-      gap: 14px;
+      gap: 12px;
       align-content: start;
       min-width: 0;
     }
+    .matrix-side .source-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-height: 310px;
+      overflow: auto;
+      padding-right: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 157, 224, 0.35) transparent;
+    }
+    .matrix-side .source-grid::-webkit-scrollbar { width: 7px; }
+    .matrix-side .source-grid::-webkit-scrollbar-thumb {
+      background: rgba(0, 157, 224, 0.32);
+      border-radius: 999px;
+    }
     .coverage-detail {
-      position: sticky;
-      top: 98px;
+      position: relative;
+      top: auto;
       z-index: 4;
       display: grid;
       gap: 12px;
-      min-height: 320px;
-      padding: 18px;
+      min-height: 0;
+      padding: 16px;
       border-radius: var(--radius);
       color: #fff;
       background:
@@ -1430,6 +1454,42 @@
       color: #fff;
       line-height: 1.35;
       font-size: 0.88rem;
+    }
+    .operation-row {
+      cursor: pointer;
+      transition: background 160ms ease, box-shadow 160ms ease;
+    }
+    .operation-row:hover td {
+      background: rgba(0, 157, 224, 0.07) !important;
+    }
+    .operation-row.active td {
+      background: rgba(0, 157, 224, 0.12) !important;
+      box-shadow: inset 3px 0 0 var(--blue);
+    }
+    .operation-detail-panel {
+      padding: 0;
+      overflow: hidden;
+    }
+    .operation-detail-panel .detail-panel {
+      min-height: 100%;
+      border-radius: var(--radius);
+      box-shadow: none;
+    }
+    .operation-next-actions {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+    }
+    .operation-next-actions li {
+      list-style: none;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255,255,255,0.86);
+      font-weight: 700;
+      line-height: 1.35;
     }
     .driver-bar {
       height: 7px;
@@ -1940,6 +2000,53 @@
       color: rgba(255, 255, 255, 0.78);
       font-weight: 600;
     }
+    .narrative-console {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: -4px;
+    }
+    .narrative-step {
+      min-height: 76px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(109, 207, 213, 0.18);
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255,255,255,0.74);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .narrative-step strong {
+      display: block;
+      color: #fff;
+      line-height: 1.25;
+      font-size: 0.84rem;
+      margin-top: 5px;
+    }
+    .narrative-step span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(218, 245, 255, 0.68);
+      font-size: 0.66rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .narrative-step span::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.28);
+    }
+    .narrative-step.active {
+      border-color: rgba(0, 157, 224, 0.72);
+      background: linear-gradient(135deg, rgba(0, 157, 224, 0.24), rgba(109, 207, 213, 0.14));
+      box-shadow: 0 16px 32px rgba(0, 157, 224, 0.18);
+    }
+    .narrative-step.active span::before {
+      background: var(--aqua);
+      box-shadow: 0 0 0 5px rgba(109, 207, 213, 0.16);
+    }
 
     /* ==== TIMELINE ==== */
     .timeline {
@@ -2174,6 +2281,12 @@
       .metric-grid, .hero-proof, .zone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .signal-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .coverage-layout { grid-template-columns: 1fr; }
+      .matrix-side .source-grid {
+        grid-template-columns: 1fr;
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+      }
       .coverage-detail,
       .sticky-detail,
       .sticky-detail.panel {
@@ -2195,6 +2308,7 @@
       .hero-copy { padding: 24px; }
       .hero-visual, .hero-visual img { min-height: 320px; }
       .metric-grid, .hero-proof, .signal-flow, .coverage-layout, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
+      .narrative-console { grid-template-columns: 1fr; }
       .detail-kpis { grid-template-columns: 1fr; }
       .panel-head { display: grid; }
       .mini-table th, .mini-table td {
@@ -2542,16 +2656,15 @@
               <div>
                 <span class="eyebrow">Operación física</span>
                 <h2 id="operations-title">Aforos y mantenimiento accionables</h2>
-                <p>Club, zona, umbral, acción recomendada y responsable. Pádel, piscina, spa, sauna y sala fitness dejan de ser puntos ciegos.</p>
+                <p>Selecciona cualquier fila para ver lectura, responsable, prioridad y siguiente acción. Pádel, piscina, spa, sauna y sala fitness dejan de ser puntos ciegos.</p>
               </div>
             </div>
             <table class="mini-table" id="operations-table"></table>
           </section>
 
-          <div class="media-tile">
-            <img src="assets/o2-padel.webp" alt="Pistas de pádel O2 Centro Wellness">
-            <span>Pádel, piscina, spa y sala fitness dejan de ser puntos ciegos de experiencia premium.</span>
-          </div>
+          <section class="panel sticky-detail operation-detail-panel" aria-live="polite">
+            <div id="operation-detail"></div>
+          </section>
         </div>
 
         <div class="two-col">
@@ -2594,6 +2707,7 @@
             </div>
             <button class="button primary" type="button" data-narrative>▶ Reproducir narrativa</button>
           </div>
+          <div class="narrative-console" id="narrative-console" aria-live="polite"></div>
 
           <div class="scenario-grid" id="scenario-grid"></div>
         </section>
