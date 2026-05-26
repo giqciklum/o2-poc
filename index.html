@@ -510,6 +510,75 @@
     .hero .proof-item span { color: rgba(255, 255, 255, 0.64); }
     .hero .proof-item strong { color: #fff; }
 
+    .signal-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 10px;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.82), rgba(237,244,249,0.76)),
+        var(--surface);
+      border: 1px solid rgba(0, 157, 224, 0.16);
+      box-shadow: var(--shadow-sm);
+    }
+    .signal-chip {
+      position: relative;
+      min-height: 72px;
+      padding: 12px 14px 12px 38px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(221, 230, 238, 0.86);
+      background: rgba(255, 255, 255, 0.82);
+      overflow: hidden;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    .signal-chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(0, 157, 224, 0.28);
+      box-shadow: 0 12px 26px rgba(0, 157, 224, 0.10);
+    }
+    .signal-chip::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 17px;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--blue);
+      box-shadow: 0 0 0 5px rgba(0, 157, 224, 0.12);
+    }
+    .signal-chip::after {
+      content: "";
+      position: absolute;
+      inset: auto 10px 0 38px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--aqua), var(--green));
+      opacity: 0.86;
+      transform-origin: left;
+      animation: stripPulse 5.2s ease-in-out infinite;
+    }
+    @keyframes stripPulse {
+      0%, 100% { transform: scaleX(0.84); opacity: 0.66; }
+      50% { transform: scaleX(1); opacity: 0.96; }
+    }
+    .signal-chip span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 900;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+    .signal-chip strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--ink);
+      font-size: 0.98rem;
+      line-height: 1.24;
+      font-weight: 850;
+    }
+
     .hero-visual {
       position: relative;
       min-height: 460px;
@@ -1258,6 +1327,21 @@
       border: 1px solid rgba(109, 207, 213, 0.26);
       box-shadow: 0 24px 58px rgba(10, 26, 42, 0.16);
       overflow: hidden;
+    }
+    .coverage-detail::before,
+    .detail-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 0 42%, rgba(255,255,255,0.10) 48%, transparent 56% 100%);
+      transform: translateX(-68%);
+      animation: panelGlint 8.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes panelGlint {
+      0%, 58%, 100% { transform: translateX(-72%); opacity: 0; }
+      68% { opacity: 0.74; }
+      82% { transform: translateX(72%); opacity: 0; }
     }
     .coverage-detail::after,
     .sticky-detail::after {
@@ -2278,7 +2362,7 @@
     @media (max-width: 1160px) {
       .topbar, .hero, .two-col { grid-template-columns: 1fr; }
       .nav { justify-content: start; }
-      .metric-grid, .hero-proof, .zone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-grid, .hero-proof, .signal-strip, .zone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .signal-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .coverage-layout { grid-template-columns: 1fr; }
       .matrix-side .source-grid {
@@ -2307,7 +2391,7 @@
       .hero { padding: 16px; min-height: auto; }
       .hero-copy { padding: 24px; }
       .hero-visual, .hero-visual img { min-height: 320px; }
-      .metric-grid, .hero-proof, .signal-flow, .coverage-layout, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
+      .metric-grid, .hero-proof, .signal-strip, .signal-flow, .coverage-layout, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
       .narrative-console { grid-template-columns: 1fr; }
       .detail-kpis { grid-template-columns: 1fr; }
       .panel-head { display: grid; }
@@ -2424,6 +2508,8 @@
             </figcaption>
           </figure>
         </div>
+
+        <section class="signal-strip" id="signal-strip" aria-label="Contexto operativo de la demo"></section>
 
         <div class="metric-grid" id="metric-grid"></div>
 
@@ -2597,7 +2683,7 @@
             <div class="panel-head">
               <div>
                 <span class="eyebrow">Voz del cliente</span>
-                <h2 id="voice-title">Feedback clasificado por IA</h2>
+                <h2 id="voice-title">Feedback priorizado por sede</h2>
                 <p>Reseñas Google, hojas de reclamación, sugerencias, encuestas, WhatsApp y conversaciones telefónicas, todo agregado por tema, sede, sentimiento y prioridad.</p>
               </div>
             </div>
