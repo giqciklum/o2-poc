@@ -1104,12 +1104,13 @@
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
       gap: 14px;
-      align-items: stretch;
+      align-items: start;
     }
     .coverage-grid,
     .source-grid {
       display: grid;
       gap: 10px;
+      align-content: start;
     }
     .coverage-card {
       display: grid;
@@ -1169,6 +1170,36 @@
       background: var(--surface);
       box-shadow: 0 6px 16px rgba(10, 26, 42, 0.035);
     }
+    .coverage-card,
+    .source-card,
+    .feed-item {
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+    .coverage-card:hover,
+    .source-card:hover,
+    .feed-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--blue-light);
+      box-shadow: var(--shadow);
+    }
+    .coverage-card.active,
+    .source-card.active,
+    .feed-item.active {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px rgba(0, 157, 224, 0.18), 0 18px 42px rgba(0, 157, 224, 0.16);
+    }
+    .coverage-card.active {
+      background:
+        linear-gradient(135deg, rgba(0, 157, 224, 0.12), rgba(109, 207, 213, 0.08)),
+        var(--surface);
+    }
+    .source-card.active {
+      background:
+        linear-gradient(135deg, rgba(47, 157, 98, 0.10), rgba(0, 157, 224, 0.06)),
+        var(--surface);
+    }
     .source-top {
       display: flex;
       justify-content: space-between;
@@ -1179,6 +1210,251 @@
       color: var(--blue-deep);
       font-weight: 900;
       font-variant-numeric: tabular-nums;
+    }
+    .matrix-side {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      min-width: 0;
+    }
+    .coverage-detail {
+      position: sticky;
+      top: 98px;
+      z-index: 4;
+      display: grid;
+      gap: 12px;
+      min-height: 320px;
+      padding: 18px;
+      border-radius: var(--radius);
+      color: #fff;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(109, 207, 213, 0.22), transparent 34%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 44px),
+        linear-gradient(135deg, rgb(5, 18, 31), rgb(0, 82, 116));
+      border: 1px solid rgba(109, 207, 213, 0.26);
+      box-shadow: 0 24px 58px rgba(10, 26, 42, 0.16);
+      overflow: hidden;
+    }
+    .coverage-detail::after,
+    .sticky-detail::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% 0 -20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(109, 207, 213, 0.9), rgba(0, 157, 224, 0.9), transparent);
+      box-shadow: 0 0 18px rgba(0, 157, 224, 0.48);
+      pointer-events: none;
+    }
+    .coverage-detail h3,
+    .detail-panel h3 {
+      color: inherit;
+      font-size: 1.08rem;
+      line-height: 1.25;
+    }
+    .coverage-detail p,
+    .detail-panel p {
+      color: inherit;
+      opacity: 0.76;
+      line-height: 1.55;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .detail-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .detail-kpi {
+      min-width: 0;
+      padding: 11px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+    }
+    .detail-kpi span {
+      display: block;
+      color: rgba(255,255,255,0.62);
+      font-size: 0.66rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+    .detail-kpi strong {
+      display: block;
+      color: #fff;
+      font-family: "Fraunces", serif;
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+    .decision-path {
+      display: grid;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .decision-step {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .decision-step b {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--aqua));
+      color: #fff;
+      font-size: 0.78rem;
+    }
+    .decision-step span {
+      display: block;
+      color: rgba(255,255,255,0.62);
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .decision-step strong {
+      color: #fff;
+      font-size: 0.84rem;
+      line-height: 1.3;
+    }
+    .source-focus {
+      display: grid;
+      gap: 5px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(109, 207, 213, 0.10);
+      border: 1px solid rgba(109, 207, 213, 0.24);
+    }
+    .source-focus span {
+      color: rgba(218, 245, 255, 0.66);
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .source-focus strong {
+      color: #fff;
+      font-size: 0.96rem;
+    }
+
+    .sticky-detail {
+      position: sticky;
+      top: 98px;
+      max-height: calc(100vh - 118px);
+      overflow: auto;
+      align-self: start;
+    }
+    .sticky-detail.panel {
+      position: sticky;
+    }
+    .sticky-detail {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 157, 224, 0.42) transparent;
+    }
+    .sticky-detail::-webkit-scrollbar { width: 8px; }
+    .sticky-detail::-webkit-scrollbar-thumb {
+      background: rgba(0, 157, 224, 0.30);
+      border-radius: 999px;
+    }
+    .detail-panel {
+      position: relative;
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border-radius: var(--radius);
+      color: #fff;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 82% 12%, rgba(109, 207, 213, 0.20), transparent 36%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.040) 0 1px, transparent 1px 42px),
+        linear-gradient(135deg, rgb(5, 18, 31), rgb(0, 82, 116));
+      border: 1px solid rgba(109, 207, 213, 0.24);
+      box-shadow: 0 18px 46px rgba(10, 26, 42, 0.12);
+    }
+    .detail-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+    .detail-score {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      color: #fff;
+      font-family: "Fraunces", serif;
+      font-size: 1.48rem;
+      font-weight: 700;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255,255,255,0.24), transparent 28%),
+        linear-gradient(135deg, var(--blue), var(--blue-deep));
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: 0 0 0 8px rgba(0,157,224,0.12), 0 18px 36px rgba(0,0,0,0.20);
+      font-variant-numeric: tabular-nums;
+    }
+    .detail-score.danger { background: linear-gradient(135deg, #d84b55, #8d1c27); box-shadow: 0 0 0 8px rgba(216,75,85,0.14), 0 18px 36px rgba(0,0,0,0.20); }
+    .detail-score.warn { background: linear-gradient(135deg, #ef9b3a, #955508); box-shadow: 0 0 0 8px rgba(239,155,58,0.15), 0 18px 36px rgba(0,0,0,0.20); }
+    .detail-score.ok { background: linear-gradient(135deg, #2f9d62, #145a35); box-shadow: 0 0 0 8px rgba(47,157,98,0.14), 0 18px 36px rgba(0,0,0,0.20); }
+    .playbook-steps,
+    .driver-list {
+      display: grid;
+      gap: 8px;
+    }
+    .playbook-step,
+    .driver-row {
+      padding: 11px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .playbook-step span,
+    .driver-row span {
+      display: block;
+      color: rgba(255,255,255,0.62);
+      font-size: 0.68rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .playbook-step strong,
+    .driver-row strong {
+      color: #fff;
+      line-height: 1.35;
+      font-size: 0.88rem;
+    }
+    .driver-bar {
+      height: 7px;
+      margin-top: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+    .driver-bar i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--blue), var(--aqua), var(--green));
+    }
+    .detail-chart-card {
+      display: grid;
+      gap: 12px;
+    }
+    .sticky-detail .chart-box {
+      height: 210px;
+      min-height: 210px;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      background: rgba(237, 244, 249, 0.56);
+      border: 1px solid rgba(221, 230, 238, 0.74);
     }
 
     #lifetime > .two-col > .panel:first-child,
@@ -1898,6 +2174,14 @@
       .metric-grid, .hero-proof, .zone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .signal-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .coverage-layout { grid-template-columns: 1fr; }
+      .coverage-detail,
+      .sticky-detail,
+      .sticky-detail.panel {
+        position: relative;
+        top: auto;
+        max-height: none;
+        overflow: visible;
+      }
       .network-stage { grid-template-columns: 1fr; }
       .scenario-grid, .three-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -1911,6 +2195,7 @@
       .hero-copy { padding: 24px; }
       .hero-visual, .hero-visual img { min-height: 320px; }
       .metric-grid, .hero-proof, .signal-flow, .coverage-layout, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
+      .detail-kpis { grid-template-columns: 1fr; }
       .panel-head { display: grid; }
       .mini-table th, .mini-table td {
         padding: 10px 6px;
@@ -2038,7 +2323,10 @@
           </div>
           <div class="coverage-layout">
             <div class="coverage-grid" id="coverage-grid"></div>
-            <div class="source-grid" id="source-grid"></div>
+            <div class="matrix-side">
+              <div class="coverage-detail" id="coverage-detail" aria-live="polite"></div>
+              <div class="source-grid" id="source-grid"></div>
+            </div>
           </div>
         </section>
 
@@ -2167,7 +2455,7 @@
             <div class="member-grid" id="member-grid" style="display: grid; gap: 10px;"></div>
           </section>
 
-          <section class="panel">
+          <section class="panel sticky-detail">
             <div class="panel-head">
               <div>
                 <h2>Plan de recuperación <small>Playbook concreto para el club</small></h2>
@@ -2202,13 +2490,16 @@
             <div class="feed-list" id="voice-feed" style="display: grid; gap: 10px;"></div>
           </section>
 
-          <section class="panel">
+          <section class="panel sticky-detail">
             <div class="panel-head">
               <div>
                 <h2>Temas con más impacto <small>Casos ponderados por sentimiento y club</small></h2>
               </div>
             </div>
-            <div class="chart-box"><canvas id="voice-chart"></canvas></div>
+            <div class="detail-chart-card">
+              <div class="chart-box"><canvas id="voice-chart"></canvas></div>
+              <div id="voice-detail" aria-live="polite"></div>
+            </div>
             <div class="chip-row" id="voice-chips"></div>
           </section>
         </div>
@@ -2228,13 +2519,16 @@
             <div class="feed-list" id="sales-feed" style="display: grid; gap: 10px;"></div>
           </section>
 
-          <section class="panel">
+          <section class="panel sticky-detail">
             <div class="panel-head">
               <div>
                 <h2>Pipeline y objeciones <small>Funnel por canal y frenos detectados</small></h2>
               </div>
             </div>
-            <div class="chart-box"><canvas id="sales-chart"></canvas></div>
+            <div class="detail-chart-card">
+              <div class="chart-box"><canvas id="sales-chart"></canvas></div>
+              <div id="sales-detail" aria-live="polite"></div>
+            </div>
             <div class="chip-row" id="objection-chips"></div>
           </section>
         </div>
