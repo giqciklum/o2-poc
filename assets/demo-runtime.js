@@ -1857,56 +1857,56 @@
   }
 
   function renderHabits() {
-    const table = byId("habits-table");
-    if (!table) return;
+    const feed = byId("habits-feed");
+    if (!feed) return;
     const all = state.habits || [];
     const selectedId = state.selectedMemberId;
     const filtered = selectedId ? all.filter((h) => h.memberId === selectedId) : [];
-    const rows = filtered.length ? filtered : all;
-    if (!rows.length) {
-      table.innerHTML = `<thead><tr><th>Socio</th><th>Accesos</th><th>Reservas</th><th>Servicios</th><th>Tendencia</th><th>Lectura</th></tr></thead><tbody><tr><td colspan="6" style="color: var(--muted); padding: 16px;">Sin hábitos registrados todavía.</td></tr></tbody>`;
+    const items = filtered.length ? filtered : all;
+    if (!items.length) {
+      feed.innerHTML = `<p style="color: var(--muted); padding: 12px;">Sin hábitos registrados para este socio.</p>`;
       return;
     }
-    table.innerHTML = `
-      <colgroup>
-        <col style="width: 19%">
-        <col style="width: 11%">
-        <col style="width: 11%">
-        <col style="width: 11%">
-        <col style="width: 14%">
-        <col style="width: 14%">
-        <col style="width: 20%">
-      </colgroup>
-      <thead>
-        <tr>
-          <th>Socio · sede</th>
-          <th>Período</th>
-          <th>Accesos vs prev</th>
-          <th>Reservas vs prev</th>
-          <th>Servicios usados</th>
-          <th>Cambio de tendencia</th>
-          <th>Lectura operativa</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${rows.map((h) => {
-          const accDelta = h.accessesPrev ? Math.round(((h.accesses - h.accessesPrev) / h.accessesPrev) * 100) : 0;
-          const bookDelta = h.bookingsPrev ? Math.round(((h.bookings - h.bookingsPrev) / h.bookingsPrev) * 100) : 0;
-          const detail = h.trendDetail ? `<div style="color: var(--muted); font-size: 0.78rem; margin-top: 6px; line-height: 1.35;">${h.trendDetail}</div>` : "";
-          return `
-            <tr>
-              <td><strong>${h.memberName}</strong><br><span style="color: var(--muted); font-size: 0.82em;">${h.club}</span></td>
-              <td>${h.period}</td>
-              <td>${h.accesses} <span style="color: var(--muted); font-size: 0.82em;">(${accDelta > 0 ? "+" : ""}${accDelta}%)</span></td>
-              <td>${h.bookings} <span style="color: var(--muted); font-size: 0.82em;">(${bookDelta > 0 ? "+" : ""}${bookDelta}%)</span></td>
-              <td>${h.servicesUsed}</td>
-              <td><span class="status-pill ${trendTone(h.trend)}">${h.trend}</span>${detail}</td>
-              <td><strong style="color: var(--blue-deep); line-height: 1.4;">${h.reading}</strong></td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    `;
+    feed.innerHTML = items.slice(0, 6).map((h) => {
+      const accDelta = h.accessesPrev ? Math.round(((h.accesses - h.accessesPrev) / h.accessesPrev) * 100) : 0;
+      const bookDelta = h.bookingsPrev ? Math.round(((h.bookings - h.bookingsPrev) / h.bookingsPrev) * 100) : 0;
+      const accSign = accDelta > 0 ? "+" : "";
+      const bookSign = bookDelta > 0 ? "+" : "";
+      const accTone = accDelta < -30 ? "var(--danger)" : accDelta < 0 ? "#9a5b05" : "var(--ok)";
+      const bookTone = bookDelta < -30 ? "var(--danger)" : bookDelta < 0 ? "#9a5b05" : "var(--ok)";
+      const detail = h.trendDetail ? `<p style="color: var(--muted); margin-top: 6px; font-size: 0.84rem; line-height: 1.4;">${h.trendDetail}</p>` : "";
+      const filterTag = selectedId && filtered.length ? `<span class="tag">Socio seleccionado</span>` : "";
+      return `
+        <article class="feed-item">
+          <div class="feed-top">
+            <div>
+              <strong>${h.memberName}</strong>
+              <span>${h.club} · ${h.period}</span>
+            </div>
+            <span class="status-pill ${trendTone(h.trend)}">${h.trend}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
+            <div>
+              <span style="color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Accesos</span>
+              <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">${h.accesses} <span style="color: ${accTone}; font-size: 0.82rem; font-weight: 700;">(${accSign}${accDelta}%)</span></div>
+              <div style="color: var(--muted); font-size: 0.76rem;">vs ${h.accessesPrev || 0} prev</div>
+            </div>
+            <div>
+              <span style="color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Reservas</span>
+              <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">${h.bookings} <span style="color: ${bookTone}; font-size: 0.82rem; font-weight: 700;">(${bookSign}${bookDelta}%)</span></div>
+              <div style="color: var(--muted); font-size: 0.76rem;">vs ${h.bookingsPrev || 0} prev</div>
+            </div>
+            <div>
+              <span style="color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Servicios</span>
+              <div style="font-size: 0.88rem; margin-top: 4px; line-height: 1.4;">${h.servicesUsed}</div>
+            </div>
+          </div>
+          ${detail}
+          <p style="color: var(--muted); margin-top: 10px; font-size: 0.86rem; line-height: 1.5;"><strong style="color: var(--blue-deep);">Lectura operativa:</strong> ${h.reading}</p>
+          ${filterTag ? `<div class="chip-row" style="margin-top: 8px;">${filterTag}</div>` : ""}
+        </article>
+      `;
+    }).join("");
   }
 
   function renderSales() {
