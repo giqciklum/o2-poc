@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v5";
+  const STORAGE_KEY = "o2_runtime_v6";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -110,6 +110,8 @@
     selectedSalesId: "C-2401",
     selectedCoverageIndex: 0,
     selectedSourceLabel: "Accesos",
+    selectedOperationId: null,
+    lastSheetSync: null,
     kpis: {
       activeMembers: 18420,
       churnRisk: 14.8,
@@ -979,6 +981,7 @@
       action: "maintenance",
       apply(next) {
         next.kpis.maintenanceRisk = 27;
+        next.selectedOperationId = "M-447";
         next.maintenance[0].risk = 93;
         next.maintenance[0].status = "Crítico";
         next.maintenance[0].action = "Parada preventiva 07:00 + repuesto de resistencia";
@@ -1022,6 +1025,7 @@
       action: "capacity",
       apply(next) {
         next.kpis.occupancy = 78;
+        next.selectedOperationId = operationId("occ", "O2CW Málaga", "Pádel");
         next.occupancy[0].now = 97;
         next.occupancy[1].now = 92;
         next.occupancy[0].action = "Derivar reservas a franja 21:00 y abrir huecos de espera";
@@ -1077,7 +1081,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : null;
       // If structure looks stale (no clubs/sparklines field), reset
-      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined) {
+      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined || parsed.selectedOperationId === undefined) {
         return deepClone(baseState);
       }
       return parsed;
@@ -1127,6 +1131,50 @@
     if (raw.includes("alta") || raw.includes("crítico") || raw.includes("critico") || raw.includes("ahora") || raw.includes("hoy")) return "high";
     if (raw.includes("media") || raw.includes("observ") || raw.includes("tensi")) return "medium";
     return "low";
+  }
+
+  function priorityWeight(value) {
+    const raw = String(value || "").toLowerCase();
+    if (raw.includes("crítico") || raw.includes("critico")) return 5;
+    if (raw.includes("alta") || raw.includes("ahora") || raw.includes("hoy")) return 4;
+    if (raw.includes("media") || raw.includes("preventivo") || raw.includes("tensi") || raw.includes("observ")) return 3;
+    if (raw.includes("baja") || raw.includes("controlado") || raw.includes("normal")) return 1;
+    return 2;
+  }
+
+  function slug(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
+  function num(value, fallback = 0) {
+    const parsed = Number(String(value ?? "").replace(",", "."));
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  function splitList(value) {
+    return String(value || "")
+      .split(/[;|,]/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  function upsertById(baseItems, incomingItems, idKey) {
+    const byId = new Map(baseItems.map((item) => [String(item[idKey]), { ...item }]));
+    incomingItems.forEach((item) => {
+      if (!item || !item[idKey]) return;
+      const key = String(item[idKey]);
+      byId.set(key, { ...(byId.get(key) || {}), ...item });
+    });
+    return Array.from(byId.values());
+  }
+
+  function operationId(kind, club, label) {
+    return `${kind}-${slug(club)}-${slug(label)}`;
   }
 
   function renderMetrics() {
@@ -1285,7 +1333,10 @@
   }
 
   function renderTasks() {
-    const tasks = state.tasks.slice(0, 6);
+    const tasks = state.tasks
+      .slice()
+      .sort((a, b) => priorityWeight(b.priority || b.status) - priorityWeight(a.priority || a.status))
+      .slice(0, 6);
     byId("open-task-count").textContent = `${state.tasks.length} abiertas`;
     byId("task-list").innerHTML = tasks.map((task) => `
       <article class="task-row">
@@ -1306,7 +1357,7 @@
     byId("zone-grid").innerHTML = topZones.map((zone) => {
       const tone = zone.now >= zone.threshold + 5 ? "danger" : zone.now >= zone.threshold - 3 ? "warn" : "ok";
       return `
-        <article class="zone-cell ${tone}">
+        <article class="zone-cell ${tone}" data-operation-id="${operationId("occ", zone.club, zone.zone)}" title="Abrir detalle operativo">
           <div>
             <span class="tag">${zone.club.replace("O2CW ", "")}</span>
             <h3 style="margin-top: 10px;">${zone.zone}</h3>
@@ -1422,7 +1473,14 @@
   }
 
   function renderMembers() {
-    byId("member-grid").innerHTML = state.members.map((member) => `
+    const members = state.members
+      .slice()
+      .sort((a, b) => (b.churnScore || 0) - (a.churnScore || 0) || (b.ltv || 0) - (a.ltv || 0));
+    const selected = members.find((member) => member.id === state.selectedMemberId) || members[0];
+    if (!selected) return;
+    state.selectedMemberId = selected.id;
+
+    byId("member-grid").innerHTML = members.map((member) => `
       <article class="member-card ${member.id === state.selectedMemberId ? "active" : ""}" data-member-card="${member.id}">
         <div class="member-top">
           <div>
@@ -1436,7 +1494,6 @@
       </article>
     `).join("");
 
-    const selected = state.members.find((member) => member.id === state.selectedMemberId) || state.members[0];
     byId("playbook-status").textContent = selected.status;
     byId("playbook-status").className = `status-pill ${priorityClass(selected.status)}`;
     byId("playbook-detail").innerHTML = `
@@ -1487,9 +1544,17 @@
   }
 
   function renderVoice() {
-    const selected = state.voice.find((item) => item.id === state.selectedVoiceId) || state.voice[0];
+    const voiceItems = state.voice
+      .slice()
+      .sort((a, b) => {
+        const scoreA = priorityWeight(a.priority) * 100 + Math.max(0, -(a.sentiment || 0));
+        const scoreB = priorityWeight(b.priority) * 100 + Math.max(0, -(b.sentiment || 0));
+        return scoreB - scoreA;
+      });
+    const selected = voiceItems.find((item) => item.id === state.selectedVoiceId) || voiceItems[0];
+    if (!selected) return;
     state.selectedVoiceId = selected.id;
-    byId("voice-feed").innerHTML = state.voice.map((item) => `
+    byId("voice-feed").innerHTML = voiceItems.map((item) => `
       <button class="feed-item ${item.id === selected.id ? "active" : ""}" type="button" data-voice-item="${item.id}" aria-pressed="${item.id === selected.id}">
         <div class="feed-top">
           <div>
@@ -1503,7 +1568,7 @@
       </button>
     `).join("");
 
-    const related = state.voice.filter((item) => item.topic === selected.topic || item.club === selected.club).length;
+    const related = voiceItems.filter((item) => item.topic === selected.topic || item.club === selected.club).length;
     const sentimentTone = selected.sentiment < -40 ? "danger" : selected.sentiment < 20 ? "warn" : "ok";
     const voiceDetail = byId("voice-detail");
     if (voiceDetail) {
@@ -1538,7 +1603,7 @@
 
     const chips = byId("voice-chips");
     if (chips) {
-      const tones = state.voice.reduce((acc, item) => {
+      const tones = voiceItems.reduce((acc, item) => {
         const key = item.sentiment > 30 ? "Positivos" : item.sentiment < -30 ? "Negativos" : "Neutros";
         acc[key] = (acc[key] || 0) + 1;
         return acc;
@@ -1548,9 +1613,13 @@
   }
 
   function renderSales() {
-    const selected = state.sales.find((item) => item.id === state.selectedSalesId) || state.sales[0];
+    const salesItems = state.sales
+      .slice()
+      .sort((a, b) => (b.intent || 0) - (a.intent || 0) || priorityWeight(b.status) - priorityWeight(a.status));
+    const selected = salesItems.find((item) => item.id === state.selectedSalesId) || salesItems[0];
+    if (!selected) return;
     state.selectedSalesId = selected.id;
-    byId("sales-feed").innerHTML = state.sales.map((item) => `
+    byId("sales-feed").innerHTML = salesItems.map((item) => `
       <button class="feed-item ${item.id === selected.id ? "active" : ""}" type="button" data-sales-item="${item.id}" aria-pressed="${item.id === selected.id}">
         <div class="feed-top">
           <div>
@@ -1569,7 +1638,7 @@
 
     const salesDetail = byId("sales-detail");
     if (salesDetail) {
-      const similar = state.sales.filter((item) =>
+      const similar = salesItems.filter((item) =>
         item.club === selected.club || item.objections.some((objection) => selected.objections.includes(objection))
       ).length;
       salesDetail.innerHTML = `
@@ -1602,7 +1671,7 @@
     }
 
     const objections = new Map();
-    state.sales.forEach((item) => item.objections.forEach((objection) => {
+    salesItems.forEach((item) => item.objections.forEach((objection) => {
       objections.set(objection, (objections.get(objection) || 0) + 1);
     }));
     byId("objection-chips").innerHTML = Array.from(objections.entries())
@@ -1613,32 +1682,59 @@
 
   function renderOperations() {
     const occupancyRows = state.occupancy.map((zone) => ({
+      id: zone.id || operationId("occ", zone.club, zone.zone),
       kind: "aforo",
       label: zone.zone,
       club: zone.club,
       status: zone.status,
-      score: zone.now - zone.threshold,
+      score: priorityWeight(zone.status) * 20 + (zone.now - zone.threshold),
+      value: zone.now,
+      threshold: zone.threshold,
       reading: `${zone.now}% ocupado · umbral ${zone.threshold}%`,
-      action: zone.action
+      action: zone.action,
+      owner: "Operaciones / club",
+      scenario: "capacity",
+      steps: [
+        "Confirmar presión de zona y franja en el dashboard de sede.",
+        zone.action,
+        "Medir si baja la saturación y si mejora el sentimiento asociado."
+      ]
     }));
     const maintenanceRows = state.maintenance.map((item) => ({
+      id: item.id || operationId("mnt", item.club, item.asset),
       kind: "mantenimiento",
       label: item.asset,
       club: item.club,
       status: item.status,
-      score: item.risk - 60,
+      score: priorityWeight(item.status) * 16 + (item.risk - 50),
+      value: item.risk,
+      threshold: item.threshold,
       reading: `Riesgo ${item.risk}/100 · ${item.hours}h uso`,
-      action: item.action
+      action: item.action,
+      owner: "Técnico / operaciones",
+      scenario: "maintenance",
+      steps: [
+        "Validar activo, horas de uso y ventana de menor impacto para socios.",
+        item.action,
+        "Cerrar tarea con evidencia y actualizar umbral preventivo si procede."
+      ]
     }));
     const priorityRows = occupancyRows.concat(maintenanceRows)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
+      .slice(0, 12);
+
+    const selected = priorityRows.find((item) => item.id === state.selectedOperationId) || priorityRows[0];
+    if (!selected) return;
+    state.selectedOperationId = selected.id;
+    const tone = selected.kind === "aforo"
+      ? (selected.value >= selected.threshold + 5 ? "danger" : selected.value >= selected.threshold - 3 ? "warn" : "ok")
+      : scoreClass(selected.value);
 
     byId("operations-table").innerHTML = `
       <thead><tr><th>Ámbito</th><th>Club</th><th>Lectura</th><th>Acción</th></tr></thead>
       <tbody>
         ${priorityRows.map((item) => `
-          <tr>
+          <tr class="operation-row ${item.id === selected.id ? "active" : ""}" data-operation-id="${item.id}">
             <td><span class="status-pill ${priorityClass(item.status === "Saturado" ? "alta" : item.status === "Tensión" ? "media" : item.status)}">${item.label}</span></td>
             <td>${item.club.replace("O2CW ", "")}</td>
             <td>${item.reading}</td>
@@ -1647,6 +1743,38 @@
         `).join("")}
       </tbody>
     `;
+
+    const detail = byId("operation-detail");
+    if (detail) {
+      const metricLabel = selected.kind === "aforo" ? "Ocupación" : "Riesgo";
+      const thresholdLabel = selected.kind === "aforo" ? "Umbral" : "Umbral uso";
+      detail.innerHTML = `
+        <article class="detail-panel">
+          <div class="detail-title-row">
+            <div>
+              <span class="tag">${selected.kind} · ${selected.club}</span>
+              <h3 style="margin-top: 12px;">${selected.label}</h3>
+              <p>${selected.reading}</p>
+            </div>
+            <span class="detail-score ${tone}">${selected.value}</span>
+          </div>
+          <div class="detail-kpis">
+            <div class="detail-kpi"><span>${metricLabel}</span><strong>${selected.kind === "aforo" ? `${selected.value}%` : `${selected.value}/100`}</strong></div>
+            <div class="detail-kpi"><span>${thresholdLabel}</span><strong>${selected.kind === "aforo" ? `${selected.threshold}%` : `${selected.threshold}h`}</strong></div>
+            <div class="detail-kpi"><span>Dueño</span><strong>${selected.owner.split(" / ")[0]}</strong></div>
+          </div>
+          <div class="source-focus">
+            <span>Siguiente acción</span>
+            <strong>${selected.action}</strong>
+            <p>La fila deja de ser un dato suelto: se convierte en tarea, responsable y verificación de impacto.</p>
+          </div>
+          <ul class="operation-next-actions">
+            ${selected.steps.map((step) => `<li>${step}</li>`).join("")}
+          </ul>
+          <button class="button primary" type="button" data-scenario="${selected.scenario}">Simular cadena completa <span class="arrow">→</span></button>
+        </article>
+      `;
+    }
   }
 
   function renderScenarios() {
@@ -1658,6 +1786,22 @@
         <p>${scenario.summary}</p>
       </button>
     `).join("");
+  }
+
+  function renderNarrativeConsole() {
+    const consoleEl = byId("narrative-console");
+    if (!consoleEl) return;
+    const order = ["churn", "voice", "sales", "maintenance", "capacity"];
+    consoleEl.innerHTML = order.map((id, index) => {
+      const scenario = scenarios[id];
+      const isActive = state.currentScenario === id;
+      return `
+        <article class="narrative-step ${isActive ? "active" : ""}">
+          <span>${String(index + 1).padStart(2, "0")} · ${scenario.badge}</span>
+          <strong>${scenario.label}</strong>
+        </article>
+      `;
+    }).join("");
   }
 
   function renderArtifacts() {
@@ -1990,6 +2134,7 @@
     renderSales();
     renderOperations();
     renderScenarios();
+    renderNarrativeConsole();
     renderArtifacts();
     renderTimeline();
     renderBackendBadge();
@@ -2018,6 +2163,196 @@
     return [...merged.values()];
   }
 
+  function mapSheetMember(row) {
+    const churn = num(row.churn_score, 0);
+    const visits30 = num(row.frecuencia_30d, 0);
+    const visitsPrev = num(row.frecuencia_prev_30d, 0);
+    const delta = visitsPrev ? Math.round(((visits30 - visitsPrev) / visitsPrev) * 100) : 0;
+    return {
+      id: row.id_socio,
+      name: row.nombre || "Socio O2",
+      club: row.club || "O2CW",
+      plan: row.plan || row.programa || "Well Living",
+      status: row.estado || (churn >= 70 ? "Riesgo alto" : churn >= 50 ? "Riesgo medio" : "Estable"),
+      churnScore: churn,
+      visits30,
+      visitsPrev,
+      ltv: num(row.ltv_estimado, 0),
+      nextAction: row.accion_recomendada || "Asignar siguiente mejor acción",
+      reason: `${visits30} accesos en 30 días frente a ${visitsPrev || "sin histórico"}; ${row.programa || "servicios O2"} · ${row.estado || "estado activo"}.`,
+      drivers: [
+        ["Accesos", `${visits30} visitas vs ${visitsPrev || "sin histórico"} (${delta > 0 ? "+" : ""}${delta}%)`, Math.min(96, Math.max(18, Math.abs(delta) + 35))],
+        ["Estado", row.estado || "Sin alerta abierta", Math.min(96, Math.max(20, churn))],
+        ["Servicios utilizados", row.programa || "Wellness", Math.min(88, Math.max(28, churn - 8))],
+        ["Valor protegido", `${euro(num(row.ltv_estimado, 0))} LTV estimado`, Math.min(90, Math.max(30, Math.round(num(row.ltv_estimado, 0) / 55)))]
+      ]
+    };
+  }
+
+  function mapSheetVoice(row) {
+    return {
+      id: row.id_feedback,
+      channel: row.canal || "Voz cliente",
+      rating: row.rating || "Feedback",
+      club: row.club || "O2CW",
+      topic: row.tema || "Experiencia",
+      sentiment: num(row.sentimiento, 0),
+      priority: row.prioridad || "Media",
+      status: row.estado || "Nueva",
+      text: row.texto || "Feedback registrado en hoja operativa.",
+      action: row.accion || "Clasificar y asignar responsable."
+    };
+  }
+
+  function mapSheetSales(row) {
+    return {
+      id: row.id_entrevista,
+      name: row.lead || "Lead O2",
+      club: row.club || "O2CW",
+      channel: row.canal || "Comercial",
+      intent: num(row.intencion_compra, 0),
+      status: row.estado || "Seguimiento",
+      motivation: row.motivacion || "Motivación pendiente de completar.",
+      objections: splitList(row.objeciones || "Sin objeción registrada"),
+      nextAction: row.siguiente_accion || "Definir siguiente mejor acción."
+    };
+  }
+
+  function mapSheetOccupancy(row) {
+    const club = row.club || "O2CW";
+    const zone = row.zona || row.tipo_zona || "Zona";
+    return {
+      id: operationId("occ", club, zone),
+      club,
+      zone,
+      now: num(row.ocupacion_pct, 0),
+      threshold: num(row.umbral_pct, 80),
+      status: row.estado || "Controlado",
+      action: row.accion_recomendada || "Monitorizar zona."
+    };
+  }
+
+  function mapSheetMaintenance(row) {
+    return {
+      id: row.id_activo || operationId("mnt", row.club, row.instalacion),
+      club: row.club || "O2CW",
+      asset: row.instalacion || "Activo",
+      risk: num(row.riesgo_averia, 0),
+      hours: num(row.horas_uso, 0),
+      threshold: num(row.umbral_aviso, 0),
+      status: row.estado || "Normal",
+      action: row.accion || "Mantenimiento programado"
+    };
+  }
+
+  function mapSheetTask(row) {
+    return {
+      id: row.id_tarea,
+      category: row.categoria || "Acción",
+      club: row.club || "O2CW",
+      owner: row.responsable || "Equipo O2",
+      priority: row.prioridad || "Media",
+      status: row.estado || "Pendiente",
+      text: row.descripcion || "Tarea operativa"
+    };
+  }
+
+  function mapSheetImpact(row) {
+    const label = row.categoria || row.tipo || "Impacto";
+    const value = num(row.importe_estimado, 0) || row.estado || "Activo";
+    const detail = `${row.club || "Red O2"} · ${row.comentario || row.origen || "trazabilidad en Google Sheet"}`;
+    return [label, value, detail];
+  }
+
+  function syncArrayFromSheet(current, incoming, mapper, idKey, minimumToReplace = 0) {
+    if (!Array.isArray(incoming) || !incoming.length) return current;
+    const mapped = incoming.map(mapper).filter((item) => item && item[idKey]);
+    if (!mapped.length) return current;
+    const merged = upsertById(current || [], mapped, idKey);
+    return merged.length >= minimumToReplace ? merged : current;
+  }
+
+  function applyBackendSnapshot(data) {
+    if (!data || data.status !== "ok" || !data.snapshot) return false;
+    const snapshot = data.snapshot;
+    const before = JSON.stringify({
+      socios: state.members.length,
+      voz: state.voice.length,
+      sales: state.sales.length,
+      occ: state.occupancy.length,
+      mnt: state.maintenance.length,
+      tasks: state.tasks.length
+    });
+
+    state.members = syncArrayFromSheet(state.members, snapshot.socios, mapSheetMember, "id");
+    state.voice = syncArrayFromSheet(state.voice, snapshot.voz_cliente, mapSheetVoice, "id");
+    state.sales = syncArrayFromSheet(state.sales, snapshot.entrevistas_comerciales, mapSheetSales, "id");
+    state.occupancy = syncArrayFromSheet(
+      state.occupancy.map((item) => ({ ...item, id: item.id || operationId("occ", item.club, item.zone) })),
+      snapshot.aforos,
+      mapSheetOccupancy,
+      "id"
+    );
+    state.maintenance = syncArrayFromSheet(state.maintenance, snapshot.mantenimiento, mapSheetMaintenance, "id");
+    state.tasks = syncArrayFromSheet(state.tasks, snapshot.tareas, mapSheetTask, "id");
+
+    if (Array.isArray(snapshot.agenda_impacto) && snapshot.agenda_impacto.length >= 3) {
+      const sheetImpact = snapshot.agenda_impacto.slice(0, 5).map(mapSheetImpact);
+      state.impact = sheetImpact.concat(state.impact || []).slice(0, 5);
+    }
+
+    const churnScores = state.members.map((member) => member.churnScore).filter((value) => Number.isFinite(value));
+    if (churnScores.length) {
+      const avgChurnScore = churnScores.reduce((sum, value) => sum + value, 0) / churnScores.length;
+      state.kpis.churnRisk = Math.round(avgChurnScore * 2.2) / 10;
+    }
+    const sentiments = state.voice.map((item) => item.sentiment).filter((value) => Number.isFinite(value));
+    if (sentiments.length) {
+      const avg = sentiments.reduce((sum, value) => sum + value, 0) / sentiments.length;
+      state.kpis.sentiment = Math.max(0, Math.min(100, Math.round(70 + avg / 3)));
+    }
+    if (state.occupancy.length) {
+      state.kpis.occupancy = Math.round(state.occupancy.reduce((sum, item) => sum + item.now, 0) / state.occupancy.length);
+    }
+    if (state.maintenance.length) {
+      state.kpis.maintenanceRisk = state.maintenance.filter((item) => item.risk >= 70).length;
+    }
+    if (state.sales.length) {
+      state.kpis.pipeline = Math.max(state.kpis.pipeline || 0, state.sales.reduce((sum, item) => sum + (item.intent || 0) * 1100, 0));
+    }
+
+    state.heroProof = [
+      ["Fuentes socio", `${state.dataSources.length} conectadas`],
+      ["Socios muestra", `${state.members.length} perfiles`],
+      ["Eventos demo", "146 señales"],
+      ["Sedes O2", `${state.clubs.length} clubs`]
+    ];
+    state.lastSheetSync = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+
+    const after = JSON.stringify({
+      socios: state.members.length,
+      voz: state.voice.length,
+      sales: state.sales.length,
+      occ: state.occupancy.length,
+      mnt: state.maintenance.length,
+      tasks: state.tasks.length
+    });
+    saveState();
+    return before !== after || Boolean(data.snapshot);
+  }
+
+  function syncBackendState() {
+    if (!BACKEND_URL) return Promise.resolve(null);
+    return backendFetch({ action: "state", detail: "full", t: Date.now() }).then((data) => {
+      if (!data || data.status !== "ok") return data;
+      backend.mode = "live";
+      backend.version = data.version || backend.version;
+      applyBackendSnapshot(data);
+      renderAll();
+      return data;
+    });
+  }
+
   function applyScenario(id) {
     const scenario = scenarios[id];
     if (!scenario) return;
@@ -2043,15 +2378,18 @@
     if (narrativeTimer) {
       window.clearTimeout(narrativeTimer);
       narrativeTimer = null;
+      renderNarrativeConsole();
       toast("Narrativa cancelada", "Detenida la reproducción automática.");
       return;
     }
     const order = ["churn", "voice", "sales", "maintenance", "capacity"];
     let idx = 0;
+    setTab("simulator");
     toast("Narrativa en marcha", "Las 5 escenas se reproducirán en cascada cada 4 segundos.");
     function step() {
       if (idx >= order.length) {
         narrativeTimer = null;
+        renderNarrativeConsole();
         toast("Narrativa completada", "Has visto las 5 escenas de la red O2.");
         return;
       }
@@ -2144,7 +2482,7 @@
     renderBackendBadge();
     // Warmup first then state
     backendFetch({ action: "warmup", t: Date.now() }).finally(() => {
-      backendFetch({ action: "state", t: Date.now() }).then((data) => {
+      syncBackendState().then((data) => {
         if (!data || data.status !== "ok") return;
         backend.mode = "live";
         backend.version = data.version || null;
@@ -2157,7 +2495,7 @@
     if (!BACKEND_URL) return;
     if (pollTimer) window.clearInterval(pollTimer);
     pollTimer = window.setInterval(() => {
-      backendFetch({ action: "state", t: Date.now() }).then((data) => {
+      syncBackendState().then((data) => {
         if (!data || data.status !== "ok") return;
         backend.mode = "live";
         backend.version = data.version || backend.version;
@@ -2180,6 +2518,7 @@
       backend.mode = "live";
       backend.version = data.version || backend.version;
       renderBackendBadge();
+      syncBackendState();
     });
   }
 
@@ -2260,6 +2599,14 @@
         state.selectedSalesId = sales.dataset.salesItem;
         saveState();
         renderSales();
+      }
+
+      const operation = event.target.closest("[data-operation-id]");
+      if (operation) {
+        state.selectedOperationId = operation.dataset.operationId;
+        saveState();
+        if (state.currentTab !== "operations") setTab("operations");
+        renderOperations();
       }
 
       const modal = byId("artifact-modal");
