@@ -235,6 +235,123 @@ function setupSheet() {
     ["2026-05-28","pipeline","comercial","O2CW Sexta Avenida","C-2401","1280","probable","ventas","sales","Alta esperada Well Living"]
   ]);
 
+  appendRows(socios, [
+    ["S-2602","Lucia Marin","O2CW Malaga","Well Living Plus","2025-02-11","Riesgo alto","4","12","74","3560","Recovery + piscina","Sesion recovery + rutina piscina"],
+    ["S-1189","Oscar Vidal","O2CW Sexta Avenida","Corporate Wellness","2024-10-04","Riesgo medio","6","9","57","4120","ZONE + fuerza","Reactivar con ZONE horario ejecutivo"],
+    ["S-3077","Ainhoa Perez","O2CW Parc del Migdia","Family Wellness","2025-06-18","Activo","15","14","24","2680","Aqua + retos SoyO2","Invitar a reto SoyO2 familiar"],
+    ["S-2334","Rafael Torres","O2CW Huelva","Well Living","2025-01-29","Riesgo alto","2","7","71","1840","Fisio espalda","Llamada retorno + plan espalda"],
+    ["S-2718","Marina Soler","O2CW Boutique Girona","Boutique Women","2025-12-03","Activo","11","10","29","2260","Yoga + sauna","Recomendar Pilates Reformer"],
+    ["S-3092","Teresa Navarro","O2CW Boutique Madrid","Boutique Premium","2025-08-14","Riesgo medio","7","11","54","3020","Bodymind","Ajustar agenda de clases"],
+    ["S-3201","Hugo Salas","O2CW Granada","Padel & Wellness","2025-04-20","Riesgo medio","8","13","59","2440","Padel + spa","Ofrecer huecos fuera de pico"],
+    ["S-3380","Noelia Castro","O2CW Manuel Becerra","Well Living","2025-11-08","Activo","10","9","33","2050","ZONE","Recomendar reto ZONE Games"],
+    ["S-3521","Bruno Escudero","O2CW Sexta Avenida","Family Wellness","2024-12-12","Riesgo alto","3","10","76","3980","Natacion familiar","Reunion familiar + plan natacion infantil"],
+    ["S-3604","Irene Costa","O2CW Malaga","Recovery Plus","2025-05-07","Activo","12","11","27","3180","Recovery + fisio","Mantener seguimiento fisio"],
+    ["S-3742","Mateo Puig","O2CW Parc del Migdia","Well Living","2025-09-01","Riesgo medio","6","10","52","1920","Outdoor","Reactivar con grupo running"],
+    ["S-3888","Carla Benitez","O2CW Huelva","Aqua Wellness","2026-02-03","Activo","14","13","22","2160","Natacion","Invitar a masterclass Aquawellness"],
+    ["S-4011","Valentina Rius","O2CW Boutique Barcelona","Boutique Premium","2025-10-09","Activo","12","12","26","2860","Body&Soul + sauna","Recomendar masterclass Body&Soul"],
+    ["S-4056","Andres Molina","O2CW Manuel Becerra","Well Living Plus","2025-07-19","Riesgo medio","5","9","61","3340","Fuerza","Plan fuerza 3 semanas + recordatorios SoyO2"],
+    ["S-4080","Monica Vega","O2CW Sexta Avenida","Corporate Wellness","2025-01-16","Activo","9","8","30","3720","Corporate + ZONE","Invitar a evento corporate wellness"],
+    ["S-4122","Diego Ramos","O2CW Granada","Padel & Wellness","2025-06-02","Riesgo alto","3","12","73","2580","Padel","Resolver reservas fallidas y liga interna"],
+    ["S-4190","Elena Prieto","O2CW Parc del Migdia","Outdoor & Aqua","2025-04-12","Activo","11","10","28","2040","Outdoor + aqua","Recomendar running club + Aqua yoga"],
+    ["S-4255","Carmen Ruiz","O2CW Malaga","Recovery Plus","2024-12-01","Riesgo medio","6","9","56","3460","Recovery + fisio","Check recuperacion y seguimiento fisio"],
+    ["S-4310","Nicolas Serra","O2CW Boutique Madrid","Boutique Premium","2026-01-28","Activo","16","15","21","2940","HIIT boutique","Mantener recomendacion HIIT boutique"]
+  ]);
+
+  appendRows(voz, [
+    ["V-121","2026-05-24","Encuesta NPS","O2CW Sexta Avenida","Detractor","-64","Natacion infantil","Alta","Abierta","Llevamos semanas sin hueco para el curso infantil.","Escalar a coordinacion y proponer lista preferente"],
+    ["V-122","2026-05-24","WhatsApp","O2CW Boutique Madrid","Neutro","-22","Pilates Reformer","Media","Nueva","Nunca encuentro huecos de Pilates despues del trabajo.","Cruzar reservas fallidas y proponer franja alternativa"],
+    ["V-123","2026-05-23","Recepcion","O2CW Manuel Becerra","Queja","-51","Vestuarios","Alta","En curso","Los vestuarios se saturan tras ZONE y el spa pierde sensacion premium.","Refuerzo limpieza y aviso de franjas valle"],
+    ["V-124","2026-05-23","Google Reviews","O2CW Boutique Girona","5","91","Bodymind","Baja","Completada","Yoga, sauna y ambiente por encima de otros gimnasios.","Usar como promotor boutique"],
+    ["V-125","2026-05-22","App SoyO2","O2CW Huelva","Sugerencia","18","Recordatorios","Media","Nueva","Seria util recibir recordatorios de natacion y eventos.","Segmentar recordatorios por habito"],
+    ["V-126","2026-05-22","Telefono","O2CW Granada","Queja","-47","Padel","Media","Abierta","No hay visibilidad clara de huecos reales de pistas.","Unificar disponibilidad y guion de recepcion"],
+    ["V-127","2026-05-21","Encuesta post-fisio","O2CW Malaga","Promotor","84","Fisioterapia","Baja","Completada","El fisio me ayudo a volver a entrenar con seguridad.","Argumento comercial para Recovery Plus"],
+    ["V-128","2026-05-21","Hoja sugerencias","O2CW Parc del Migdia","Sugerencia","33","Running club","Baja","Nueva","Mas salidas de running por la manana ayudarian a mantener rutina.","Test grupo outdoor martes y jueves"]
+  ]);
+
+  appendRows(comunicaciones, [
+    ["COM-004","2026-05-24","S-2602","O2CW Malaga","WhatsApp","Incidencia spa y baja rutina","-45","Pendiente","Sesion recovery + disculpa proactiva"],
+    ["COM-005","2026-05-24","S-1189","O2CW Sexta Avenida","Telefono","Cambio horario laboral","-8","Contactado","Enviar ZONE 20:30 y plan corporate"],
+    ["COM-006","2026-05-23","S-2334","O2CW Huelva","Telefono","Dolor lumbar y abandono fisio","-38","Sin respuesta","Reintentar llamada con fisio"],
+    ["COM-007","2026-05-23","S-3201","O2CW Granada","WhatsApp","Disponibilidad padel","-21","Abierto","Proponer huecos fuera de pico"],
+    ["COM-008","2026-05-22","lead","O2CW Boutique Madrid","Instagram","Interes Pilates Reformer","32","Contactado","Enviar huecos reales y visita"],
+    ["COM-009","2026-05-22","lead","O2CW Malaga","Dia de prueba","Recovery Plus","58","Alta probable","Cita fisio + plan mensual"]
+  ]);
+
+  appendRows(encuestas, [
+    ["E-004","2026-05-24","S-3521","O2CW Sexta Avenida","5","Baja","Curso natacion infantil sin huecos","Natacion y comunicacion","Resolver cupo familiar"],
+    ["E-005","2026-05-23","S-2602","O2CW Malaga","6","Media","Sauna y duchas","Spa y mantenimiento","Plan preventivo visible"],
+    ["E-006","2026-05-23","S-2718","O2CW Boutique Girona","9","Alta","Ninguno","Bodymind y sauna","Recomendar Pilates Reformer"],
+    ["E-007","2026-05-22","S-2334","O2CW Huelva","4","Baja","Dolor lumbar sin seguimiento","Fisioterapia","Llamada humana con plan espalda"],
+    ["E-008","2026-05-22","S-3888","O2CW Huelva","10","Alta","Ninguno","Aqua Wellness","Invitar a masterclass"]
+  ]);
+
+  appendRows(habitos, [
+    ["H-004","S-2602","Ultimos 30 dias","O2CW Malaga","4","3 reservas piscina","Recovery; piscina","-67% accesos vs periodo anterior","Riesgo alto por friccion spa"],
+    ["H-005","S-1189","Ultimos 30 dias","O2CW Sexta Avenida","6","3 cancelaciones ZONE","ZONE; fuerza","Cambio de franja a noche","Riesgo medio corporate"],
+    ["H-006","S-3077","Ultimos 30 dias","O2CW Parc del Migdia","15","9 reservas aqua","Piscina; retos SoyO2","Estable positivo","Socia familiar promotora"],
+    ["H-007","S-2334","Ultimos 30 dias","O2CW Huelva","2","0 reservas","Sala fitness; fisio","Abandono de rutina","Riesgo alto por salud"],
+    ["H-008","S-3201","Ultimos 30 dias","O2CW Granada","8","5 reservas fallidas","Padel; spa","Saturacion padel 20:00","Redistribuir demanda"],
+    ["H-009","S-3742","Ultimos 30 dias","O2CW Parc del Migdia","6","1 reserva indoor","Outdoor; On Demand","Migracion a exterior","Activar running club"]
+  ]);
+
+  appendRows(entrevistas, [
+    ["C-2420","2026-05-25","Beatriz Galan","O2CW Boutique Madrid","Instagram","Boutique, Pilates y spa sin ambiente masificado","Disponibilidad Pilates; precio","82","Visita agendada","Mostrar huecos reales y valor boutique"],
+    ["C-2421","2026-05-25","Daniel Bosch","O2CW Parc del Migdia","Referral socio","Natacion y fuerza para triatlon","Distancia; horario piscina","78","Contactado","Enviar plan piscina + fuerza + On Demand"],
+    ["C-2422","2026-05-24","Sandra Rivas","O2CW Malaga","Dia de prueba","Recuperacion lesion y spa post-entreno","Compromiso","93","Alta probable","Cita con fisio y plan Recovery Plus"],
+    ["C-2423","2026-05-24","Pablo Nieto","O2CW Granada","WhatsApp comercial","Padel y sala fitness con amigos","Saturacion pistas","69","Seguimiento","Enviar disponibilidad real fuera de pico"],
+    ["C-2424","2026-05-23","Laura Esteve","O2CW Huelva","Web","Plan familiar con piscina infantil","Curso natacion","74","Visita agendada","Proponer Family Wellness con cupo curso"],
+    ["C-2425","2026-05-23","Marc Oliva","O2CW Boutique Barcelona","Evento corporativo","Entrenamiento funcional cerca oficina","Contrato empresa","67","Contactado","Preparar propuesta corporate flexible"],
+    ["C-2426","2026-05-22","Elena Moya","O2CW Manuel Becerra","Telefono","Fuerza, ZONE y fisioterapia preventiva","Parking","81","Alta probable","Invitacion ZONE + sesion fisio"],
+    ["C-2427","2026-05-22","Victor Sancho","O2CW Sexta Avenida","Google Ads","Cambio desde low-cost a experiencia premium","Precio; permanencia","58","Nutrir","Enviar comparativa de valor premium"]
+  ]);
+
+  appendRows(aforos, [
+    ["AF-005","2026-05-25 20:00","O2CW Sexta Avenida","ZONE","dirigida","91","86","Saturado","Abrir clase espejo 20:30 si se repite"],
+    ["AF-006","2026-05-25 19:30","O2CW Boutique Madrid","Pilates Reformer","dirigida","96","88","Saturado","Priorizar lista de espera y franja 14:30"],
+    ["AF-007","2026-05-25 18:00","O2CW Huelva","Piscina cursos","piscina","89","84","Tension","Revisar cupos familiares y monitor apoyo"],
+    ["AF-008","2026-05-25 07:30","O2CW Parc del Migdia","Running club","outdoor","52","75","Oportunidad","Lanzar grupo martes jueves manana"],
+    ["AF-009","2026-05-25 20:00","O2CW Manuel Becerra","ZONE","dirigida","93","86","Saturado","Mensaje SoyO2 con clase alternativa"],
+    ["AF-010","2026-05-25 18:30","O2CW Boutique Barcelona","Body&Soul","dirigida","69","78","Controlado","Recomendar clase alternativa si sube demanda"],
+    ["AF-011","2026-05-25 18:30","O2CW Parc del Migdia","Cycling","dirigida","64","80","Controlado","Sin accion"],
+    ["AF-012","2026-05-25 19:30","O2CW Sexta Avenida","Sala fitness","fitness","87","84","Tension","Refuerzo tecnico en zona fuerza"],
+    ["AF-013","2026-05-25 18:00","O2CW Boutique Girona","Yoga","dirigida","73","80","Controlado","Mantener cupo y monitorizar waitlist"],
+    ["AF-014","2026-05-25 18:45","O2CW Boutique Barcelona","Sauna","spa","78","80","Controlado","Sin accion"]
+  ]);
+
+  appendRows(mantenimiento, [
+    ["M-501","O2CW Sexta Avenida","Sistema climatizacion ZONE","1260","1400","78","Preventivo","Revision filtros y caudal","2026-05-30"],
+    ["M-502","O2CW Boutique Madrid","Reformer 07","860","920","72","Preventivo","Cambio muelles y check seguridad","2026-05-29"],
+    ["M-503","O2CW Granada","Iluminacion pista padel 3","540","620","69","Observacion","Inspeccion electrica","2026-05-31"],
+    ["M-504","O2CW Huelva","Filtro piscina infantil","1010","1080","81","Preventivo","Lavado y repuesto antes del sabado","2026-05-28"],
+    ["M-505","O2CW Parc del Migdia","Bicicletas cycling bloque B","740","1000","51","Normal","Mantenimiento mensual","2026-06-06"],
+    ["M-506","O2CW Boutique Girona","Sauna boutique","390","520","58","Normal","Seguimiento temperatura","2026-06-03"]
+  ]);
+
+  appendRows(tareas, [
+    ["T-843","Retencion","O2CW Malaga","Experiencia","Alta","Hoy","Contactar a Lucia Marin por caida de accesos y dolor spa.","2026-05-25"],
+    ["T-844","Natacion","O2CW Sexta Avenida","Coordinacion","Alta","Hoy","Resolver lista de espera infantil y alternativas familiares.","2026-05-25"],
+    ["T-845","Comercial","O2CW Boutique Madrid","Ventas","Media","Pendiente","Enviar disponibilidad real de Pilates Reformer a Beatriz Galan.","2026-05-25"],
+    ["T-846","Aforo","O2CW Manuel Becerra","Operaciones","Media","Ahora","Recomendar clase ZONE alternativa por saturacion 20:00.","2026-05-25"],
+    ["T-847","Mantenimiento","O2CW Huelva","Tecnico","Alta","Programada","Revisar filtro piscina infantil antes de actividad familiar.","2026-05-25"],
+    ["T-848","CX","O2CW Granada","Recepcion","Media","Nueva","Unificar guion de disponibilidad de padel y waitlist.","2026-05-25"],
+    ["T-849","Producto","O2CW Parc del Migdia","Club manager","Baja","Nueva","Probar running club por la manana con segmento outdoor.","2026-05-25"],
+    ["T-850","Comercial","O2CW Sexta Avenida","Ventas","Media","Pendiente","Nutrir lead low-cost con comparativa de valor premium.","2026-05-25"]
+  ]);
+
+  appendRows(autos, [
+    ["A-004","Encuesta NPS","E-004","Natacion infantil Sexta Avenida NPS 5","En curso","2026-05-25 10:00","","Tarea a coordinacion natacion"],
+    ["A-005","Reservas fallidas","S-3201","5 intentos de padel sin hueco","Completado","2026-05-25 20:00","2026-05-25 20:01","Franja alternativa propuesta"],
+    ["A-006","Lead scoring","C-2422","Dia de prueba Recovery Plus intent 93","Completado","2026-05-24 18:30","2026-05-24 18:31","Alta probable y cita fisio"]
+  ]);
+
+  appendRows(impacto, [
+    ["2026-05-25","ingreso protegido","retencion","O2CW Malaga","S-2602","3560","en riesgo","lifetime","churn","Recovery Plus con caida de accesos"],
+    ["2026-05-25","ingreso protegido","retencion","O2CW Sexta Avenida","S-3521","3980","accion hoy","lifetime","churn","Plan familiar cerca de renovacion"],
+    ["2026-05-26","coste evitado","mantenimiento","O2CW Huelva","M-504","2200","preventivo","mantenimiento","maintenance","Evitar cierre piscina infantil"],
+    ["2026-05-25","pipeline","comercial","O2CW Malaga","C-2422","1560","alta probable","ventas","sales","Recovery Plus con intencion 93"],
+    ["2026-05-25","experiencia","aforo","O2CW Boutique Madrid","AF-006","1200","saturado","operaciones","capacity","Pilates Reformer al 96%"]
+  ]);
+
   if (def) {
     try { ss.deleteSheet(def); } catch(e) {}
   }

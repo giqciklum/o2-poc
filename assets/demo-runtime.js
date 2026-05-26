@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v3";
+  const STORAGE_KEY = "o2_runtime_v4";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -367,6 +367,449 @@
       tab: "lifetime"
     }
   };
+
+  function enrichWithProductionSeed(seed) {
+    seed.kpis = {
+      ...seed.kpis,
+      activeMembers: 22480,
+      churnRisk: 13.6,
+      sentiment: 81,
+      occupancy: 74,
+      maintenanceRisk: 22,
+      pipeline: 412000,
+      protectedRevenue: 92400,
+      nps: 58
+    };
+    seed.sparklines.activeMembers = [21680, 21840, 21960, 22120, 22290, 22480];
+    seed.sparklines.churnRisk = [11.9, 12.4, 13.0, 13.7, 14.1, 13.6];
+    seed.sparklines.sentiment = [84, 83, 82, 81, 80, 81];
+    seed.sparklines.pipeline = [296, 312, 344, 371, 392, 412];
+    seed.heroProof = [
+      ["Fuentes socio", "11 conectadas"],
+      ["Socios muestra", "24 perfiles"],
+      ["Eventos demo", "146 señales"],
+      ["Sedes O2", "9 clubs"]
+    ];
+    seed.dataSources = [
+      ...seed.dataSources,
+      { label: "App SoyO2", detail: "Reservas, retos, recordatorios y engagement", strength: 89 },
+      { label: "MOVERGY / Wellness Passport", detail: "Tendencia de actividad y progreso", strength: 74 },
+      { label: "Máquinas y ZONE", detail: "Uso conectado, intensidad y recurrencia", strength: 71 }
+    ];
+    seed.topicScores = [
+      ["Spa", 48],
+      ["Vestuarios", 42],
+      ["Pádel", 36],
+      ["Clases", 31],
+      ["App SoyO2", 24],
+      ["Recepción", 18],
+      ["Fisioterapia", 14]
+    ];
+    seed.salesFunnel = {
+      labels: ["Lead", "Contactado", "Visita", "Prueba", "Alta"],
+      values: [386, 264, 151, 93, 57]
+    };
+    seed.retentionTrend = {
+      labels: ["Dic", "Ene", "Feb", "Mar", "Abr", "May"],
+      visits: [13, 12, 10, 8, 6, 4],
+      churn: [14, 18, 25, 37, 52, 71]
+    };
+
+    seed.members.push(
+      {
+        id: "S-2602",
+        name: "Lucía Marín",
+        club: "O2CW Málaga",
+        plan: "Well Living Plus",
+        status: "Riesgo alto",
+        churnScore: 74,
+        visits30: 4,
+        visitsPrev: 12,
+        ltv: 3560,
+        nextAction: "Sesión recovery + revisión de rutina en piscina",
+        reason: "Baja de accesos tras dos incidencias de spa y caída de reservas en natación.",
+        drivers: [
+          ["Accesos", "4 accesos vs 12 previos; última visita hace 11 días", 86],
+          ["Punto de dolor", "2 comentarios sobre sauna y duchas", 81],
+          ["Servicios", "Sin uso de recovery ni fisio en 38 días", 66],
+          ["SoyO2", "Abre recordatorios pero no reserva", 58]
+        ]
+      },
+      {
+        id: "S-1189",
+        name: "Óscar Vidal",
+        club: "O2CW Sexta Avenida",
+        plan: "Corporate Wellness",
+        status: "Riesgo medio",
+        churnScore: 57,
+        visits30: 6,
+        visitsPrev: 9,
+        ltv: 4120,
+        nextAction: "Reactivar con ZONE en horario ejecutivo",
+        reason: "Pérdida de hábito por cambio de franja laboral y menor asistencia a ZONE.",
+        drivers: [
+          ["Franja", "Pasa de 07:30 a 20:30 y baja asistencia", 68],
+          ["Clases", "3 huecos ZONE cancelados", 61],
+          ["Comercial", "Empresa renovable en julio", 52],
+          ["Valor", "LTV alto por plan corporate", 74]
+        ]
+      },
+      {
+        id: "S-3077",
+        name: "Ainhoa Pérez",
+        club: "O2CW Parc del Migdia",
+        plan: "Family Wellness",
+        status: "Riesgo bajo",
+        churnScore: 24,
+        visits30: 15,
+        visitsPrev: 14,
+        ltv: 2680,
+        nextAction: "Invitar a reto SoyO2 familiar",
+        reason: "Uso estable, familia activa y alta respuesta a retos.",
+        drivers: [
+          ["Accesos", "15 accesos y 9 reservas confirmadas", 18],
+          ["App", "Completa retos y recibe recordatorios", 16],
+          ["Satisfacción", "NPS 10 en encuesta familiar", 12],
+          ["Servicios", "Piscina y clases aqua recurrentes", 21]
+        ]
+      },
+      {
+        id: "S-2334",
+        name: "Rafael Torres",
+        club: "O2CW Huelva",
+        plan: "Well Living",
+        status: "Riesgo alto",
+        churnScore: 71,
+        visits30: 2,
+        visitsPrev: 7,
+        ltv: 1840,
+        nextAction: "Llamada de retorno + plan de espalda con fisio",
+        reason: "Dolor lumbar, baja de uso de sala y abandono de fisioterapia.",
+        drivers: [
+          ["Salud", "Encuesta indica dolor lumbar recurrente", 79],
+          ["Frecuencia", "2 accesos en 30 días", 84],
+          ["Servicios", "Fisio recomendado no contratado", 70],
+          ["Teléfono", "Llamada perdida sin seguimiento", 62]
+        ]
+      },
+      {
+        id: "S-2718",
+        name: "Marina Soler",
+        club: "Boutique Girona",
+        plan: "Boutique Women",
+        status: "Estable",
+        churnScore: 29,
+        visits30: 11,
+        visitsPrev: 10,
+        ltv: 2260,
+        nextAction: "Recomendar Pilates Reformer y sauna",
+        reason: "Patrón estable y satisfacción alta en clases bodymind.",
+        drivers: [
+          ["Clases", "Yoga y Pilates constantes", 20],
+          ["Satisfacción", "NPS 9 y comentario positivo", 16],
+          ["Servicios", "Uso mensual de sauna", 24],
+          ["Comunidad", "Alta participación en masterclass", 18]
+        ]
+      },
+      {
+        id: "S-3092",
+        name: "Teresa Navarro",
+        club: "Boutique Madrid",
+        plan: "Boutique Premium",
+        status: "Riesgo medio",
+        churnScore: 54,
+        visits30: 7,
+        visitsPrev: 11,
+        ltv: 3020,
+        nextAction: "Ajustar agenda de clases bodymind",
+        reason: "Cambio de tendencia en clases preferidas y menor interacción con app.",
+        drivers: [
+          ["SoyO2", "Baja de reservas en app del 36%", 59],
+          ["Clases", "Pierde huecos de Pilates", 63],
+          ["Comunicación", "Pide alternativas por WhatsApp", 51],
+          ["Valor", "Plan premium con alto margen", 56]
+        ]
+      },
+      {
+        id: "S-3201",
+        name: "Hugo Salas",
+        club: "O2CW Granada",
+        plan: "Padel & Wellness",
+        status: "Riesgo medio",
+        churnScore: 59,
+        visits30: 8,
+        visitsPrev: 13,
+        ltv: 2440,
+        nextAction: "Ofrecer huecos de pádel fuera de pico",
+        reason: "Reservas rechazadas por saturación y baja de uso de spa.",
+        drivers: [
+          ["Pádel", "5 intentos de reserva sin hueco", 72],
+          ["Aforo", "Pico 20:00 supera 90%", 67],
+          ["Spa", "Sin uso desde abril", 44],
+          ["WhatsApp", "Pregunta por disponibilidad de pistas", 49]
+        ]
+      },
+      {
+        id: "S-3380",
+        name: "Noelia Castro",
+        club: "O2CW Manuel Becerra",
+        plan: "Well Living",
+        status: "Estable",
+        churnScore: 33,
+        visits30: 10,
+        visitsPrev: 9,
+        ltv: 2050,
+        nextAction: "Recomendar reto ZONE Games",
+        reason: "Uso saludable, interés por retos y buena recurrencia.",
+        drivers: [
+          ["ZONE", "4 sesiones en 30 días", 22],
+          ["App", "Alta interacción con retos", 18],
+          ["Encuesta", "NPS 9", 14],
+          ["Frecuencia", "Tendencia positiva", 19]
+        ]
+      },
+      {
+        id: "S-3521",
+        name: "Bruno Escudero",
+        club: "O2CW Sexta Avenida",
+        plan: "Family Wellness",
+        status: "Riesgo alto",
+        churnScore: 76,
+        visits30: 3,
+        visitsPrev: 10,
+        ltv: 3980,
+        nextAction: "Reunión familiar + plan natación infantil",
+        reason: "Baja de asistencia familiar y queja sobre disponibilidad de natación infantil.",
+        drivers: [
+          ["Familia", "2 miembros dejan de reservar", 78],
+          ["Natación", "Lista de espera infantil", 73],
+          ["Cuota", "Renovación en 21 días", 69],
+          ["Reclamación", "Petición abierta en recepción", 64]
+        ]
+      },
+      {
+        id: "S-3604",
+        name: "Irene Costa",
+        club: "O2CW Málaga",
+        plan: "Recovery Plus",
+        status: "Riesgo bajo",
+        churnScore: 27,
+        visits30: 12,
+        visitsPrev: 11,
+        ltv: 3180,
+        nextAction: "Mantener seguimiento de fisioterapia",
+        reason: "Uso consistente de recovery y fisioterapia.",
+        drivers: [
+          ["Recovery", "6 sesiones en 30 días", 17],
+          ["Fisio", "Plan activo y asistencia completa", 13],
+          ["App", "Registra progreso semanal", 20],
+          ["Satisfacción", "Comentario positivo sobre equipo", 15]
+        ]
+      },
+      {
+        id: "S-3742",
+        name: "Mateo Puig",
+        club: "O2CW Parc del Migdia",
+        plan: "Well Living",
+        status: "Riesgo medio",
+        churnScore: 52,
+        visits30: 6,
+        visitsPrev: 10,
+        ltv: 1920,
+        nextAction: "Reactivar con grupo de running",
+        reason: "Desplazamiento a exterior y menos reservas indoor.",
+        drivers: [
+          ["Outdoor", "Interés en running fuera del club", 48],
+          ["Accesos", "Baja de accesos indoor", 55],
+          ["Clases", "No reserva desde hace 18 días", 58],
+          ["App", "Consulta contenidos On Demand", 39]
+        ]
+      },
+      {
+        id: "S-3888",
+        name: "Carla Benítez",
+        club: "O2CW Huelva",
+        plan: "Aqua Wellness",
+        status: "Estable",
+        churnScore: 22,
+        visits30: 14,
+        visitsPrev: 13,
+        ltv: 2160,
+        nextAction: "Invitar a masterclass Aquawellness",
+        reason: "Patrón fuerte en piscina y satisfacción alta.",
+        drivers: [
+          ["Natación", "8 reservas aqua completadas", 18],
+          ["Encuesta", "NPS 10", 10],
+          ["Rutina", "Tendencia semanal estable", 15],
+          ["Comunidad", "Participa en eventos del club", 14]
+        ]
+      }
+    );
+
+    seed.members.push(
+      {
+        id: "S-4011",
+        name: "Valentina Rius",
+        club: "Boutique Barcelona",
+        plan: "Boutique Premium",
+        status: "Estable",
+        churnScore: 26,
+        visits30: 12,
+        visitsPrev: 12,
+        ltv: 2860,
+        nextAction: "Recomendar masterclass Body&Soul",
+        reason: "Alta recurrencia en bodymind y uso mensual de sauna.",
+        drivers: [["Clases", "10 reservas completadas", 18], ["Spa", "Uso recurrente de sauna", 21], ["Encuesta", "NPS 9", 14], ["App", "Alta interacción SoyO2", 19]]
+      },
+      {
+        id: "S-4056",
+        name: "Andrés Molina",
+        club: "O2CW Manuel Becerra",
+        plan: "Well Living Plus",
+        status: "Riesgo medio",
+        churnScore: 61,
+        visits30: 5,
+        visitsPrev: 9,
+        ltv: 3340,
+        nextAction: "Plan de fuerza 3 semanas + recordatorios SoyO2",
+        reason: "Pierde hábito de fuerza y no responde a email, pero sí abre WhatsApp.",
+        drivers: [["Fuerza", "Baja de 7 a 2 sesiones", 70], ["WhatsApp", "Canal preferido", 48], ["Cuota", "Plan premium renovable", 58], ["Recencia", "Último acceso hace 8 días", 64]]
+      },
+      {
+        id: "S-4080",
+        name: "Mónica Vega",
+        club: "O2CW Sexta Avenida",
+        plan: "Corporate Wellness",
+        status: "Estable",
+        churnScore: 30,
+        visits30: 9,
+        visitsPrev: 8,
+        ltv: 3720,
+        nextAction: "Invitar a evento corporate wellness",
+        reason: "Uso estable y buena respuesta a eventos corporativos.",
+        drivers: [["Corporate", "Empresa activa", 22], ["Eventos", "Asiste a masterclass", 20], ["NPS", "Promotora", 15], ["Zona", "Fuerza + ZONE", 24]]
+      },
+      {
+        id: "S-4122",
+        name: "Diego Ramos",
+        club: "O2CW Granada",
+        plan: "Padel & Wellness",
+        status: "Riesgo alto",
+        churnScore: 73,
+        visits30: 3,
+        visitsPrev: 12,
+        ltv: 2580,
+        nextAction: "Resolver reservas fallidas de pádel y proponer liga interna",
+        reason: "Alta frustración por pistas sin disponibilidad y caída brusca de visitas.",
+        drivers: [["Pádel", "6 reservas fallidas", 82], ["Accesos", "-75% vs mes anterior", 86], ["Recepción", "Queja abierta", 62], ["Comunidad", "Interés en liga interna", 45]]
+      },
+      {
+        id: "S-4190",
+        name: "Elena Prieto",
+        club: "O2CW Parc del Migdia",
+        plan: "Outdoor & Aqua",
+        status: "Estable",
+        churnScore: 28,
+        visits30: 11,
+        visitsPrev: 10,
+        ltv: 2040,
+        nextAction: "Recomendar running club + Aqua yoga",
+        reason: "Combina outdoor, piscina y contenidos On Demand.",
+        drivers: [["Outdoor", "3 salidas running", 19], ["Aqua", "5 reservas", 17], ["On Demand", "Uso semanal", 24], ["Encuesta", "NPS 9", 14]]
+      },
+      {
+        id: "S-4255",
+        name: "Carmen Ruiz",
+        club: "O2CW Málaga",
+        plan: "Recovery Plus",
+        status: "Riesgo medio",
+        churnScore: 56,
+        visits30: 6,
+        visitsPrev: 9,
+        ltv: 3460,
+        nextAction: "Check de recuperación y seguimiento de fisio",
+        reason: "Interrumpe fisioterapia tras mejora inicial y reduce reservas de recovery.",
+        drivers: [["Fisio", "2 sesiones perdidas", 63], ["Recovery", "Baja de uso", 57], ["Salud", "Dolor recurrente leve", 51], ["LTV", "Plan alto valor", 60]]
+      },
+      {
+        id: "S-4310",
+        name: "Nicolás Serra",
+        club: "Boutique Madrid",
+        plan: "Boutique Premium",
+        status: "Riesgo bajo",
+        churnScore: 21,
+        visits30: 16,
+        visitsPrev: 15,
+        ltv: 2940,
+        nextAction: "Mantener recomendación de HIIT boutique",
+        reason: "Uso intenso de clases y alta afinidad con experiencia boutique.",
+        drivers: [["Clases", "16 accesos en 30 días", 12], ["HIIT", "6 sesiones", 18], ["Satisfacción", "NPS 10", 9], ["Comunidad", "Participa en eventos", 15]]
+      }
+    );
+
+    seed.voice.push(
+      { id: "V-121", channel: "Encuesta NPS", rating: "Detractor", club: "O2CW Sexta Avenida", topic: "Natación infantil", sentiment: -64, priority: "Alta", status: "Abierta", text: "Llevamos semanas sin hueco para el curso infantil y nadie nos da alternativa clara.", action: "Escalar a coordinación de natación y proponer lista preferente." },
+      { id: "V-122", channel: "WhatsApp", rating: "Neutro", club: "Boutique Madrid", topic: "Pilates Reformer", sentiment: -22, priority: "Media", status: "Nueva", text: "Me interesa seguir, pero nunca encuentro huecos de Pilates después del trabajo.", action: "Cruzar reservas fallidas y proponer franja alternativa." },
+      { id: "V-123", channel: "Recepción", rating: "Queja", club: "O2CW Manuel Becerra", topic: "Vestuarios", sentiment: -51, priority: "Alta", status: "En curso", text: "Los vestuarios se saturan tras ZONE y el spa pierde sensación premium.", action: "Refuerzo de limpieza y aviso de franjas de menor ocupación." },
+      { id: "V-124", channel: "Google Reviews", rating: "5 estrellas", club: "Boutique Girona", topic: "Bodymind", sentiment: 91, priority: "Baja", status: "Completada", text: "Yoga, sauna y el ambiente del centro están muy por encima de otros gimnasios.", action: "Usar como promotor para campañas boutique." },
+      { id: "V-125", channel: "App SoyO2", rating: "Sugerencia", club: "O2CW Huelva", topic: "Recordatorios", sentiment: 18, priority: "Media", status: "Nueva", text: "Estaría bien recibir recordatorios personalizados de natación y eventos.", action: "Segmentar recordatorios por hábito de uso." },
+      { id: "V-126", channel: "Teléfono", rating: "Queja", club: "O2CW Granada", topic: "Pádel", sentiment: -47, priority: "Media", status: "Abierta", text: "Llamo para preguntar por pistas y no hay visibilidad de huecos reales.", action: "Unificar disponibilidad de pádel y guion de recepción." },
+      { id: "V-127", channel: "Encuesta post-fisio", rating: "Promotor", club: "O2CW Málaga", topic: "Fisioterapia", sentiment: 84, priority: "Baja", status: "Completada", text: "El fisio me ayudó a volver a entrenar con seguridad.", action: "Convertir en argumento comercial para Recovery Plus." },
+      { id: "V-128", channel: "Hoja sugerencias", rating: "Sugerencia", club: "O2CW Parc del Migdia", topic: "Running club", sentiment: 33, priority: "Baja", status: "Nueva", text: "Más salidas de running por la mañana ayudarían a mantener rutina.", action: "Test de grupo outdoor martes/jueves." }
+    );
+
+    seed.sales.push(
+      { id: "C-2420", name: "Beatriz Galán", club: "Boutique Madrid", channel: "Instagram", intent: 82, status: "Visita agendada", motivation: "Busca boutique, Pilates y spa sin ambiente masificado.", objections: ["Disponibilidad de Pilates", "Precio"], nextAction: "Mostrar huecos reales y valor de servicio boutique." },
+      { id: "C-2421", name: "Daniel Bosch", club: "O2CW Parc del Migdia", channel: "Referral socio", intent: 78, status: "Contactado", motivation: "Quiere natación y plan de fuerza para triatlón.", objections: ["Distancia", "Horario piscina"], nextAction: "Enviar plan combinado piscina + fuerza + On Demand." },
+      { id: "C-2422", name: "Sandra Rivas", club: "O2CW Málaga", channel: "Día de prueba", intent: 93, status: "Alta probable", motivation: "Recuperación de lesión y spa post-entreno.", objections: ["Compromiso"], nextAction: "Cita con fisio y plan mensual Recovery Plus." },
+      { id: "C-2423", name: "Pablo Nieto", club: "O2CW Granada", channel: "WhatsApp comercial", intent: 69, status: "Seguimiento", motivation: "Pádel y sala fitness con amigos.", objections: ["Saturación pistas"], nextAction: "Enviar disponibilidad real de pádel fuera de pico." },
+      { id: "C-2424", name: "Laura Esteve", club: "O2CW Huelva", channel: "Web", intent: 74, status: "Visita agendada", motivation: "Plan familiar con piscina infantil.", objections: ["Curso natación"], nextAction: "Proponer Family Wellness con cupo de curso." },
+      { id: "C-2425", name: "Marc Oliva", club: "Boutique Barcelona", channel: "Evento corporativo", intent: 67, status: "Contactado", motivation: "Entrenamiento funcional cerca de oficina.", objections: ["Contrato empresa"], nextAction: "Preparar propuesta corporate flexible." },
+      { id: "C-2426", name: "Elena Moya", club: "O2CW Manuel Becerra", channel: "Teléfono", intent: 81, status: "Alta probable", motivation: "Fuerza, ZONE y fisioterapia preventiva.", objections: ["Parking"], nextAction: "Invitación ZONE + sesión inicial de fisio." },
+      { id: "C-2427", name: "Víctor Sancho", club: "O2CW Sexta Avenida", channel: "Google Ads", intent: 58, status: "Nutrir", motivation: "Cambio desde low-cost a experiencia premium.", objections: ["Precio", "Permanencia"], nextAction: "Enviar comparativa de valor y beneficios de socio." }
+    );
+
+    seed.occupancy.push(
+      { club: "O2CW Sexta Avenida", zone: "ZONE", now: 91, threshold: 86, status: "Saturado", action: "Abrir clase espejo 20:30 si se repite 3 días" },
+      { club: "Boutique Madrid", zone: "Pilates Reformer", now: 96, threshold: 88, status: "Saturado", action: "Priorizar lista de espera y proponer franja 14:30" },
+      { club: "O2CW Huelva", zone: "Piscina cursos", now: 89, threshold: 84, status: "Tensión", action: "Revisar cupos familiares y monitor de apoyo" },
+      { club: "O2CW Parc del Migdia", zone: "Running club", now: 52, threshold: 75, status: "Oportunidad", action: "Lanzar grupo martes/jueves mañana" },
+      { club: "O2CW Sexta Avenida", zone: "Sala fitness", now: 87, threshold: 84, status: "Tensión", action: "Refuerzo técnico en zona fuerza" },
+      { club: "Boutique Girona", zone: "Yoga", now: 73, threshold: 80, status: "Controlado", action: "Mantener cupo y monitorizar waitlist" },
+      { club: "O2CW Manuel Becerra", zone: "ZONE", now: 93, threshold: 86, status: "Saturado", action: "Mensaje SoyO2 con clase alternativa" },
+      { club: "Boutique Barcelona", zone: "Sauna", now: 78, threshold: 80, status: "Controlado", action: "Sin acción" }
+    );
+
+    seed.maintenance.push(
+      { id: "M-501", club: "O2CW Sexta Avenida", asset: "Sistema climatización ZONE", risk: 78, hours: 1260, threshold: 1400, status: "Preventivo", action: "Revisión filtros y caudal antes de masterclass" },
+      { id: "M-502", club: "Boutique Madrid", asset: "Reformer 07", risk: 72, hours: 860, threshold: 920, status: "Preventivo", action: "Cambio de muelles y check seguridad" },
+      { id: "M-503", club: "O2CW Granada", asset: "Iluminación pista pádel 3", risk: 69, hours: 540, threshold: 620, status: "Observación", action: "Inspección eléctrica esta semana" },
+      { id: "M-504", club: "O2CW Huelva", asset: "Filtro piscina infantil", risk: 81, hours: 1010, threshold: 1080, status: "Preventivo", action: "Lavado y repuesto antes del sábado" },
+      { id: "M-505", club: "O2CW Parc del Migdia", asset: "Bicicletas cycling bloque B", risk: 51, hours: 740, threshold: 1000, status: "Normal", action: "Mantenimiento mensual" },
+      { id: "M-506", club: "Boutique Girona", asset: "Sauna boutique", risk: 58, hours: 390, threshold: 520, status: "Normal", action: "Seguimiento de temperatura" }
+    );
+
+    seed.tasks.push(
+      { id: "T-843", category: "Retención", club: "O2CW Málaga", owner: "Experiencia", priority: "Alta", status: "Hoy", text: "Contactar a Lucía Marín por caída de accesos y dolor spa." },
+      { id: "T-844", category: "Natación", club: "O2CW Sexta Avenida", owner: "Coordinación", priority: "Alta", status: "Hoy", text: "Resolver lista de espera infantil y comunicar alternativas familiares." },
+      { id: "T-845", category: "Comercial", club: "Boutique Madrid", owner: "Ventas", priority: "Media", status: "Pendiente", text: "Enviar disponibilidad real de Pilates Reformer a Beatriz Galán." },
+      { id: "T-846", category: "Aforo", club: "O2CW Manuel Becerra", owner: "Operaciones", priority: "Media", status: "Ahora", text: "Recomendar clase ZONE alternativa por saturación 20:00." },
+      { id: "T-847", category: "Mantenimiento", club: "O2CW Huelva", owner: "Técnico", priority: "Alta", status: "Programada", text: "Revisar filtro piscina infantil antes de actividad familiar." },
+      { id: "T-848", category: "CX", club: "O2CW Granada", owner: "Recepción", priority: "Media", status: "Nueva", text: "Unificar guion de disponibilidad de pádel y waitlist." },
+      { id: "T-849", category: "Producto", club: "O2CW Parc del Migdia", owner: "Club manager", priority: "Baja", status: "Nueva", text: "Probar running club por la mañana con segmento outdoor." },
+      { id: "T-850", category: "Comercial", club: "O2CW Sexta Avenida", owner: "Ventas", priority: "Media", status: "Pendiente", text: "Nutrir lead low-cost con comparativa de valor premium." }
+    );
+
+    seed.impact = [
+      ["Revenue protegido", 92400, "24 perfiles priorizados por churn, LTV y fricción reciente."],
+      ["Averías evitables", 12, "Activos de spa, piscina, ZONE y pádel cerca de umbral."],
+      ["Horas recuperadas", 74, "Menos triage manual en reseñas, llamadas y tareas."],
+      ["Reviews críticas", 9, "Casos abiertos con respuesta y responsable asignado."],
+      ["Pipeline accionable", 412000, "Leads con motivación, objeción y siguiente mejor acción."]
+    ];
+  }
+
+  enrichWithProductionSeed(baseState);
 
   const scenarios = {
     churn: {
@@ -1011,22 +1454,36 @@
   }
 
   function renderOperations() {
+    const occupancyRows = state.occupancy.map((zone) => ({
+      kind: "aforo",
+      label: zone.zone,
+      club: zone.club,
+      status: zone.status,
+      score: zone.now - zone.threshold,
+      reading: `${zone.now}% ocupado · umbral ${zone.threshold}%`,
+      action: zone.action
+    }));
+    const maintenanceRows = state.maintenance.map((item) => ({
+      kind: "mantenimiento",
+      label: item.asset,
+      club: item.club,
+      status: item.status,
+      score: item.risk - 60,
+      reading: `Riesgo ${item.risk}/100 · ${item.hours}h uso`,
+      action: item.action
+    }));
+    const priorityRows = occupancyRows.concat(maintenanceRows)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10);
+
     byId("operations-table").innerHTML = `
       <thead><tr><th>Ámbito</th><th>Club</th><th>Lectura</th><th>Acción</th></tr></thead>
       <tbody>
-        ${state.occupancy.slice(0, 4).map((zone) => `
+        ${priorityRows.map((item) => `
           <tr>
-            <td><span class="status-pill ${priorityClass(zone.status === "Saturado" ? "alta" : zone.status === "Tensión" ? "media" : "baja")}">${zone.zone}</span></td>
-            <td>${zone.club.replace("O2CW ", "")}</td>
-            <td>${zone.now}% ocupado · umbral ${zone.threshold}%</td>
-            <td>${zone.action}</td>
-          </tr>
-        `).join("")}
-        ${state.maintenance.slice(0, 4).map((item) => `
-          <tr>
-            <td><span class="status-pill ${priorityClass(item.status)}">${item.asset}</span></td>
+            <td><span class="status-pill ${priorityClass(item.status === "Saturado" ? "alta" : item.status === "Tensión" ? "media" : item.status)}">${item.label}</span></td>
             <td>${item.club.replace("O2CW ", "")}</td>
-            <td>Riesgo ${item.risk}/100 · ${item.hours}h uso</td>
+            <td>${item.reading}</td>
             <td>${item.action}</td>
           </tr>
         `).join("")}
