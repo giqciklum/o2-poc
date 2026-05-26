@@ -1702,9 +1702,82 @@
 
   function trendTone(label) {
     const s = String(label || "").toLowerCase();
-    if (s.includes("caída") || s.includes("caida") || s.includes("crítica") || s.includes("critica") || s.includes("saturación") || s.includes("saturacion")) return "danger";
-    if (s.includes("cambio") || s.includes("franja") || s.includes("migra")) return "warn";
+    if (s.includes("caída") || s.includes("caida") || s.includes("crítica") || s.includes("critica") || s.includes("saturación") || s.includes("saturacion") || s.includes("abandono") || /-\d+%/.test(s)) return "danger";
+    if (s.includes("cambio") || s.includes("franja") || s.includes("migra") || s.includes("tensión") || s.includes("tension")) return "warn";
     return "ok";
+  }
+
+  // Normaliza tildes en textos que vienen del seed sin acentos.
+  function prettyAccents(text) {
+    if (!text) return text;
+    return String(text)
+      .replace(/Caida/g, "Caída")
+      .replace(/caida/g, "caída")
+      .replace(/Perdida/g, "Pérdida")
+      .replace(/perdida/g, "pérdida")
+      .replace(/Habito/g, "Hábito")
+      .replace(/habito/g, "hábito")
+      .replace(/Habitos/g, "Hábitos")
+      .replace(/habitos/g, "hábitos")
+      .replace(/Saturacion/g, "Saturación")
+      .replace(/saturacion/g, "saturación")
+      .replace(/Telefono/g, "Teléfono")
+      .replace(/telefono/g, "teléfono")
+      .replace(/Recuperacion/g, "Recuperación")
+      .replace(/recuperacion/g, "recuperación")
+      .replace(/Resena/g, "Reseña")
+      .replace(/resena/g, "reseña")
+      .replace(/Resenas/g, "Reseñas")
+      .replace(/resenas/g, "reseñas")
+      .replace(/Satisfaccion/g, "Satisfacción")
+      .replace(/satisfaccion/g, "satisfacción")
+      .replace(/Comunicaciones/g, "Comunicaciones")
+      .replace(/Comunicacion\b/g, "Comunicación")
+      .replace(/comunicacion\b/g, "comunicación")
+      .replace(/Acciones/g, "Acciones")
+      .replace(/Accion\b/g, "Acción")
+      .replace(/accion\b/g, "acción")
+      .replace(/Atencion/g, "Atención")
+      .replace(/atencion/g, "atención")
+      .replace(/Padel/g, "Pádel")
+      .replace(/padel/g, "pádel")
+      .replace(/Malaga/g, "Málaga")
+      .replace(/Periodo/g, "Período")
+      .replace(/\bperiodo\b/g, "período")
+      .replace(/Ultimos/g, "Últimos")
+      .replace(/ultimos/g, "últimos")
+      .replace(/Disculpa/g, "Disculpa")
+      .replace(/Resolver objecion/g, "Resolver objeción")
+      .replace(/Objeciones?/g, function(m){ return m.replace("Objecion","Objeción").replace("objecion","objeción"); })
+      .replace(/Disponibilidad/g, "Disponibilidad")
+      .replace(/Plan preventivo/g, "Plan preventivo")
+      .replace(/Migracion/g, "Migración")
+      .replace(/migracion/g, "migración")
+      .replace(/Compromiso anual/g, "Compromiso anual")
+      .replace(/Recepcion/g, "Recepción")
+      .replace(/recepcion/g, "recepción")
+      .replace(/Natacion/g, "Natación")
+      .replace(/natacion/g, "natación")
+      .replace(/Fisio\b/g, "Fisio")
+      .replace(/Friccion/g, "Fricción")
+      .replace(/friccion/g, "fricción")
+      .replace(/Promocion/g, "Promoción")
+      .replace(/promocion/g, "promoción");
+  }
+
+  // Devuelve un label corto y categórico para el badge de cambio de tendencia.
+  function deriveTrendLabel(raw) {
+    const s = String(raw || "").toLowerCase();
+    if (s.includes("saturaci") || s.includes("saturado") || s.includes("saturacion")) return "Saturación";
+    if (s.includes("abandono")) return "Abandono";
+    if (s.includes("estable") || s.includes("positiv") || s.includes("creciente")) return "Estable creciente";
+    if (s.includes("franja")) return "Cambio de franja";
+    if (s.includes("migra") || s.includes("outdoor")) return "Migración";
+    if (/-\d+%/.test(s) || s.includes("caida") || s.includes("caída") || s.includes("perdida") || s.includes("pérdida") || s.includes("crítica") || s.includes("critica")) return "Caída crítica";
+    if (s.includes("cambio")) return "Cambio detectado";
+    if (s.includes("tensión") || s.includes("tension")) return "Tensión";
+    const fallback = raw ? String(raw).split(";")[0].split(",")[0].trim() : "";
+    return fallback ? prettyAccents(fallback) : "Sin cambio";
   }
 
   function renderSurveys() {
@@ -1716,6 +1789,14 @@
       return;
     }
     surveysTable.innerHTML = `
+      <colgroup>
+        <col style="width: 19%">
+        <col style="width: 9%">
+        <col style="width: 12%">
+        <col style="width: 22%">
+        <col style="width: 18%">
+        <col style="width: 20%">
+      </colgroup>
       <thead>
         <tr>
           <th>Socio · sede</th>
@@ -1729,12 +1810,12 @@
       <tbody>
         ${surveys.map((survey) => `
           <tr>
-            <td><strong>${survey.memberName}</strong><br><span style="color: var(--muted); font-size: 0.85em;">${survey.club} · ${survey.date}</span></td>
+            <td><strong>${survey.memberName}</strong><br><span style="color: var(--muted); font-size: 0.82em;">${survey.club} · ${survey.date}</span></td>
             <td><span class="status-pill ${npsTone(survey.nps)}">${survey.nps}/10</span></td>
             <td>${survey.satisfaction}</td>
-            <td>${survey.painPoint}</td>
-            <td>${survey.improvement}</td>
-            <td><strong style="color: var(--blue-deep);">${survey.action}</strong></td>
+            <td style="line-height: 1.4;">${survey.painPoint}</td>
+            <td style="line-height: 1.4;">${survey.improvement}</td>
+            <td><strong style="color: var(--blue-deep); line-height: 1.4;">${survey.action}</strong></td>
           </tr>
         `).join("")}
       </tbody>
@@ -1783,14 +1864,23 @@
     const filtered = selectedId ? all.filter((h) => h.memberId === selectedId) : [];
     const rows = filtered.length ? filtered : all;
     if (!rows.length) {
-      table.innerHTML = `<thead><tr><th>Socio</th><th>Accesos</th><th>Reservas</th><th>Servicios</th><th>Tendencia</th></tr></thead><tbody><tr><td colspan="5" style="color: var(--muted); padding: 16px;">Sin hábitos registrados todavía.</td></tr></tbody>`;
+      table.innerHTML = `<thead><tr><th>Socio</th><th>Accesos</th><th>Reservas</th><th>Servicios</th><th>Tendencia</th><th>Lectura</th></tr></thead><tbody><tr><td colspan="6" style="color: var(--muted); padding: 16px;">Sin hábitos registrados todavía.</td></tr></tbody>`;
       return;
     }
     table.innerHTML = `
+      <colgroup>
+        <col style="width: 19%">
+        <col style="width: 11%">
+        <col style="width: 11%">
+        <col style="width: 11%">
+        <col style="width: 14%">
+        <col style="width: 14%">
+        <col style="width: 20%">
+      </colgroup>
       <thead>
         <tr>
           <th>Socio · sede</th>
-          <th>Periodo</th>
+          <th>Período</th>
           <th>Accesos vs prev</th>
           <th>Reservas vs prev</th>
           <th>Servicios usados</th>
@@ -1802,15 +1892,16 @@
         ${rows.map((h) => {
           const accDelta = h.accessesPrev ? Math.round(((h.accesses - h.accessesPrev) / h.accessesPrev) * 100) : 0;
           const bookDelta = h.bookingsPrev ? Math.round(((h.bookings - h.bookingsPrev) / h.bookingsPrev) * 100) : 0;
+          const detail = h.trendDetail ? `<div style="color: var(--muted); font-size: 0.78rem; margin-top: 6px; line-height: 1.35;">${h.trendDetail}</div>` : "";
           return `
             <tr>
-              <td><strong>${h.memberName}</strong><br><span style="color: var(--muted); font-size: 0.85em;">${h.club}</span></td>
+              <td><strong>${h.memberName}</strong><br><span style="color: var(--muted); font-size: 0.82em;">${h.club}</span></td>
               <td>${h.period}</td>
-              <td>${h.accesses} <span style="color: var(--muted); font-size: 0.85em;">(${accDelta > 0 ? "+" : ""}${accDelta}%)</span></td>
-              <td>${h.bookings} <span style="color: var(--muted); font-size: 0.85em;">(${bookDelta > 0 ? "+" : ""}${bookDelta}%)</span></td>
+              <td>${h.accesses} <span style="color: var(--muted); font-size: 0.82em;">(${accDelta > 0 ? "+" : ""}${accDelta}%)</span></td>
+              <td>${h.bookings} <span style="color: var(--muted); font-size: 0.82em;">(${bookDelta > 0 ? "+" : ""}${bookDelta}%)</span></td>
               <td>${h.servicesUsed}</td>
-              <td><span class="status-pill ${trendTone(h.trend)}">${h.trend}</span></td>
-              <td><strong style="color: var(--blue-deep);">${h.reading}</strong></td>
+              <td><span class="status-pill ${trendTone(h.trend)}">${h.trend}</span>${detail}</td>
+              <td><strong style="color: var(--blue-deep); line-height: 1.4;">${h.reading}</strong></td>
             </tr>
           `;
         }).join("")}
@@ -2383,20 +2474,20 @@
     const delta = visitsPrev ? Math.round(((visits30 - visitsPrev) / visitsPrev) * 100) : 0;
     return {
       id: row.id_socio,
-      name: pretty(row.nombre || "Socio O2"),
-      club: pretty(row.club || "O2CW"),
-      plan: pretty(row.plan || row.programa || "Well Living"),
-      status: pretty(row.estado || (churn >= 70 ? "Riesgo alto" : churn >= 50 ? "Riesgo medio" : "Estable")),
+      name: prettyAccents(pretty(row.nombre || "Socio O2")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      plan: prettyAccents(pretty(row.plan || row.programa || "Well Living")),
+      status: prettyAccents(pretty(row.estado || (churn >= 70 ? "Riesgo alto" : churn >= 50 ? "Riesgo medio" : "Estable"))),
       churnScore: churn,
       visits30,
       visitsPrev,
       ltv: num(row.ltv_estimado, 0),
-      nextAction: pretty(row.accion_recomendada || "Asignar siguiente mejor acción"),
-      reason: pretty(`${visits30} accesos en 30 días frente a ${visitsPrev || "sin histórico"}; ${row.programa || "servicios O2"} · ${row.estado || "estado activo"}.`),
+      nextAction: prettyAccents(pretty(row.accion_recomendada || "Asignar siguiente mejor acción")),
+      reason: prettyAccents(pretty(`${visits30} accesos en 30 días frente a ${visitsPrev || "sin histórico"}; ${row.programa || "servicios O2"} · ${row.estado || "estado activo"}.`)),
       drivers: [
         ["Accesos", `${visits30} visitas vs ${visitsPrev || "sin histórico"} (${delta > 0 ? "+" : ""}${delta}%)`, Math.min(96, Math.max(18, Math.abs(delta) + 35))],
-        ["Estado", pretty(row.estado || "Sin alerta abierta"), Math.min(96, Math.max(20, churn))],
-        ["Servicios utilizados", pretty(row.programa || "Wellness"), Math.min(88, Math.max(28, churn - 8))],
+        ["Estado", prettyAccents(pretty(row.estado || "Sin alerta abierta")), Math.min(96, Math.max(20, churn))],
+        ["Servicios utilizados", prettyAccents(pretty(row.programa || "Wellness")), Math.min(88, Math.max(28, churn - 8))],
         ["Valor protegido", `${euro(num(row.ltv_estimado, 0))} LTV estimado`, Math.min(90, Math.max(30, Math.round(num(row.ltv_estimado, 0) / 55)))]
       ]
     };
@@ -2405,68 +2496,68 @@
   function mapSheetVoice(row) {
     return {
       id: row.id_feedback,
-      channel: pretty(row.canal || "Voz cliente"),
-      rating: pretty(row.rating || "Feedback"),
-      club: pretty(row.club || "O2CW"),
-      topic: pretty(row.tema || "Experiencia"),
+      channel: prettyAccents(pretty(row.canal || "Voz cliente")),
+      rating: prettyAccents(pretty(row.rating || "Feedback")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      topic: prettyAccents(pretty(row.tema || "Experiencia")),
       sentiment: num(row.sentimiento, 0),
-      priority: pretty(row.prioridad || "Media"),
-      status: pretty(row.estado || "Nueva"),
-      text: pretty(row.texto || "Feedback registrado en hoja operativa."),
-      action: pretty(row.accion || "Clasificar y asignar responsable.")
+      priority: prettyAccents(pretty(row.prioridad || "Media")),
+      status: prettyAccents(pretty(row.estado || "Nueva")),
+      text: prettyAccents(pretty(row.texto || "Feedback registrado en hoja operativa.")),
+      action: prettyAccents(pretty(row.accion || "Clasificar y asignar responsable."))
     };
   }
 
   function mapSheetSales(row) {
     return {
       id: row.id_entrevista,
-      name: pretty(row.lead || "Lead O2"),
-      club: pretty(row.club || "O2CW"),
-      channel: pretty(row.canal || "Comercial"),
+      name: prettyAccents(pretty(row.lead || "Lead O2")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      channel: prettyAccents(pretty(row.canal || "Comercial")),
       intent: num(row.intencion_compra, 0),
-      status: pretty(row.estado || "Seguimiento"),
-      motivation: pretty(row.motivacion || "Motivación pendiente de completar."),
-      objections: splitList(row.objeciones || "Sin objeción registrada").map(pretty),
-      nextAction: pretty(row.siguiente_accion || "Definir siguiente mejor acción.")
+      status: prettyAccents(pretty(row.estado || "Seguimiento")),
+      motivation: prettyAccents(pretty(row.motivacion || "Motivación pendiente de completar.")),
+      objections: splitList(row.objeciones || "Sin objeción registrada").map(function(o){ return prettyAccents(pretty(o)); }),
+      nextAction: prettyAccents(pretty(row.siguiente_accion || "Definir siguiente mejor acción."))
     };
   }
 
   function mapSheetOccupancy(row) {
-    const club = pretty(row.club || "O2CW");
-    const zone = pretty(row.zona || row.tipo_zona || "Zona");
+    const club = prettyAccents(pretty(row.club || "O2CW"));
+    const zone = prettyAccents(pretty(row.zona || row.tipo_zona || "Zona"));
     return {
       id: operationId("occ", club, zone),
       club,
       zone,
       now: num(row.ocupacion_pct, 0),
       threshold: num(row.umbral_pct, 80),
-      status: pretty(row.estado || "Controlado"),
-      action: pretty(row.accion_recomendada || "Monitorizar zona.")
+      status: prettyAccents(pretty(row.estado || "Controlado")),
+      action: prettyAccents(pretty(row.accion_recomendada || "Monitorizar zona."))
     };
   }
 
   function mapSheetMaintenance(row) {
     return {
       id: row.id_activo || operationId("mnt", row.club, row.instalacion),
-      club: pretty(row.club || "O2CW"),
-      asset: pretty(row.instalacion || "Activo"),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      asset: prettyAccents(pretty(row.instalacion || "Activo")),
       risk: num(row.riesgo_averia, 0),
       hours: num(row.horas_uso, 0),
       threshold: num(row.umbral_aviso, 0),
-      status: pretty(row.estado || "Normal"),
-      action: pretty(row.accion || "Mantenimiento programado")
+      status: prettyAccents(pretty(row.estado || "Normal")),
+      action: prettyAccents(pretty(row.accion || "Mantenimiento programado"))
     };
   }
 
   function mapSheetTask(row) {
     return {
       id: row.id_tarea,
-      category: pretty(row.categoria || "Acción"),
-      club: pretty(row.club || "O2CW"),
-      owner: pretty(row.responsable || "Equipo O2"),
-      priority: pretty(row.prioridad || "Media"),
-      status: pretty(row.estado || "Pendiente"),
-      text: pretty(row.descripcion || "Tarea operativa")
+      category: prettyAccents(pretty(row.categoria || "Acción")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      owner: prettyAccents(pretty(row.responsable || "Equipo O2")),
+      priority: prettyAccents(pretty(row.prioridad || "Media")),
+      status: prettyAccents(pretty(row.estado || "Pendiente")),
+      text: prettyAccents(pretty(row.descripcion || "Tarea operativa"))
     };
   }
 
@@ -2483,13 +2574,13 @@
       id: row.id_encuesta || `E-${memberId}`,
       date: pretty(row.fecha || ""),
       memberId,
-      memberName: pretty(row.nombre || row.id_socio || "Socio O2"),
-      club: pretty(row.club || "O2CW"),
+      memberName: prettyAccents(pretty(row.nombre || row.id_socio || "Socio O2")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
       nps: num(row.nps, 0),
-      satisfaction: pretty(row.satisfaccion || "Media"),
-      painPoint: pretty(row.puntos_dolor || "Sin punto de dolor"),
-      improvement: pretty(row.area_mejora || "Mejora pendiente de detectar"),
-      action: pretty(row.accion_recomendada || "Asignar siguiente mejor acción")
+      satisfaction: prettyAccents(pretty(row.satisfaccion || "Media")),
+      painPoint: prettyAccents(pretty(row.puntos_dolor || "Sin punto de dolor")),
+      improvement: prettyAccents(pretty(row.area_mejora || "Mejora pendiente de detectar")),
+      action: prettyAccents(pretty(row.accion_recomendada || "Asignar siguiente mejor acción"))
     };
   }
 
@@ -2498,30 +2589,35 @@
       id: row.id_comunicacion,
       date: pretty(row.fecha || ""),
       memberId: pretty(row.id_socio || ""),
-      memberName: pretty(row.nombre || row.id_socio || "Socio O2"),
-      club: pretty(row.club || "O2CW"),
-      channel: pretty(row.canal || "WhatsApp"),
-      reason: pretty(row.motivo || "Comunicación registrada"),
+      memberName: prettyAccents(pretty(row.nombre || row.id_socio || "Socio O2")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      channel: prettyAccents(pretty(row.canal || "WhatsApp")),
+      reason: prettyAccents(pretty(row.motivo || "Comunicación registrada")),
       sentiment: num(row.sentimiento, 0),
-      result: pretty(row.resultado || "Sin resolver"),
-      nextAction: pretty(row.siguiente_accion || "Definir siguiente paso")
+      result: prettyAccents(pretty(row.resultado || "Sin resolver")),
+      nextAction: prettyAccents(pretty(row.siguiente_accion || "Definir siguiente paso"))
     };
   }
 
   function mapSheetHabit(row) {
+    const trendRaw = pretty(row.cambio_tendencia || "Sin cambio");
+    const trendLabel = deriveTrendLabel(trendRaw);
+    // Si la etiqueta derivada coincide con el texto base, no duplicar detalle.
+    const trendDetail = trendRaw && trendRaw.toLowerCase() !== trendLabel.toLowerCase() ? prettyAccents(trendRaw) : "";
     return {
       id: row.id_habito,
       memberId: pretty(row.id_socio || ""),
-      memberName: pretty(row.nombre || row.id_socio || "Socio O2"),
-      club: pretty(row.club || "O2CW"),
-      period: pretty(row.periodo || "Últimos 30 días"),
+      memberName: prettyAccents(pretty(row.nombre || row.id_socio || "Socio O2")),
+      club: prettyAccents(pretty(row.club || "O2CW")),
+      period: prettyAccents(pretty(row.periodo || "Últimos 30 días")),
       accesses: num(row.accesos, 0),
       accessesPrev: num(row.accesos_prev, 0),
       bookings: num(row.reservas, 0),
       bookingsPrev: num(row.reservas_prev, 0),
-      servicesUsed: pretty(row.servicios_usados || "Sin servicios registrados"),
-      trend: pretty(row.cambio_tendencia || "Sin cambio"),
-      reading: pretty(row.lectura || "Sin lectura disponible")
+      servicesUsed: prettyAccents(pretty(row.servicios_usados || "Sin servicios registrados")),
+      trend: trendLabel,
+      trendDetail,
+      reading: prettyAccents(pretty(row.lectura || "Sin lectura disponible"))
     };
   }
 
