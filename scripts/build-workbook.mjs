@@ -36,14 +36,49 @@ const data = {
     rows: [
       ["V-104","2026-05-24","Google Reviews","O2CW Malaga","2",-72,"Sauna y bano turco","Alta","Abierta","La sauna estaba fuera de servicio otra vez y nadie aviso antes de entrar.","Crear tarea preventiva y respuesta publica"],
       ["V-098","2026-05-23","Hoja sugerencias","O2CW Granada","Sugerencia",26,"Pistas de padel","Media","En curso","Ampliar huecos de reserva en tarde.","Cruzar aforo con reservas"],
-      ["V-091","2026-05-22","Recepcion","O2CW Boutique Madrid","Promotor",88,"Body&Soul","Baja","Completada","La clase de movilidad ha sido excelente.","Usar como senal de retencion"]
+      ["V-091","2026-05-22","Encuesta post-clase","O2CW Boutique Madrid","Promotor",88,"Body&Soul","Baja","Completada","La clase de movilidad ha sido excelente.","Usar como senal de retencion"],
+      ["V-088","2026-05-21","WhatsApp","O2CW Manuel Becerra","Neutro",-18,"Cambio de horario","Media","Nueva","Desde que cambiaron la clase de las 19:30 me cuesta venir entre semana.","Detectar cambio de tendencia y sugerir alternativa"]
+    ]
+  },
+  comunicaciones: {
+    headers: ["id_comunicacion","fecha","id_socio","club","canal","motivo","sentimiento","resultado","siguiente_accion"],
+    rows: [
+      ["COM-001","2026-05-23","S-1748","O2CW Manuel Becerra","WhatsApp","Saturacion vestuarios y cambio de rutina",-34,"Sin resolver","Llamada humana + propuesta franja valle"],
+      ["COM-002","2026-05-22","S-0832","O2CW Granada","Telefono","Disponibilidad padel familiar",12,"Interes activo","Enviar huecos alternativos"],
+      ["COM-003","2026-05-21","S-2214","O2CW Boutique Barcelona","App SoyO2","Felicitacion clase Body&Soul",82,"Promotora","Recomendacion personalizada"]
+    ]
+  },
+  encuestas: {
+    headers: ["id_encuesta","fecha","id_socio","club","nps","satisfaccion","puntos_dolor","area_mejora","accion_recomendada"],
+    rows: [
+      ["E-001","2026-05-24","S-1748","O2CW Manuel Becerra",6,"Media","Vestuarios y spa en hora punta","Experiencia club","Recuperar habito con circuito spa en franja valle"],
+      ["E-002","2026-05-22","S-0832","O2CW Granada",7,"Media","Reservas de padel saturadas","Aforos y reservas","Redistribuir pistas y comunicar huecos"],
+      ["E-003","2026-05-21","S-2214","O2CW Boutique Barcelona",10,"Alta","Ninguno","Clases Body&Soul","Usar como promotora"]
+    ]
+  },
+  habitos_uso: {
+    headers: ["id_habito","id_socio","periodo","club","accesos","reservas","servicios_usados","cambio_tendencia","lectura"],
+    rows: [
+      ["H-001","S-1748","Ultimos 30 dias","O2CW Manuel Becerra",3,"2 no-shows","Spa; fuerza","-73% accesos vs periodo anterior","Riesgo alto por perdida de habito"],
+      ["H-002","S-0832","Ultimos 30 dias","O2CW Granada",5,"2 cancelaciones padel","Padel; ciclo","Cambio a franja valle","Riesgo medio por saturacion"],
+      ["H-003","S-2214","Ultimos 30 dias","O2CW Boutique Barcelona",13,"12 reservas","Body&Soul; SoyO2","Estable positivo","Socia promotora"]
+    ]
+  },
+  necesidades_o2: {
+    headers: ["necesidad","informacion_utilizada","herramienta_poc","kpi_demo","responsable","estado"],
+    rows: [
+      ["Prediccion de riesgo de desercion","Accesos; cuotas; servicios utilizados; comunicaciones","Socio 360 + playbook de retencion","churn_score; LTV protegido","Experiencia / club","Cubierto"],
+      ["Satisfaccion y puntos de dolor","Resenas; reclamaciones; encuestas; WhatsApp; telefono","Voz del cliente + sentimiento por sede","sentimiento; NPS; prioridad","CX / direccion","Cubierto"],
+      ["Areas de mejora en el servicio","Sugerencias; reclamaciones; aforos; mantenimiento","Ranking de temas + tareas por club","temas criticos; tareas abiertas","Operaciones","Cubierto"],
+      ["Habitos de uso y cambios de tendencia","Accesos; reservas; SoyO2; servicios usados","Radar de frecuencia y habitos","frecuencia_30d; no-shows; ocupacion","Club manager","Cubierto"],
+      ["Analisis de estrategias comerciales","CRM; llamadas; WhatsApp; visitas; objeciones","Inteligencia comercial y funnel","intencion_compra; objeciones; conversion","Comercial","Cubierto"]
     ]
   },
   entrevistas_comerciales: {
     headers: ["id_entrevista","fecha","lead","club","canal","motivacion","objeciones","intencion_compra","estado","siguiente_accion"],
     rows: [
       ["C-2401","2026-05-24","Ines Romero","O2CW Sexta Avenida","Dia de prueba","Fuerza, piscina y fisioterapia por lesion previa","Precio; horario despues de oficina",86,"Visita agendada","Enviar plan 14 dias con piscina + fisio"],
-      ["C-2388","2026-05-23","Alvaro Segui","O2CW Huelva","Formulario web","Club familiar con piscina y padel","Disponibilidad padel",72,"Contactado","Proponer visita en franja valle"],
+      ["C-2388","2026-05-23","Alvaro Segui","O2CW Huelva","WhatsApp comercial","Club familiar con piscina y padel","Disponibilidad padel",72,"Contactado","Proponer visita en franja valle"],
       ["C-2362","2026-05-22","Nuria Ferrer","O2CW Boutique Girona","Instagram","Gimnasio femenino, yoga, pilates y sauna","Compromiso anual",91,"Alta probable","Cerrar mensual con upgrade Body&Soul"]
     ]
   },
@@ -133,7 +168,7 @@ dashboard.getRange("A1").format = {
 dashboard.getRange("A1").format.rowHeightPx = 40;
 
 dashboard.getRange("A3:H3").merge();
-dashboard.getRange("A3").values = [["Dashboard ejecutivo para retencion, voz del cliente, comercial, aforos y mantenimiento predictivo."]];
+dashboard.getRange("A3").values = [["Dashboard ejecutivo para las necesidades O2: desercion, satisfaccion, puntos de dolor, areas de mejora, habitos de uso y estrategia comercial."]];
 dashboard.getRange("A3").format = { fill: theme.soft, font: { color: theme.ink }, wrapText: true };
 
 writeMatrix(dashboard, "A5", [
@@ -143,29 +178,31 @@ writeMatrix(dashboard, "A5", [
   ["Feedback critico", "", "Casos con sentimiento negativo", "voz_cliente"],
   ["Pipeline probable", "", "Suma de oportunidades comerciales", "entrevistas"],
   ["Aforos saturados", "", "Zonas por encima de umbral", "aforos"],
-  ["Riesgo mantenimiento", "", "Activos con riesgo >=70", "mantenimiento"]
+  ["Riesgo mantenimiento", "", "Activos con riesgo >=70", "mantenimiento"],
+  ["Necesidades O2", "", "Bloques pedidos por O2 cubiertos", "necesidades_o2"]
 ]);
-dashboard.getRange("B6:B11").formulas = [
+dashboard.getRange("B6:B12").formulas = [
   ["=COUNTA(socios!A2:A500)"],
   ["=ROUND(AVERAGE(socios!I2:I500),0)"],
   ["=COUNTIF(voz_cliente!F2:F500,\"<0\")"],
   ["=SUMIF(entrevistas_comerciales!H2:H500,\">=80\",agenda_impacto!F2:F500)"],
   ["=COUNTIF(aforos!H2:H500,\"Saturado\")"],
-  ["=COUNTIF(mantenimiento!F2:F500,\">=70\")"]
+  ["=COUNTIF(mantenimiento!F2:F500,\">=70\")"],
+  ["=COUNTA(necesidades_o2!A2:A500)"]
 ];
 dashboard.getRange("A5:D5").format = { fill: theme.blue, font: { bold: true, color: theme.white } };
-dashboard.getRange("A5:D11").format.borders = { color: theme.line, style: "Continuous", weight: "Thin" };
+dashboard.getRange("A5:D12").format.borders = { color: theme.line, style: "Continuous", weight: "Thin" };
 dashboard.getRange("B9").format.numberFormat = "#,##0";
 dashboard.getRange("A:D").format.columnWidthPx = 150;
 dashboard.getRange("C:C").format.columnWidthPx = 260;
 
 writeMatrix(dashboard, "F5", [
-  ["Escena", "Estado"],
-  ["Socio en riesgo", "Demo-ready"],
-  ["Resena negativa", "Demo-ready"],
-  ["Entrevista comercial", "Demo-ready"],
-  ["Averia anticipada", "Demo-ready"],
-  ["Aforo saturado", "Demo-ready"]
+  ["Necesidad O2", "Herramienta"],
+  ["Prediccion desercion", "Socio 360"],
+  ["Satisfaccion y dolor", "Voz cliente"],
+  ["Areas de mejora", "Temas + tareas"],
+  ["Habitos y tendencias", "Radar + aforos"],
+  ["Estrategia comercial", "Funnel + objeciones"]
 ]);
 dashboard.getRange("F5:G5").format = { fill: theme.ink, font: { bold: true, color: theme.white } };
 dashboard.getRange("F5:G10").format.borders = { color: theme.line, style: "Continuous", weight: "Thin" };

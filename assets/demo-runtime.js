@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v2";
+  const STORAGE_KEY = "o2_runtime_v3";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -123,10 +123,52 @@
       pipeline: [218, 232, 248, 261, 272, 286]
     },
     heroProof: [
-      ["Cliente", "O2 Centro Wellness"],
-      ["Método", "Well-living"],
+      ["Fuentes socio", "8 conectadas"],
+      ["Necesidades O2", "5 cubiertas"],
       ["Red viva", "9 clubs premium"],
       ["Huella", "Demo + Sheet"]
+    ],
+    dataSources: [
+      { label: "Accesos", detail: "Frecuencia, recencia y franjas de uso", strength: 96 },
+      { label: "Cuotas", detail: "Plan, ciclo de cobro y valor protegido", strength: 88 },
+      { label: "Servicios", detail: "Spa, piscina, clases, fisio, pádel y SoyO2", strength: 92 },
+      { label: "Acciones comerciales", detail: "Leads, visitas, objeciones y seguimiento", strength: 84 },
+      { label: "WhatsApp / teléfono", detail: "Motivos, sentimiento y siguiente mejor acción", strength: 76 },
+      { label: "Sugerencias y reclamaciones", detail: "Tema, sede, prioridad y responsable", strength: 91 },
+      { label: "Encuestas", detail: "Satisfacción, NPS y puntos de dolor", strength: 79 },
+      { label: "Aforos y reservas", detail: "Cambios de tendencia por zona y hora", strength: 86 }
+    ],
+    coverage: [
+      {
+        need: "Predicción de riesgo de deserción",
+        output: "Churn explicable + LTV protegido + playbook de recuperación",
+        signals: ["accesos", "cuotas", "servicios", "comunicaciones"],
+        owner: "Experiencia / club"
+      },
+      {
+        need: "Satisfacción y puntos de dolor",
+        output: "Sentimiento por sede + temas críticos + prioridad operativa",
+        signals: ["reseñas", "reclamaciones", "encuestas", "WhatsApp"],
+        owner: "CX / dirección"
+      },
+      {
+        need: "Áreas de mejora en el servicio",
+        output: "Ranking de temas recurrentes: spa, vestuarios, pádel, clases",
+        signals: ["sugerencias", "aforos", "mantenimiento", "recepción"],
+        owner: "Operaciones"
+      },
+      {
+        need: "Hábitos de uso y cambios de tendencia",
+        output: "Radar de frecuencia, reservas, no-shows y migración de franjas",
+        signals: ["accesos", "SoyO2", "reservas", "servicios utilizados"],
+        owner: "Club manager"
+      },
+      {
+        need: "Análisis de estrategias comerciales",
+        output: "Objeciones agregadas + intención de compra + eficacia por canal",
+        signals: ["CRM", "llamadas", "WhatsApp", "visitas comerciales"],
+        owner: "Comercial"
+      }
     ],
     retentionTrend: {
       labels: ["Dic", "Ene", "Feb", "Mar", "Abr", "May"],
@@ -148,10 +190,10 @@
         nextAction: "Llamada de recuperación + invitación a circuito spa en franja valle",
         reason: "Caída fuerte de frecuencia, dos clases no asistidas y una reseña reciente sobre saturación de vestuarios.",
         drivers: [
-          ["Frecuencia 30 días", "3 visitas frente a 11 el mes anterior", 92],
-          ["Saturación percibida", "Vestuarios y spa en hora punta", 78],
-          ["Servicios premium", "Sin uso de fisioterapia ni nutrición en 45 días", 64],
-          ["Momento vital", "Objetivo embarazo/postparto indicado en onboarding", 58]
+          ["Accesos y reservas", "3 accesos frente a 11; dos no-shows en clases SoyO2", 92],
+          ["Satisfacción / dolor", "Encuesta 6/10 + comentario sobre vestuarios y spa en hora punta", 82],
+          ["Servicios utilizados", "Sin fisioterapia, nutrición ni spa en 45 días pese a plan premium", 68],
+          ["Comunicaciones", "WhatsApp abierto sin respuesta y llamada anterior no registrada como resuelta", 58]
         ]
       },
       {
@@ -167,9 +209,9 @@
         nextAction: "Oferta de pack pádel + seguimiento de nutrición",
         reason: "Menor asistencia en pádel y dos cancelaciones tardías en clases de ciclo.",
         drivers: [
-          ["Uso de pádel", "Baja del 42% en reservas", 74],
-          ["Cancelaciones", "2 cancelaciones tardías", 61],
-          ["Canal preferido", "Responde mejor a WhatsApp", 54],
+          ["Hábito de uso", "Baja del 42% en reservas de pádel y cambio a franja valle", 74],
+          ["Cancelaciones", "2 cancelaciones tardías en ciclo y pádel", 61],
+          ["Canal preferido", "Responde mejor a WhatsApp que a email", 54],
           ["Valor protegido", "LTV alto por plan familiar", 68]
         ]
       },
@@ -186,10 +228,10 @@
         nextAction: "Mantener recomendación de Zone Her y Body&Soul",
         reason: "Uso recurrente, feedback positivo y progresión constante.",
         drivers: [
-          ["Frecuencia", "13 visitas en 30 días", 22],
+          ["Frecuencia", "13 accesos en 30 días y tendencia estable", 22],
           ["Comunidad", "Alta afinidad con clases boutique", 18],
-          ["Feedback", "Promotora en última encuesta", 15],
-          ["Servicios", "Usa app y clases ilimitadas", 24]
+          ["Feedback", "Promotora en encuesta y reseña positiva sobre Body&Soul", 15],
+          ["Servicios", "Usa app SoyO2 y clases ilimitadas", 24]
         ]
       }
     ],
@@ -220,7 +262,7 @@
       },
       {
         id: "V-091",
-        channel: "Recepción",
+        channel: "Encuesta post-clase",
         rating: "Promotor",
         club: "Boutique Madrid",
         topic: "Clases Body&Soul",
@@ -229,6 +271,18 @@
         status: "Completada",
         text: "La clase de movilidad ha sido excelente y quiero repetir con la misma instructora.",
         action: "Usar como señal de retención y recomendación personalizada."
+      },
+      {
+        id: "V-088",
+        channel: "WhatsApp",
+        rating: "Neutro",
+        club: "O2CW Manuel Becerra",
+        topic: "Cambio de horario",
+        sentiment: -18,
+        priority: "Media",
+        status: "Nueva",
+        text: "Desde que cambiaron la clase de las 19:30 me cuesta venir entre semana.",
+        action: "Detectar cambio de tendencia y sugerir alternativa de clase o franja."
       }
     ],
     topicScores: [
@@ -254,12 +308,12 @@
         id: "C-2388",
         name: "Álvaro Seguí",
         club: "O2CW Huelva",
-        channel: "Formulario web",
+        channel: "WhatsApp comercial",
         intent: 72,
         status: "Contactado",
         motivation: "Busca club familiar con piscina y pádel.",
         objections: ["Disponibilidad pádel"],
-        nextAction: "Proponer visita en franja valle y mostrar reservas de pádel."
+        nextAction: "Proponer visita en franja valle y mostrar disponibilidad real de pádel."
       },
       {
         id: "C-2362",
@@ -318,7 +372,7 @@
     churn: {
       label: "Socio en riesgo",
       badge: "Lifetime",
-      summary: "Detecta una caída de frecuencia y propone una acción de retención con LTV protegido.",
+      summary: "Cruza accesos, servicios, cuotas y comunicaciones para anticipar deserción con LTV protegido.",
       action: "churn",
       apply(next) {
         next.kpis.churnRisk = 12.9;
@@ -326,7 +380,8 @@
         next.selectedMemberId = "S-1748";
         next.members[0].churnScore = 86;
         next.members[0].status = "Riesgo crítico";
-        next.members[0].nextAction = "Llamada hoy + pase invitado + circuito spa en franja valle";
+        next.members[0].nextAction = "Llamada hoy + WhatsApp personalizado + circuito spa en franja valle";
+        next.members[0].drivers[1] = ["Punto de dolor", "Encuesta 5/10 y WhatsApp sobre saturación de vestuarios", 88];
         next.tasks.unshift({
           id: "T-820",
           category: "Retención",
@@ -334,7 +389,7 @@
           owner: "Responsable experiencia",
           priority: "Alta",
           status: "Hoy",
-          text: "Activar playbook Clara Valera: llamada, invitación y rutina de vuelta."
+          text: "Activar playbook Clara Valera: llamada, WhatsApp personalizado, invitación y rutina de vuelta."
         });
         next.impact[0][1] = 61200;
         next.clubs.find((c) => c.id === "MB").alerts = 6;
@@ -349,15 +404,15 @@
           summary: "Motivo probable, mensaje recomendado y valor protegido.",
           meta: ["LTV 3.240 €", "Riesgo 86", "Acción hoy"],
           body: [
-            "El modelo detecta caída de frecuencia, fricción en hora punta y abandono de servicios premium.",
-            "Acción recomendada: llamada humana desde el club, invitación a circuito spa fuera de pico y rutina de retorno de 14 días.",
+            "El modelo detecta caída de frecuencia, fricción en hora punta, comunicaciones abiertas y abandono de servicios premium.",
+            "Acción recomendada: llamada humana desde el club, WhatsApp personalizado, invitación a circuito spa fuera de pico y rutina de retorno de 14 días.",
             "Impacto esperado: reducir probabilidad de baja y recuperar hábito semanal antes del próximo ciclo de cobro."
           ]
         }
       ],
       timeline: [
         { time: "09:02", title: "Frecuencia anómala", detail: "Clara baja de 11 a 3 visitas en 30 días." },
-        { time: "09:03", title: "Riesgo explicado", detail: "El sistema cruza no-shows, saturación de vestuario y bajo uso de servicios." },
+        { time: "09:03", title: "Riesgo explicado", detail: "El sistema cruza accesos, cuotas, no-shows, WhatsApp, encuesta y bajo uso de servicios." },
         { time: "09:04", title: "Tarea creada", detail: "Responsable de experiencia recibe acción concreta y guion de llamada." },
         { time: "09:05", title: "LTV protegido", detail: "La dirección ve el impacto económico estimado en el dashboard." }
       ]
@@ -365,7 +420,7 @@
     voice: {
       label: "Reseña negativa",
       badge: "Voz cliente",
-      summary: "Clasifica una reseña sobre sauna, crea tarea y mueve el sentimiento del club.",
+      summary: "Unifica reseñas, reclamaciones, sugerencias, encuestas y WhatsApp para detectar puntos de dolor.",
       action: "voice",
       apply(next) {
         next.kpis.sentiment = 76;
@@ -373,7 +428,7 @@
         next.topicScores[0][1] = 46;
         next.voice.unshift({
           id: "V-117",
-          channel: "Google Reviews",
+          channel: "Google Reviews + encuesta",
           rating: "2 estrellas",
           club: "O2CW Málaga",
           topic: "Sauna y baño turco",
@@ -381,7 +436,7 @@
           priority: "Alta",
           status: "Nueva",
           text: "Pago un club premium y la sauna vuelve a estar cerrada sin aviso.",
-          action: "Responder con disculpa, explicar actuación y abrir tarea de mantenimiento."
+          action: "Responder, abrir mantenimiento y marcar Spa como área de mejora en Málaga."
         });
         next.tasks.unshift({
           id: "T-825",
@@ -404,14 +459,14 @@
           summary: "Triage automático, respuesta sugerida y tarea enlazada.",
           meta: ["Sentimiento -88", "Tema Spa", "Alta prioridad"],
           body: [
-            "La reseña queda clasificada como problema de instalación premium, no como queja genérica.",
+            "La reseña y la encuesta quedan clasificadas como problema de instalación premium, no como queja genérica.",
             "Respuesta sugerida: disculpa concreta, confirmación de revisión y canal directo para compensación si procede.",
-            "La misma señal alimenta mantenimiento, reputación online y cuadro de dirección."
+            "La misma señal alimenta mantenimiento, reputación online, satisfacción y áreas de mejora por sede."
           ]
         }
       ],
       timeline: [
-        { time: "11:14", title: "Nueva reseña", detail: "Google Review 2 estrellas sobre sauna en O2CW Málaga." },
+        { time: "11:14", title: "Nuevo dolor detectado", detail: "Google Review 2 estrellas + encuesta de satisfacción sobre sauna en O2CW Málaga." },
         { time: "11:14", title: "NLP clasifica tema", detail: "Tema: Spa. Sentimiento: -88. Prioridad: alta." },
         { time: "11:15", title: "Tarea a club", detail: "Club manager recibe acción y respuesta sugerida." },
         { time: "11:16", title: "Dashboard cambia", detail: "Baja el sentimiento y sube el peso del tema Spa." }
@@ -420,7 +475,7 @@
     sales: {
       label: "Entrevista comercial",
       badge: "Captación",
-      summary: "Resume una conversación, detecta objeciones y propone la siguiente mejor acción.",
+      summary: "Analiza llamadas, WhatsApp y acciones comerciales para entender qué estrategias convierten mejor.",
       action: "sales",
       apply(next) {
         next.kpis.pipeline = 318000;
@@ -428,7 +483,7 @@
           id: "C-2418",
           name: "Carlos Medina",
           club: "O2CW Manuel Becerra",
-          channel: "Llamada grabada",
+          channel: "Llamada + WhatsApp",
           intent: 88,
           status: "Alta probable",
           motivation: "Quiere piscina, fuerza y recuperación por espalda.",
@@ -456,14 +511,14 @@
           meta: ["Intent 88", "Objeción precio", "Cita fisio"],
           body: [
             "Motivación principal: recuperar espalda y volver a entrenar sin dolor.",
-            "Objeciones: precio frente a gimnasio low-cost y aparcamiento en hora punta.",
-            "Siguiente acción: vender valor premium con fisioterapia, piscina y rutina segura de retorno."
+          "Objeciones: precio frente a gimnasio low-cost, aparcamiento en hora punta y dudas por compromiso.",
+          "Siguiente acción: vender valor premium con fisioterapia, piscina y rutina segura de retorno."
           ]
         }
       ],
       timeline: [
         { time: "12:06", title: "Audio procesado", detail: "La llamada se transcribe y resume en menos de un minuto." },
-        { time: "12:07", title: "Objeciones detectadas", detail: "Precio y parking aparecen como frenos de cierre." },
+        { time: "12:07", title: "Objeciones detectadas", detail: "Precio, parking y compromiso aparecen como frenos de cierre." },
         { time: "12:08", title: "Siguiente acción", detail: "Propuesta personalizada con fisioterapia y piscina." },
         { time: "12:09", title: "Pipeline actualizado", detail: "La oportunidad pasa a alta probable." }
       ]
@@ -514,7 +569,7 @@
     capacity: {
       label: "Aforo saturado",
       badge: "Aforos",
-      summary: "Pistas de pádel y spa superan umbral; la POC propone redistribución y aviso en app.",
+      summary: "Detecta cambios de tendencia en hábitos de uso: pádel y spa superan umbral en hora punta.",
       action: "capacity",
       apply(next) {
         next.kpis.occupancy = 78;
@@ -540,7 +595,7 @@
           summary: "Zonas saturadas, mensajes SoyO2 y refuerzo propuesto.",
           meta: ["Pádel 97%", "Spa 92%", "App SoyO2"],
           body: [
-            "La demo detecta saturación en pádel y spa antes de que se traduzca en mala experiencia.",
+            "La demo detecta cambios de hábito y saturación en pádel y spa antes de que se traduzcan en mala experiencia.",
             "Acción: sugerir franja alternativa en SoyO2, abrir lista de espera y reforzar limpieza en spa.",
             "La dirección ve el impacto por club sin tener que revisar logs de acceso manualmente."
           ]
@@ -573,7 +628,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : null;
       // If structure looks stale (no clubs/sparklines field), reset
-      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent) {
+      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources) {
         return deepClone(baseState);
       }
       return parsed;
@@ -827,6 +882,37 @@
         </article>
       `;
     }).join("");
+  }
+
+  function renderCoverage() {
+    const coverageGrid = byId("coverage-grid");
+    const sourceGrid = byId("source-grid");
+    if (!coverageGrid || !sourceGrid) return;
+
+    coverageGrid.innerHTML = state.coverage.map((item, index) => `
+      <article class="coverage-card">
+        <div class="coverage-index">${String(index + 1).padStart(2, "0")}</div>
+        <div>
+          <strong>${item.need}</strong>
+          <p>${item.output}</p>
+          <div class="chip-row">
+            ${item.signals.map((signal) => `<span class="tag">${signal}</span>`).join("")}
+          </div>
+          <span class="coverage-owner">${item.owner}</span>
+        </div>
+      </article>
+    `).join("");
+
+    sourceGrid.innerHTML = state.dataSources.map((source) => `
+      <article class="source-card">
+        <div class="source-top">
+          <strong>${source.label}</strong>
+          <span>${source.strength}%</span>
+        </div>
+        <p>${source.detail}</p>
+        <div class="progress"><i style="width:${source.strength}%"></i></div>
+      </article>
+    `).join("");
   }
 
   function renderMembers() {
@@ -1279,6 +1365,7 @@
 
   function renderAll() {
     renderMetrics();
+    renderCoverage();
     renderNetwork();
     renderTasks();
     renderZones();

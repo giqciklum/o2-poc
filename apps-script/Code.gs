@@ -136,7 +136,46 @@ function setupSheet() {
   appendRows(voz, [
     ["V-104","2026-05-24","Google Reviews","O2CW Malaga","2","-72","Sauna y bano turco","Alta","Abierta","La sauna estaba fuera de servicio otra vez y nadie aviso antes de entrar.","Crear tarea preventiva y respuesta publica"],
     ["V-098","2026-05-23","Hoja sugerencias","O2CW Granada","Sugerencia","26","Pistas de padel","Media","En curso","Ampliar huecos de reserva en tarde.","Cruzar aforo con reservas"],
-    ["V-091","2026-05-22","Recepcion","O2CW Boutique Madrid","Promotor","88","Body&Soul","Baja","Completada","La clase de movilidad ha sido excelente.","Usar como senal de retencion"]
+    ["V-091","2026-05-22","Encuesta post-clase","O2CW Boutique Madrid","Promotor","88","Body&Soul","Baja","Completada","La clase de movilidad ha sido excelente.","Usar como senal de retencion"],
+    ["V-088","2026-05-21","WhatsApp","O2CW Manuel Becerra","Neutro","-18","Cambio de horario","Media","Nueva","Desde que cambiaron la clase de las 19:30 me cuesta venir entre semana.","Detectar cambio de tendencia y sugerir alternativa"]
+  ]);
+
+  var comunicaciones = ensureSheet(ss, "comunicaciones", [
+    "id_comunicacion","fecha","id_socio","club","canal","motivo","sentimiento","resultado","siguiente_accion"
+  ], "#071016");
+  appendRows(comunicaciones, [
+    ["COM-001","2026-05-23","S-1748","O2CW Manuel Becerra","WhatsApp","Saturacion vestuarios y cambio de rutina","-34","Sin resolver","Llamada humana + propuesta franja valle"],
+    ["COM-002","2026-05-22","S-0832","O2CW Granada","Telefono","Disponibilidad padel familiar","12","Interes activo","Enviar huecos alternativos"],
+    ["COM-003","2026-05-21","S-2214","O2CW Boutique Barcelona","App SoyO2","Felicitacion clase Body&Soul","82","Promotora","Recomendacion personalizada"]
+  ]);
+
+  var encuestas = ensureSheet(ss, "encuestas", [
+    "id_encuesta","fecha","id_socio","club","nps","satisfaccion","puntos_dolor","area_mejora","accion_recomendada"
+  ], "#006f9f");
+  appendRows(encuestas, [
+    ["E-001","2026-05-24","S-1748","O2CW Manuel Becerra","6","Media","Vestuarios y spa en hora punta","Experiencia club","Recuperar habito con circuito spa en franja valle"],
+    ["E-002","2026-05-22","S-0832","O2CW Granada","7","Media","Reservas de padel saturadas","Aforos y reservas","Redistribuir pistas y comunicar huecos"],
+    ["E-003","2026-05-21","S-2214","O2CW Boutique Barcelona","10","Alta","Ninguno","Clases Body&Soul","Usar como promotora"]
+  ]);
+
+  var habitos = ensureSheet(ss, "habitos_uso", [
+    "id_habito","id_socio","periodo","club","accesos","reservas","servicios_usados","cambio_tendencia","lectura"
+  ], "#009de0");
+  appendRows(habitos, [
+    ["H-001","S-1748","Ultimos 30 dias","O2CW Manuel Becerra","3","2 no-shows","Spa; fuerza","-73% accesos vs periodo anterior","Riesgo alto por perdida de habito"],
+    ["H-002","S-0832","Ultimos 30 dias","O2CW Granada","5","2 cancelaciones padel","Padel; ciclo","Cambio a franja valle","Riesgo medio por saturacion"],
+    ["H-003","S-2214","Ultimos 30 dias","O2CW Boutique Barcelona","13","12 reservas","Body&Soul; SoyO2","Estable positivo","Socia promotora"]
+  ]);
+
+  var necesidades = ensureSheet(ss, "necesidades_o2", [
+    "necesidad","informacion_utilizada","herramienta_poc","kpi_demo","responsable","estado"
+  ], "#009de0");
+  appendRows(necesidades, [
+    ["Prediccion de riesgo de desercion","Accesos; cuotas; servicios utilizados; comunicaciones","Socio 360 + playbook de retencion","churn_score; LTV protegido","Experiencia / club","Cubierto"],
+    ["Satisfaccion y puntos de dolor","Resenas; reclamaciones; encuestas; WhatsApp; telefono","Voz del cliente + sentimiento por sede","sentimiento; NPS; prioridad","CX / direccion","Cubierto"],
+    ["Areas de mejora en el servicio","Sugerencias; reclamaciones; aforos; mantenimiento","Ranking de temas + tareas por club","temas criticos; tareas abiertas","Operaciones","Cubierto"],
+    ["Habitos de uso y cambios de tendencia","Accesos; reservas; SoyO2; servicios usados","Radar de frecuencia y habitos","frecuencia_30d; no-shows; ocupacion","Club manager","Cubierto"],
+    ["Analisis de estrategias comerciales","CRM; llamadas; WhatsApp; visitas; objeciones","Inteligencia comercial y funnel","intencion_compra; objeciones; conversion","Comercial","Cubierto"]
   ]);
 
   var entrevistas = ensureSheet(ss, "entrevistas_comerciales", [
@@ -144,7 +183,7 @@ function setupSheet() {
   ], "#071016");
   appendRows(entrevistas, [
     ["C-2401","2026-05-24","Ines Romero","O2CW Sexta Avenida","Dia de prueba","Fuerza, piscina y fisioterapia por lesion previa","Precio; horario despues de oficina","86","Visita agendada","Enviar plan 14 dias con piscina + fisio"],
-    ["C-2388","2026-05-23","Alvaro Segui","O2CW Huelva","Formulario web","Club familiar con piscina y padel","Disponibilidad padel","72","Contactado","Proponer visita en franja valle"],
+    ["C-2388","2026-05-23","Alvaro Segui","O2CW Huelva","WhatsApp comercial","Club familiar con piscina y padel","Disponibilidad padel","72","Contactado","Proponer visita en franja valle"],
     ["C-2362","2026-05-22","Nuria Ferrer","O2CW Boutique Girona","Instagram","Gimnasio femenino, yoga, pilates y sauna","Compromiso anual","91","Alta probable","Cerrar mensual con upgrade Body&Soul"]
   ]);
 
@@ -223,25 +262,29 @@ function handleTrigger(action, ss) {
   lock.waitLock(10000);
   try {
     if (action === "churn") {
-      appendTask(ss, "Retencion", "O2CW Manuel Becerra", "Responsable experiencia", "Alta", "Activar playbook Clara Valera: llamada, invitacion y rutina de vuelta.");
-      appendAutomation(ss, "Churn score", "S-1748", "Riesgo sube a 86/100", "Playbook de retencion y valor protegido actualizado.");
+      appendTask(ss, "Retencion", "O2CW Manuel Becerra", "Responsable experiencia", "Alta", "Activar playbook Clara Valera: llamada, WhatsApp personalizado, invitacion y rutina de vuelta.");
+      if (ss.getSheetByName("comunicaciones")) ss.getSheetByName("comunicaciones").appendRow([getNextSequentialId(ss.getSheetByName("comunicaciones"), "COM-"), todayIso(), "S-1748", "O2CW Manuel Becerra", "WhatsApp + llamada", "Recuperacion de habito", "-42", "Pendiente", "Invitacion spa franja valle"]);
+      if (ss.getSheetByName("habitos_uso")) ss.getSheetByName("habitos_uso").appendRow([getNextSequentialId(ss.getSheetByName("habitos_uso"), "H-"), "S-1748", "Ultimos 30 dias", "O2CW Manuel Becerra", "3", "2 no-shows", "Spa; fuerza", "Caida critica", "Activar retencion"]);
+      appendAutomation(ss, "Churn score", "S-1748", "Riesgo sube a 86/100 cruzando accesos, cuotas, servicios y comunicaciones", "Playbook de retencion y valor protegido actualizado.");
       ss.getSheetByName("agenda_impacto").appendRow([todayIso(), "ingreso protegido", "retencion", "O2CW Manuel Becerra", "S-1748", "3240", "accion hoy", "lifetime", "churn", "Playbook activado"]);
       return json({ status: "ok", version: VERSION, action: action, mensaje: "Socio en riesgo registrado y playbook de retencion creado." });
     }
 
     if (action === "voice") {
       var voiceId = getNextSequentialId(ss.getSheetByName("voz_cliente"), "V-");
-      ss.getSheetByName("voz_cliente").appendRow([voiceId, todayIso(), "Google Reviews", "O2CW Malaga", "2", "-88", "Sauna y bano turco", "Alta", "Nueva", "Pago un club premium y la sauna vuelve a estar cerrada sin aviso.", "Responder y abrir mantenimiento"]);
+      ss.getSheetByName("voz_cliente").appendRow([voiceId, todayIso(), "Google Reviews + encuesta", "O2CW Malaga", "2", "-88", "Sauna y bano turco", "Alta", "Nueva", "Pago un club premium y la sauna vuelve a estar cerrada sin aviso.", "Responder, abrir mantenimiento y marcar area de mejora"]);
+      if (ss.getSheetByName("encuestas")) ss.getSheetByName("encuestas").appendRow([getNextSequentialId(ss.getSheetByName("encuestas"), "E-"), todayIso(), "anonimo", "O2CW Malaga", "4", "Baja", "Sauna cerrada sin aviso", "Spa y comunicacion preventiva", "Plan preventivo + aviso SoyO2"]);
       appendTask(ss, "Reclamacion", "O2CW Malaga", "Club manager", "Alta", "Gestionar resena 2 estrellas sobre sauna y confirmar plan preventivo.");
-      appendAutomation(ss, "Voz cliente", voiceId, "Resena clasificada como Spa - sentimiento -88", "Tarea y respuesta sugerida creadas.");
+      appendAutomation(ss, "Voz cliente", voiceId, "Resena y encuesta clasificadas como Spa - sentimiento -88", "Tarea, area de mejora y respuesta sugerida creadas.");
       return json({ status: "ok", version: VERSION, action: action, mensaje: "Resena clasificada, tarea creada y sentimiento actualizado." });
     }
 
     if (action === "sales") {
       var salesId = getNextSequentialId(ss.getSheetByName("entrevistas_comerciales"), "C-");
-      ss.getSheetByName("entrevistas_comerciales").appendRow([salesId, todayIso(), "Carlos Medina", "O2CW Manuel Becerra", "Llamada grabada", "Piscina, fuerza y recuperacion de espalda", "Precio; parking", "88", "Alta probable", "Enviar comparativa de valor premium y cita con fisioterapeuta"]);
+      ss.getSheetByName("entrevistas_comerciales").appendRow([salesId, todayIso(), "Carlos Medina", "O2CW Manuel Becerra", "Llamada + WhatsApp", "Piscina, fuerza y recuperacion de espalda", "Precio; parking; compromiso", "88", "Alta probable", "Enviar comparativa de valor premium y cita con fisioterapeuta"]);
+      if (ss.getSheetByName("comunicaciones")) ss.getSheetByName("comunicaciones").appendRow([getNextSequentialId(ss.getSheetByName("comunicaciones"), "COM-"), todayIso(), "lead", "O2CW Manuel Becerra", "WhatsApp comercial", "Resolver objecion precio y parking", "24", "Abierto", "Enviar prueba piscina + fisioterapia"]);
       appendTask(ss, "Comercial", "O2CW Manuel Becerra", "Equipo ventas", "Alta", "Enviar propuesta Well Living a Carlos Medina con prueba de piscina y fisio.");
-      appendAutomation(ss, "Entrevista comercial", salesId, "Objeciones precio y parking detectadas", "Resumen IA y siguiente accion creados.");
+      appendAutomation(ss, "Entrevista comercial", salesId, "Objeciones precio, parking y compromiso detectadas", "Resumen IA y siguiente accion creados.");
       return json({ status: "ok", version: VERSION, action: action, mensaje: "Entrevista comercial resumida y siguiente accion asignada." });
     }
 
@@ -256,6 +299,7 @@ function handleTrigger(action, ss) {
       appendTask(ss, "Aforo", "O2CW Malaga", "Operaciones", "Media", "Activar recomendacion de franja alternativa para padel y mensaje SoyO2.");
       appendAutomation(ss, "Aforo saturado", "AF-001", "Padel Malaga al 97%", "Mensaje SoyO2 y lista de espera preparados.");
       ss.getSheetByName("aforos").appendRow(["AF-099", nowFormatted(), "O2CW Malaga", "Padel", "padel", "97", "85", "Saturado", "Derivar reservas a franja 21:00 y abrir lista de espera"]);
+      if (ss.getSheetByName("habitos_uso")) ss.getSheetByName("habitos_uso").appendRow([getNextSequentialId(ss.getSheetByName("habitos_uso"), "H-"), "segmento-padel", "Hora punta", "O2CW Malaga", "alto", "97% ocupacion", "Padel", "Cambio de tendencia a saturacion", "Redistribuir demanda"]);
       return json({ status: "ok", version: VERSION, action: action, mensaje: "Aforo saturado registrado y plan operativo creado." });
     }
 
@@ -269,6 +313,10 @@ function buildStatePayload(ss, detailFull) {
   var socios = ss.getSheetByName("socios");
   var voz = ss.getSheetByName("voz_cliente");
   var entrevistas = ss.getSheetByName("entrevistas_comerciales");
+  var comunicaciones = ss.getSheetByName("comunicaciones");
+  var encuestas = ss.getSheetByName("encuestas");
+  var habitos = ss.getSheetByName("habitos_uso");
+  var necesidades = ss.getSheetByName("necesidades_o2");
   var aforos = ss.getSheetByName("aforos");
   var mantenimiento = ss.getSheetByName("mantenimiento");
   var tareas = ss.getSheetByName("tareas");
@@ -293,8 +341,12 @@ function buildStatePayload(ss, detailFull) {
       tareas_abiertas: openTasks,
       feedback_total: voz ? voz.getLastRow() - 1 : 0,
       entrevistas_total: entrevistas ? entrevistas.getLastRow() - 1 : 0,
+      comunicaciones_total: comunicaciones ? comunicaciones.getLastRow() - 1 : 0,
+      encuestas_total: encuestas ? encuestas.getLastRow() - 1 : 0,
+      habitos_total: habitos ? habitos.getLastRow() - 1 : 0,
       aforos_total: aforos ? aforos.getLastRow() - 1 : 0,
-      mantenimiento_total: mantenimiento ? mantenimiento.getLastRow() - 1 : 0
+      mantenimiento_total: mantenimiento ? mantenimiento.getLastRow() - 1 : 0,
+      necesidades_cubiertas: necesidades ? necesidades.getLastRow() - 1 : 0
     }
   };
 
@@ -303,6 +355,10 @@ function buildStatePayload(ss, detailFull) {
       socios: sheetToObjects(socios),
       voz_cliente: sheetToObjects(voz),
       entrevistas_comerciales: sheetToObjects(entrevistas),
+      comunicaciones: sheetToObjects(comunicaciones),
+      encuestas: sheetToObjects(encuestas),
+      habitos_uso: sheetToObjects(habitos),
+      necesidades_o2: sheetToObjects(necesidades),
       aforos: sheetToObjects(aforos),
       mantenimiento: sheetToObjects(mantenimiento),
       tareas: sheetToObjects(tareas),

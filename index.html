@@ -1100,6 +1100,87 @@
       font-weight: 600;
     }
 
+    .coverage-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .coverage-grid,
+    .source-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .coverage-card {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 12px;
+      min-height: 118px;
+      padding: 14px;
+      border: 1px solid rgba(0, 157, 224, 0.20);
+      border-radius: var(--radius-sm);
+      background:
+        linear-gradient(135deg, rgba(0, 157, 224, 0.055), rgba(109, 207, 213, 0.035)),
+        var(--surface);
+      box-shadow: 0 8px 18px rgba(10, 26, 42, 0.045);
+    }
+    .coverage-index {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+      color: #fff;
+      font-family: "Fraunces", serif;
+      font-size: 1.02rem;
+      font-weight: 700;
+      box-shadow: 0 8px 18px var(--blue-shadow);
+    }
+    .coverage-card strong,
+    .source-card strong {
+      display: block;
+      color: var(--ink);
+      font-weight: 800;
+      line-height: 1.25;
+    }
+    .coverage-card p,
+    .source-card p {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.86rem;
+      margin-top: 6px;
+      font-weight: 600;
+    }
+    .coverage-card .chip-row { margin-top: 10px; }
+    .coverage-owner {
+      display: inline-block;
+      color: var(--blue-deep);
+      font-size: 0.74rem;
+      font-weight: 800;
+      margin-top: 9px;
+      text-transform: uppercase;
+    }
+    .source-card {
+      min-height: 92px;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      box-shadow: 0 6px 16px rgba(10, 26, 42, 0.035);
+    }
+    .source-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+    .source-top span {
+      color: var(--blue-deep);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
     #lifetime > .two-col > .panel:first-child,
     #voice > .two-col > .panel:first-child,
     #sales > .two-col > .panel:first-child,
@@ -1816,6 +1897,7 @@
       .nav { justify-content: start; }
       .metric-grid, .hero-proof, .zone-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .signal-flow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .coverage-layout { grid-template-columns: 1fr; }
       .network-stage { grid-template-columns: 1fr; }
       .scenario-grid, .three-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
@@ -1828,7 +1910,7 @@
       .hero { padding: 16px; min-height: auto; }
       .hero-copy { padding: 24px; }
       .hero-visual, .hero-visual img { min-height: 320px; }
-      .metric-grid, .hero-proof, .signal-flow, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
+      .metric-grid, .hero-proof, .signal-flow, .coverage-layout, .zone-grid, .scenario-grid, .three-col { grid-template-columns: 1fr; }
       .panel-head { display: grid; }
       .mini-table th, .mini-table td {
         padding: 10px 6px;
@@ -1905,10 +1987,10 @@
             <div class="hero-proof" id="hero-proof"></div>
             <div class="signal-flow" aria-label="Flujo de señales O2">
               <div class="signal-step"><span>Accesos</span><strong>Frecuencia</strong></div>
-              <div class="signal-step"><span>SoyO2</span><strong>Reservas</strong></div>
-              <div class="signal-step"><span>Voz</span><strong>Sentimiento</strong></div>
-              <div class="signal-step"><span>Club</span><strong>Aforos</strong></div>
-              <div class="signal-step"><span>Acción</span><strong>Playbook</strong></div>
+              <div class="signal-step"><span>Cuotas</span><strong>LTV</strong></div>
+              <div class="signal-step"><span>Servicios</span><strong>Hábitos</strong></div>
+              <div class="signal-step"><span>WhatsApp</span><strong>Dolores</strong></div>
+              <div class="signal-step"><span>Comercial</span><strong>Estrategia</strong></div>
             </div>
           </div>
           <figure class="hero-visual hero-console">
@@ -1945,6 +2027,20 @@
         </div>
 
         <div class="metric-grid" id="metric-grid"></div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Matriz de necesidades O2 <small>Fuentes del socio → decisiones accionables</small></h2>
+              <p>La demo cubre explícitamente accesos, cuotas, servicios utilizados, acciones comerciales, comunicaciones, WhatsApp/teléfono, sugerencias, reclamaciones y encuestas para responder a los cinco bloques que O2 ha priorizado.</p>
+            </div>
+            <span class="status-pill low">5/5 cubierto</span>
+          </div>
+          <div class="coverage-layout">
+            <div class="coverage-grid" id="coverage-grid"></div>
+            <div class="source-grid" id="source-grid"></div>
+          </div>
+        </section>
 
         <section class="panel">
           <div class="panel-head">
@@ -2031,7 +2127,7 @@
           <section class="panel">
             <div class="panel-head">
               <div>
-                <h2>Sentimiento <small>Reseñas, hojas y recepción</small></h2>
+                <h2>Sentimiento <small>Reseñas, reclamaciones, encuestas y WhatsApp</small></h2>
               </div>
             </div>
             <div class="chart-box small"><canvas id="sentiment-chart"></canvas></div>
@@ -2065,7 +2161,7 @@
               <div>
                 <span class="eyebrow">Socio 360</span>
                 <h2 id="lifetime-title">Riesgos explicables, no alertas genéricas</h2>
-                <p>Cada socio en riesgo lleva motivo probable, valor protegido y siguiente acción para el equipo del club.</p>
+                <p>Cada socio en riesgo cruza accesos, cuotas, servicios utilizados, comunicaciones y satisfacción para explicar motivo probable, valor protegido y siguiente acción.</p>
               </div>
             </div>
             <div class="member-grid" id="member-grid" style="display: grid; gap: 10px;"></div>
@@ -2085,7 +2181,7 @@
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Variables que explican el churn <small>Modelo sintético — frecuencia, uso de servicios, feedback y saturación</small></h2>
+              <h2>Variables que explican el churn <small>Accesos, cuotas, servicios, comunicaciones y puntos de dolor</small></h2>
             </div>
           </div>
           <table class="mini-table" id="drivers-table"></table>
@@ -2100,7 +2196,7 @@
               <div>
                 <span class="eyebrow">Voz del cliente</span>
                 <h2 id="voice-title">Feedback clasificado por IA</h2>
-                <p>Reseñas Google, hojas de reclamación, sugerencias escritas y conversaciones en recepción, todo agregado por tema, sede y prioridad.</p>
+                <p>Reseñas Google, hojas de reclamación, sugerencias, encuestas, WhatsApp y conversaciones telefónicas, todo agregado por tema, sede, sentimiento y prioridad.</p>
               </div>
             </div>
             <div class="feed-list" id="voice-feed" style="display: grid; gap: 10px;"></div>
@@ -2126,7 +2222,7 @@
               <div>
                 <span class="eyebrow">Inteligencia comercial</span>
                 <h2 id="sales-title">Entrevistas de captación analizadas</h2>
-                <p>Resumen, motivación, objeciones reales y siguiente mejor acción — listo para que el comercial cierre con argumentos.</p>
+                <p>Resumen de llamadas/WhatsApp, motivación, objeciones reales, eficacia por canal y siguiente mejor acción — listo para analizar estrategias comerciales.</p>
               </div>
             </div>
             <div class="feed-list" id="sales-feed" style="display: grid; gap: 10px;"></div>
