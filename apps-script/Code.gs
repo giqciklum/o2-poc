@@ -401,7 +401,7 @@ function handleTrigger(action, ss) {
       ss.getSheetByName("entrevistas_comerciales").appendRow([salesId, todayIso(), "Carlos Medina", "O2CW Manuel Becerra", "Llamada + WhatsApp", "Piscina, fuerza y recuperacion de espalda", "Precio; parking; compromiso", "88", "Alta probable", "Enviar comparativa de valor premium y cita con fisioterapeuta"]);
       if (ss.getSheetByName("comunicaciones")) ss.getSheetByName("comunicaciones").appendRow([getNextSequentialId(ss.getSheetByName("comunicaciones"), "COM-"), todayIso(), "lead", "O2CW Manuel Becerra", "WhatsApp comercial", "Resolver objecion precio y parking", "24", "Abierto", "Enviar prueba piscina + fisioterapia"]);
       appendTask(ss, "Comercial", "O2CW Manuel Becerra", "Equipo ventas", "Alta", "Enviar propuesta Well Living a Carlos Medina con prueba de piscina y fisio.");
-      appendAutomation(ss, "Entrevista comercial", salesId, "Objeciones precio, parking y compromiso detectadas", "Resumen IA y siguiente accion creados.");
+      appendAutomation(ss, "Entrevista comercial", salesId, "Objeciones precio, parking y compromiso detectadas", "Resumen comercial y siguiente accion creados.");
       return json({ status: "ok", version: VERSION, action: action, mensaje: "Entrevista comercial resumida y siguiente accion asignada." });
     }
 
