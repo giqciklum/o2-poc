@@ -1762,7 +1762,57 @@
       .replace(/Friccion/g, "Fricción")
       .replace(/friccion/g, "fricción")
       .replace(/Promocion/g, "Promoción")
-      .replace(/promocion/g, "promoción");
+      .replace(/promocion/g, "promoción")
+      .replace(/Climatizacion/g, "Climatización")
+      .replace(/climatizacion/g, "climatización")
+      .replace(/Iluminacion/g, "Iluminación")
+      .replace(/iluminacion/g, "iluminación")
+      .replace(/Inspeccion/g, "Inspección")
+      .replace(/inspeccion/g, "inspección")
+      .replace(/Electrica/g, "Eléctrica")
+      .replace(/electrica/g, "eléctrica")
+      .replace(/Electrico/g, "Eléctrico")
+      .replace(/electrico/g, "eléctrico")
+      .replace(/Tecnico/g, "Técnico")
+      .replace(/tecnico/g, "técnico")
+      .replace(/Vibracion/g, "Vibración")
+      .replace(/vibracion/g, "vibración")
+      .replace(/Sabado/g, "Sábado")
+      .replace(/sabado/g, "sábado")
+      .replace(/Revision/g, "Revisión")
+      .replace(/revision/g, "revisión")
+      .replace(/Sesion\b/g, "Sesión")
+      .replace(/sesion\b/g, "sesión")
+      .replace(/Reservas? saturad/g, function(m){ return m.replace("saturad","saturad"); })
+      .replace(/Tension\b/g, "Tensión")
+      .replace(/tension\b/g, "tensión")
+      .replace(/Aviso\b/g, "Aviso")
+      .replace(/Practica/g, "Práctica")
+      .replace(/practica/g, "práctica")
+      .replace(/Reactivacion/g, "Reactivación")
+      .replace(/reactivacion/g, "reactivación")
+      .replace(/Cancelacion/g, "Cancelación")
+      .replace(/cancelacion/g, "cancelación")
+      .replace(/Cancelaciones/g, "Cancelaciones")
+      .replace(/cancelaciones/g, "cancelaciones")
+      .replace(/Notificacion/g, "Notificación")
+      .replace(/notificacion/g, "notificación")
+      .replace(/Vacacion/g, "Vacación")
+      .replace(/vacacion/g, "vacación")
+      .replace(/Renovacion/g, "Renovación")
+      .replace(/renovacion/g, "renovación")
+      .replace(/Anos\b/g, "Años")
+      .replace(/anos\b/g, "años")
+      .replace(/Dia\b/g, "Día")
+      .replace(/\bdia\b/g, "día")
+      .replace(/Dias\b/g, "Días")
+      .replace(/\bdias\b/g, "días")
+      .replace(/Mas\b/g, "Más")
+      .replace(/\bmas\b/g, "más")
+      .replace(/Despues/g, "Después")
+      .replace(/despues/g, "después")
+      .replace(/Util\b/g, "Útil")
+      .replace(/\butil\b/g, "útil");
   }
 
   // Devuelve un label corto y categórico para el badge de cambio de tendencia.
@@ -2028,16 +2078,28 @@
       : scoreClass(selected.value);
 
     byId("operations-table").innerHTML = `
+      <colgroup>
+        <col style="width: 26%">
+        <col style="width: 18%">
+        <col style="width: 26%">
+        <col style="width: 30%">
+      </colgroup>
       <thead><tr><th>Ámbito</th><th>Club</th><th>Lectura</th><th>Acción</th></tr></thead>
       <tbody>
-        ${priorityRows.map((item) => `
+        ${priorityRows.map((item) => {
+          const label = prettyAccents(item.label);
+          const club = prettyAccents(item.club).replace("O2CW ", "");
+          const reading = prettyAccents(item.reading);
+          const action = prettyAccents(item.action);
+          return `
           <tr class="operation-row ${item.id === selected.id ? "active" : ""}" data-operation-id="${item.id}">
-            <td><span class="status-pill ${priorityClass(item.status === "Saturado" ? "alta" : item.status === "Tensión" ? "media" : item.status)}">${item.label}</span></td>
-            <td>${item.club.replace("O2CW ", "")}</td>
-            <td>${item.reading}</td>
-            <td>${item.action}</td>
+            <td><span class="status-pill ${priorityClass(item.status === "Saturado" ? "alta" : item.status === "Tensión" ? "media" : item.status)}" style="white-space: normal; line-height: 1.3; text-align: left; max-width: 100%;">${label}</span></td>
+            <td>${club}</td>
+            <td>${reading}</td>
+            <td>${action}</td>
           </tr>
-        `).join("")}
+        `;
+        }).join("")}
       </tbody>
     `;
 
@@ -2049,9 +2111,9 @@
         <article class="detail-panel">
           <div class="detail-title-row">
             <div>
-              <span class="tag">${selected.kind} · ${selected.club}</span>
-              <h3 style="margin-top: 12px;">${selected.label}</h3>
-              <p>${selected.reading}</p>
+              <span class="tag">${selected.kind} · ${prettyAccents(selected.club)}</span>
+              <h3 style="margin-top: 12px;">${prettyAccents(selected.label)}</h3>
+              <p>${prettyAccents(selected.reading)}</p>
             </div>
             <span class="detail-score ${tone}">${selected.value}</span>
           </div>
@@ -2062,11 +2124,11 @@
           </div>
           <div class="source-focus">
             <span>Siguiente acción</span>
-            <strong>${selected.action}</strong>
+            <strong>${prettyAccents(selected.action)}</strong>
             <p>La fila deja de ser un dato suelto: se convierte en tarea, responsable y verificación de impacto.</p>
           </div>
           <ul class="operation-next-actions">
-            ${selected.steps.map((step) => `<li>${step}</li>`).join("")}
+            ${selected.steps.map((step) => `<li>${prettyAccents(step)}</li>`).join("")}
           </ul>
           <button class="button primary" type="button" data-scenario="${selected.scenario}">Simular cadena completa <span class="arrow">→</span></button>
         </article>
