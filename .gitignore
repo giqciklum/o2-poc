@@ -15,7 +15,6 @@ LOCAL_*.md
 *_PRIVADA.md
 
 # Docs internos de venta/handoff — mantener locales, NUNCA publicar (el cliente puede mirar el repo)
-/README.md
 /docs/guia-demo-reunion.md
 /docs/mensaje-cliente.md
 /docs/mensaje-equipo.md
