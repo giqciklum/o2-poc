@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v8";
+  const STORAGE_KEY = "o2_runtime_v9";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -370,14 +370,19 @@
       { id: "COM-003", date: "2026-05-21", memberId: "S-2214", memberName: "Marta Roca", club: "Boutique Barcelona", channel: "App SoyO2", reason: "Felicitación clase Body&Soul", sentiment: 82, result: "Promotora", nextAction: "Recomendación personalizada y referral" },
       { id: "COM-004", date: "2026-05-24", memberId: "S-2602", memberName: "Lucía Marín", club: "O2CW Málaga", channel: "WhatsApp", reason: "Queja por sauna fuera de servicio", sentiment: -68, result: "Abierto", nextAction: "Respuesta humana + invitación recovery" },
       { id: "COM-005", date: "2026-05-24", memberId: "S-1189", memberName: "Óscar Vidal", club: "O2CW Sexta Avenida", channel: "Teléfono", reason: "Cambio horario laboral", sentiment: -8, result: "Contactado", nextAction: "Enviar ZONE 20:30 y plan corporate" },
-      { id: "COM-006", date: "2026-05-23", memberId: "S-2334", memberName: "Andrea Solís", club: "O2CW Huelva", channel: "Teléfono", reason: "Dolor lumbar y abandono fisio", sentiment: -38, result: "Sin respuesta", nextAction: "Reintentar llamada con fisio asignada" }
+      { id: "COM-006", date: "2026-05-23", memberId: "S-2334", memberName: "Rafael Torres", club: "O2CW Huelva", channel: "Teléfono", reason: "Dolor lumbar y abandono de fisioterapia", sentiment: -38, result: "Sin respuesta", nextAction: "Reintentar llamada con fisio asignada" }
     ],
     habits: [
       { id: "H-001", memberId: "S-1748", memberName: "Clara Valera", club: "O2CW Manuel Becerra", period: "Últimos 30 días", accesses: 3, accessesPrev: 11, bookings: 2, bookingsPrev: 7, servicesUsed: "Spa (1) · Fitness (2)", trend: "Caída crítica", reading: "Pérdida de hábito tras saturación; activar retención" },
       { id: "H-002", memberId: "S-0832", memberName: "Javier Antón", club: "O2CW Granada", period: "Últimos 30 días", accesses: 5, accessesPrev: 8, bookings: 3, bookingsPrev: 5, servicesUsed: "Pádel (2) · Piscina (1)", trend: "Cambio a franja valle", reading: "Migración de hábito; ajustar oferta de pádel" },
       { id: "H-003", memberId: "S-2214", memberName: "Marta Roca", club: "Boutique Barcelona", period: "Últimos 30 días", accesses: 13, accessesPrev: 12, bookings: 11, bookingsPrev: 10, servicesUsed: "Body&Soul (6) · Yoga (3) · Spa (2)", trend: "Estable creciente", reading: "Patrón premium consolidado; usar como referencia" },
       { id: "H-004", memberId: "S-2602", memberName: "Lucía Marín", club: "O2CW Málaga", period: "Últimos 30 días", accesses: 4, accessesPrev: 12, bookings: 1, bookingsPrev: 6, servicesUsed: "Piscina (1)", trend: "Caída crítica", reading: "Sin recovery ni fisio en 38 días" },
-      { id: "H-005", memberId: "segmento-padel", memberName: "Segmento pádel hora punta", club: "O2CW Málaga", period: "Hora punta", accesses: 97, accessesPrev: 78, bookings: 142, bookingsPrev: 118, servicesUsed: "Pádel (97%)", trend: "Saturación creciente", reading: "Redistribuir demanda y abrir lista de espera" }
+      { id: "H-005", memberId: "S-1189", memberName: "Óscar Vidal", club: "O2CW Sexta Avenida", period: "Últimos 30 días", accesses: 6, accessesPrev: 9, bookings: 3, bookingsPrev: 6, servicesUsed: "ZONE (3) · Fuerza (2)", trend: "Cambio a franja noche", reading: "Pérdida por cambio de franja laboral; reactivar ZONE ejecutivo" },
+      { id: "H-006", memberId: "S-3077", memberName: "Ainhoa Pérez", club: "O2CW Parc del Migdia", period: "Últimos 30 días", accesses: 15, accessesPrev: 14, bookings: 9, bookingsPrev: 7, servicesUsed: "Piscina (5) · Aqua (4)", trend: "Estable creciente", reading: "Patrón familiar fuerte; invitar a reto SoyO2" },
+      { id: "H-007", memberId: "S-2334", memberName: "Rafael Torres", club: "O2CW Huelva", period: "Últimos 30 días", accesses: 2, accessesPrev: 7, bookings: 0, bookingsPrev: 3, servicesUsed: "Sala fitness (2)", trend: "Caída crítica", reading: "Dolor lumbar y abandono de fisio; llamada de retorno" },
+      { id: "H-008", memberId: "S-3201", memberName: "Hugo Salas", club: "O2CW Granada", period: "Últimos 30 días", accesses: 8, accessesPrev: 13, bookings: 5, bookingsPrev: 9, servicesUsed: "Pádel (5) · Spa (1)", trend: "Saturación de pádel", reading: "Reservas rechazadas en pico; ofrecer franja valle" },
+      { id: "H-009", memberId: "S-3742", memberName: "Mateo Puig", club: "O2CW Parc del Migdia", period: "Últimos 30 días", accesses: 6, accessesPrev: 10, bookings: 1, bookingsPrev: 4, servicesUsed: "Outdoor (4) · On Demand (1)", trend: "Migración a exterior", reading: "Activar grupo running para recuperar hábito" },
+      { id: "H-PADEL-PICO", memberId: "segmento-padel", memberName: "Segmento pádel hora punta", club: "O2CW Málaga", period: "Hora punta", accesses: 97, accessesPrev: 78, bookings: 142, bookingsPrev: 118, servicesUsed: "Pádel (97%)", trend: "Saturación creciente", reading: "Redistribuir demanda y abrir lista de espera" }
     ],
     impact: [
       ["Revenue protegido", 42800, "Socios con LTV alto priorizados antes de baja."],
@@ -1172,6 +1177,14 @@
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "");
+  }
+
+  function deburr(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .trim();
   }
 
   function num(value, fallback = 0) {
@@ -2540,9 +2553,14 @@
     const visits30 = num(row.frecuencia_30d, 0);
     const visitsPrev = num(row.frecuencia_prev_30d, 0);
     const delta = visitsPrev ? Math.round(((visits30 - visitsPrev) / visitsPrev) * 100) : 0;
+    const existingMember = (state.members || []).find((m) => m.id === row.id_socio);
+    const sheetName = prettyAccents(pretty(row.nombre || "Socio O2"));
+    const name = existingMember && existingMember.name && deburr(existingMember.name) === deburr(sheetName)
+      ? existingMember.name
+      : sheetName;
     return {
       id: row.id_socio,
-      name: prettyAccents(pretty(row.nombre || "Socio O2")),
+      name,
       club: prettyAccents(pretty(row.club || "O2CW")),
       plan: prettyAccents(pretty(row.plan || row.programa || "Well Living")),
       status: prettyAccents(pretty(row.estado || (churn >= 70 ? "Riesgo alto" : churn >= 50 ? "Riesgo medio" : "Estable"))),
@@ -2577,9 +2595,14 @@
   }
 
   function mapSheetSales(row) {
+    const existingSale = (state.sales || []).find((s) => s.id === row.id_entrevista);
+    const sheetName = prettyAccents(pretty(row.lead || "Lead O2"));
+    const name = existingSale && existingSale.name && deburr(existingSale.name) === deburr(sheetName)
+      ? existingSale.name
+      : sheetName;
     return {
       id: row.id_entrevista,
-      name: prettyAccents(pretty(row.lead || "Lead O2")),
+      name,
       club: prettyAccents(pretty(row.club || "O2CW")),
       channel: prettyAccents(pretty(row.canal || "Comercial")),
       intent: num(row.intencion_compra, 0),
@@ -2659,6 +2682,9 @@
     if (id) {
       const match = (state.members || []).find((member) => member.id === id);
       if (match && match.name) return match.name;
+      if (/^segmento/i.test(id)) {
+        return prettyAccents(pretty(id.replace(/[-_]+/g, " ").replace(/^segmento\b/i, "Segmento")));
+      }
       return id;
     }
     return "Socio O2";
@@ -2680,24 +2706,33 @@
   }
 
   function mapSheetHabit(row) {
-    const trendRaw = pretty(row.cambio_tendencia || "Sin cambio");
+    const existing = (state.habits || []).find((h) => h.id === row.id_habito);
+    const trendRaw = pretty(row.cambio_tendencia || (existing && (existing.trendDetail || existing.trend)) || "Sin cambio");
     const trendLabel = deriveTrendLabel(trendRaw);
     // Si la etiqueta derivada coincide con el texto base, no duplicar detalle.
     const trendDetail = trendRaw && trendRaw.toLowerCase() !== trendLabel.toLowerCase() ? prettyAccents(trendRaw) : "";
+    // El Sheet manda accesos como número, pero reservas llega como texto
+    // ("2 no-shows") y el periodo anterior puede faltar: nunca degradamos los
+    // valores ricos ya cargados en el estado.
+    const accesses = num(row.accesos, existing ? existing.accesses : 0);
+    const accessesPrev = num(row.accesos_prev, 0) || (existing ? existing.accessesPrev : 0);
+    const bookings = num(row.reservas, 0) || (existing ? existing.bookings : 0);
+    const bookingsPrev = num(row.reservas_prev, 0) || (existing ? existing.bookingsPrev : 0);
+    const services = prettyAccents(pretty(row.servicios_usados || ""));
     return {
       id: row.id_habito,
       memberId: pretty(row.id_socio || ""),
       memberName: resolveSheetMemberName(row),
-      club: prettyAccents(pretty(row.club || "O2CW")),
-      period: prettyAccents(pretty(row.periodo || "Últimos 30 días")),
-      accesses: num(row.accesos, 0),
-      accessesPrev: num(row.accesos_prev, 0),
-      bookings: num(row.reservas, 0),
-      bookingsPrev: num(row.reservas_prev, 0),
-      servicesUsed: prettyAccents(pretty(row.servicios_usados || "Sin servicios registrados")),
+      club: prettyAccents(pretty(row.club || (existing && existing.club) || "O2CW")),
+      period: prettyAccents(pretty(row.periodo || (existing && existing.period) || "Últimos 30 días")),
+      accesses,
+      accessesPrev,
+      bookings,
+      bookingsPrev,
+      servicesUsed: (existing && existing.servicesUsed) || services || "Sin servicios registrados",
       trend: trendLabel,
-      trendDetail,
-      reading: prettyAccents(pretty(row.lectura || "Sin lectura disponible"))
+      trendDetail: trendDetail || (existing && existing.trendDetail) || "",
+      reading: (existing && existing.reading) || prettyAccents(pretty(row.lectura || "Sin lectura disponible"))
     };
   }
 
