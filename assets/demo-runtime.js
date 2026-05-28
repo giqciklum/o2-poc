@@ -1875,19 +1875,24 @@
   function renderCommunications() {
     const feed = byId("communications-feed");
     if (!feed) return;
-    const all = state.communications || [];
+    const sorted = (state.communications || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    const memberIds = new Set((state.members || []).map((m) => m.id));
+    const socioComms = sorted.filter((c) => memberIds.has(c.memberId));
+    const all = socioComms.length ? socioComms : sorted;
     const selectedId = state.selectedMemberId;
-    const filtered = selectedId ? all.filter((c) => c.memberId === selectedId) : [];
-    const items = (filtered.length ? filtered : all).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+    const selectedItems = selectedId ? all.filter((c) => c.memberId === selectedId) : [];
+    const others = all.filter((c) => !selectedId || c.memberId !== selectedId);
+    const items = selectedItems.concat(others);
     if (!items.length) {
-      feed.innerHTML = `<p style="color: var(--muted); padding: 12px;">Sin comunicaciones registradas para este socio.</p>`;
+      feed.innerHTML = `<p style="color: var(--muted); padding: 12px;">Sin comunicaciones registradas.</p>`;
       return;
     }
     feed.innerHTML = items.slice(0, 8).map((c) => {
       const tone = c.sentiment < -30 ? "danger" : c.sentiment > 30 ? "ok" : "warn";
-      const filterTag = selectedId && filtered.length ? `<span class="tag">Socio seleccionado</span>` : `<span class="tag">Red O2</span>`;
+      const isFocus = selectedId && c.memberId === selectedId;
+      const filterTag = isFocus ? `<span class="tag">Socio seleccionado</span>` : `<span class="tag">Red O2</span>`;
       return `
-        <article class="feed-item">
+        <article class="feed-item${isFocus ? " is-focus" : ""}">
           <div class="feed-top">
             <div>
               <strong>${c.memberName}</strong>
@@ -1909,25 +1914,26 @@
   function renderHabits() {
     const feed = byId("habits-feed");
     if (!feed) return;
-    const all = state.habits || [];
+    const all = (state.habits || []).slice();
     const selectedId = state.selectedMemberId;
-    const filtered = selectedId ? all.filter((h) => h.memberId === selectedId) : [];
-    const items = filtered.length ? filtered : all;
+    const selectedItems = selectedId ? all.filter((h) => h.memberId === selectedId) : [];
+    const others = all.filter((h) => !selectedId || h.memberId !== selectedId);
+    const items = selectedItems.concat(others);
     if (!items.length) {
-      feed.innerHTML = `<p style="color: var(--muted); padding: 12px;">Sin hábitos registrados para este socio.</p>`;
+      feed.innerHTML = `<p style="color: var(--muted); padding: 12px;">Sin hábitos registrados.</p>`;
       return;
     }
     feed.innerHTML = items.slice(0, 6).map((h) => {
-      const accDelta = h.accessesPrev ? Math.round(((h.accesses - h.accessesPrev) / h.accessesPrev) * 100) : 0;
-      const bookDelta = h.bookingsPrev ? Math.round(((h.bookings - h.bookingsPrev) / h.bookingsPrev) * 100) : 0;
-      const accSign = accDelta > 0 ? "+" : "";
-      const bookSign = bookDelta > 0 ? "+" : "";
-      const accTone = accDelta < -30 ? "var(--danger)" : accDelta < 0 ? "#9a5b05" : "var(--ok)";
-      const bookTone = bookDelta < -30 ? "var(--danger)" : bookDelta < 0 ? "#9a5b05" : "var(--ok)";
+      const hasAccPrev = h.accessesPrev > 0;
+      const hasBookPrev = h.bookingsPrev > 0;
+      const accDelta = hasAccPrev ? Math.round(((h.accesses - h.accessesPrev) / h.accessesPrev) * 100) : null;
+      const bookDelta = hasBookPrev ? Math.round(((h.bookings - h.bookingsPrev) / h.bookingsPrev) * 100) : null;
+      const deltaBadge = (delta) => delta === null ? "" : ` <span style="color: ${delta < -30 ? "var(--danger)" : delta < 0 ? "#9a5b05" : "var(--ok)"}; font-size: 0.82rem; font-weight: 700;">(${delta > 0 ? "+" : ""}${delta}%)</span>`;
       const detail = h.trendDetail ? `<p style="color: var(--muted); margin-top: 6px; font-size: 0.84rem; line-height: 1.4;">${h.trendDetail}</p>` : "";
-      const filterTag = selectedId && filtered.length ? `<span class="tag">Socio seleccionado</span>` : "";
+      const isFocus = selectedId && h.memberId === selectedId;
+      const filterTag = isFocus ? `<span class="tag">Socio seleccionado</span>` : `<span class="tag">Red O2</span>`;
       return `
-        <article class="feed-item">
+        <article class="feed-item${isFocus ? " is-focus" : ""}">
           <div class="feed-top">
             <div>
               <strong>${h.memberName}</strong>
@@ -1938,13 +1944,13 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
             <div>
               <span style="color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Accesos</span>
-              <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">${h.accesses} <span style="color: ${accTone}; font-size: 0.82rem; font-weight: 700;">(${accSign}${accDelta}%)</span></div>
-              <div style="color: var(--muted); font-size: 0.76rem;">vs ${h.accessesPrev || 0} prev</div>
+              <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">${h.accesses}${deltaBadge(accDelta)}</div>
+              ${hasAccPrev ? `<div style="color: var(--muted); font-size: 0.76rem;">vs ${h.accessesPrev} prev</div>` : ""}
             </div>
             <div>
               <span style="color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Reservas</span>
-              <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">${h.bookings} <span style="color: ${bookTone}; font-size: 0.82rem; font-weight: 700;">(${bookSign}${bookDelta}%)</span></div>
-              <div style="color: var(--muted); font-size: 0.76rem;">vs ${h.bookingsPrev || 0} prev</div>
+              <div style="font-weight: 700; font-size: 1rem; margin-top: 2px;">${h.bookings}${deltaBadge(bookDelta)}</div>
+              ${hasBookPrev ? `<div style="color: var(--muted); font-size: 0.76rem;">vs ${h.bookingsPrev} prev</div>` : ""}
             </div>
             <div>
               <span style="color: var(--muted); font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.04em;">Servicios</span>
@@ -2646,12 +2652,24 @@
     };
   }
 
+  function resolveSheetMemberName(row) {
+    const provided = prettyAccents(pretty(row.nombre || ""));
+    if (provided) return provided;
+    const id = pretty(row.id_socio || "");
+    if (id) {
+      const match = (state.members || []).find((member) => member.id === id);
+      if (match && match.name) return match.name;
+      return id;
+    }
+    return "Socio O2";
+  }
+
   function mapSheetCommunication(row) {
     return {
       id: row.id_comunicacion,
       date: pretty(row.fecha || ""),
       memberId: pretty(row.id_socio || ""),
-      memberName: prettyAccents(pretty(row.nombre || row.id_socio || "Socio O2")),
+      memberName: resolveSheetMemberName(row),
       club: prettyAccents(pretty(row.club || "O2CW")),
       channel: prettyAccents(pretty(row.canal || "WhatsApp")),
       reason: prettyAccents(pretty(row.motivo || "Comunicación registrada")),
@@ -2669,7 +2687,7 @@
     return {
       id: row.id_habito,
       memberId: pretty(row.id_socio || ""),
-      memberName: prettyAccents(pretty(row.nombre || row.id_socio || "Socio O2")),
+      memberName: resolveSheetMemberName(row),
       club: prettyAccents(pretty(row.club || "O2CW")),
       period: prettyAccents(pretty(row.periodo || "Últimos 30 días")),
       accesses: num(row.accesos, 0),
@@ -2990,6 +3008,8 @@
         state.selectedMemberId = member.dataset.memberCard;
         saveState();
         renderMembers();
+        renderCommunications();
+        renderHabits();
       }
 
       const coverage = event.target.closest("[data-coverage-card]");

@@ -1270,6 +1270,21 @@
       border-color: var(--blue);
       box-shadow: 0 0 0 1px rgba(0, 157, 224, 0.18), 0 18px 42px rgba(0, 157, 224, 0.16);
     }
+    #communications-feed .feed-item,
+    #habits-feed .feed-item {
+      cursor: default;
+    }
+    .feed-item.is-focus {
+      border-color: var(--blue-light);
+      background:
+        linear-gradient(135deg, rgba(0, 157, 224, 0.08), rgba(109, 207, 213, 0.05)),
+        var(--surface);
+      box-shadow: inset 3px 0 0 var(--blue);
+    }
+    .feed-item.is-focus:hover {
+      transform: none;
+      box-shadow: inset 3px 0 0 var(--blue);
+    }
     .coverage-card.active {
       background:
         linear-gradient(135deg, rgba(0, 157, 224, 0.12), rgba(109, 207, 213, 0.08)),
