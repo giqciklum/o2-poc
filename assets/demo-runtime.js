@@ -387,7 +387,7 @@
     ],
     artifacts: [],
     timeline: [
-      { time: "Listo", title: "POC preparada", detail: "Base local con datos sintéticos O2 y runtime preparado para backend Apps Script." }
+      { time: "Listo", title: "Demo preparada", detail: "Base local con datos sintéticos O2 y runtime conectado al backend en la nube." }
     ],
     urgent: {
       visible: false,
