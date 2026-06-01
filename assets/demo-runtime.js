@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v10";
+  const STORAGE_KEY = "o2_runtime_v11";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -801,7 +801,8 @@
       { id: "V-125", channel: "App SoyO2", rating: "Sugerencia", club: "O2CW Huelva", topic: "Recordatorios", sentiment: 18, priority: "Media", status: "Nueva", text: "Estaría bien recibir recordatorios personalizados de natación y eventos.", action: "Segmentar recordatorios por hábito de uso." },
       { id: "V-126", channel: "Teléfono", rating: "Queja", club: "O2CW Granada", topic: "Pádel", sentiment: -47, priority: "Media", status: "Abierta", text: "Llamo para preguntar por pistas y no hay visibilidad de huecos reales.", action: "Unificar disponibilidad de pádel y guion de recepción." },
       { id: "V-127", channel: "Encuesta post-fisio", rating: "Promotor", club: "O2CW Málaga", topic: "Fisioterapia", sentiment: 84, priority: "Baja", status: "Completada", text: "El fisio me ayudó a volver a entrenar con seguridad.", action: "Convertir en argumento comercial para Recovery Plus." },
-      { id: "V-128", channel: "Hoja sugerencias", rating: "Sugerencia", club: "O2CW Parc del Migdia", topic: "Running club", sentiment: 33, priority: "Baja", status: "Nueva", text: "Más salidas de running por la mañana ayudarían a mantener rutina.", action: "Test de grupo outdoor martes/jueves." }
+      { id: "V-128", channel: "Hoja sugerencias", rating: "Sugerencia", club: "O2CW Parc del Migdia", topic: "Running club", sentiment: 33, priority: "Baja", status: "Nueva", text: "Más salidas de running por la mañana ayudarían a mantener rutina.", action: "Test de grupo outdoor martes/jueves." },
+      { id: "V-129", channel: "Hoja de reclamaciones", rating: "Queja", club: "O2CW Granada", topic: "Proceso de baja", sentiment: -58, priority: "Alta", status: "Abierta", text: "Quería pausar la cuota por una lesión y solo se puede en persona antes del día 19; me han cobrado otro mes y me voy con mal sabor.", action: "Revisar caso por motivo de salud, avisar del corte del día 19 por SoyO2 y digitalizar la gestión de baja/pausa." }
     );
 
     seed.sales.push(

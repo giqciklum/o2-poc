@@ -265,7 +265,8 @@ function setupSheet() {
     ["V-125","2026-05-22","App SoyO2","O2CW Huelva","Sugerencia","18","Recordatorios","Media","Nueva","Seria util recibir recordatorios de natacion y eventos.","Segmentar recordatorios por habito"],
     ["V-126","2026-05-22","Telefono","O2CW Granada","Queja","-47","Padel","Media","Abierta","No hay visibilidad clara de huecos reales de pistas.","Unificar disponibilidad y guion de recepcion"],
     ["V-127","2026-05-21","Encuesta post-fisio","O2CW Malaga","Promotor","84","Fisioterapia","Baja","Completada","El fisio me ayudo a volver a entrenar con seguridad.","Argumento comercial para Recovery Plus"],
-    ["V-128","2026-05-21","Hoja sugerencias","O2CW Parc del Migdia","Sugerencia","33","Running club","Baja","Nueva","Mas salidas de running por la manana ayudarian a mantener rutina.","Test grupo outdoor martes y jueves"]
+    ["V-128","2026-05-21","Hoja sugerencias","O2CW Parc del Migdia","Sugerencia","33","Running club","Baja","Nueva","Mas salidas de running por la manana ayudarian a mantener rutina.","Test grupo outdoor martes y jueves"],
+    ["V-129","2026-05-21","Hoja de reclamaciones","O2CW Granada","Queja","-58","Proceso de baja","Alta","Abierta","Queria pausar la cuota por una lesion y solo se puede en persona antes del dia 19; me han cobrado otro mes.","Revisar caso por motivo de salud, avisar del corte del dia 19 por SoyO2 y digitalizar baja/pausa"]
   ]);
 
   appendRows(comunicaciones, [
