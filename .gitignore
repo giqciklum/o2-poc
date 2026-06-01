@@ -22,3 +22,6 @@ LOCAL_*.md
 /docs/O2_Guia_Demo_Ejecutiva_CEO.html
 /docs/pdf-assets/
 /miguel-demo/
+
+# Intermedio del generador de demo.pdf (no publicar)
+/docs/demo.html
