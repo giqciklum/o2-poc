@@ -918,6 +918,163 @@
     .delta.danger { background: var(--danger-soft); color: var(--danger); }
     .delta.flat { background: var(--surface-soft); color: var(--muted); }
 
+    /* ==== BUSINESS CASE ==== */
+    .business-case {
+      gap: 16px;
+      background:
+        radial-gradient(circle at 90% -10%, rgba(0,157,224,0.08), transparent 42%),
+        linear-gradient(180deg, rgba(227,243,252,0.55), var(--surface));
+      border-color: rgba(0,157,224,0.22);
+    }
+    .biz-head { display: flex; justify-content: space-between; gap: 14px; align-items: start; }
+    .biz-head > div { min-width: 0; }
+    .biz-head p { color: var(--muted); line-height: 1.55; margin-top: 8px; font-size: 0.9rem; max-width: 66ch; }
+    .biz-tag {
+      flex: 0 0 auto;
+      align-self: start;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .biz-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .biz-stat {
+      position: relative;
+      padding: 18px 18px 18px 22px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+    .biz-stat:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .biz-stat::before {
+      content: "";
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: var(--blue);
+    }
+    .biz-stat.warn::before { background: var(--warning); }
+    .biz-stat.ok::before { background: var(--ok); }
+    .biz-stat.blue::before { background: var(--blue); }
+    .biz-stat strong {
+      display: block;
+      font-family: "Fraunces", serif;
+      font-size: 2.3rem;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .biz-stat.warn strong { color: #b56a05; }
+    .biz-stat.ok strong { color: var(--green-deep); }
+    .biz-stat.blue strong { color: var(--blue-deep); }
+    .biz-stat span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+    .biz-roi {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .biz-roi-readout {
+      position: relative;
+      display: grid;
+      align-content: center;
+      gap: 6px;
+      padding: 18px;
+      border-radius: var(--radius-sm);
+      background:
+        radial-gradient(circle at 85% 15%, rgba(109,207,213,0.18), transparent 40%),
+        linear-gradient(135deg, rgb(5,18,31), rgb(0,82,116));
+      color: #fff;
+      border: 1px solid rgba(109,207,213,0.24);
+      overflow: hidden;
+    }
+    .biz-roi-readout span { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(218,245,255,0.72); }
+    .biz-roi-readout strong { font-family: "Fraunces", serif; font-size: 1.32rem; line-height: 1.18; font-weight: 700; }
+    .biz-roi-readout p { color: rgba(255,255,255,0.78); font-size: 0.84rem; line-height: 1.5; margin-top: 2px; font-weight: 500; }
+    .biz-roi-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .biz-roi-tile {
+      display: grid; align-content: center; gap: 7px;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--line);
+    }
+    .biz-roi-tile strong { font-family: "Fraunces", serif; font-size: 1.46rem; line-height: 1.05; color: var(--ink); }
+    .biz-roi-tile strong em { font-style: normal; color: var(--blue-deep); }
+    .biz-roi-tile span { color: var(--muted); font-size: 0.8rem; line-height: 1.42; font-weight: 600; }
+    .biz-roi-tile.accent {
+      background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+      border-color: transparent;
+      box-shadow: 0 12px 28px var(--blue-shadow);
+    }
+    .biz-roi-tile.accent strong { color: #fff; }
+    .biz-roi-tile.accent span { color: rgba(255,255,255,0.88); }
+    .biz-foot { color: var(--muted-soft); font-size: 0.74rem; line-height: 1.5; font-weight: 500; margin: 0; }
+
+    @media (max-width: 860px) {
+      .biz-stats { grid-template-columns: 1fr; }
+      .biz-roi { grid-template-columns: 1fr; }
+    }
+
+    /* ==== MEMBER JOURNEY ==== */
+    .journey { display: grid; gap: 10px; }
+    .journey-label { color: rgba(255,255,255,0.62); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+    .journey-track {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .journey-track::before {
+      content: "";
+      position: absolute;
+      left: 10%; right: 10%; top: 6px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(47,157,98,0.65), rgba(239,155,58,0.6), rgba(216,75,85,0.7));
+      opacity: 0.6;
+    }
+    .journey-step {
+      position: relative;
+      display: grid;
+      gap: 3px;
+      padding-top: 19px;
+      text-align: center;
+      min-width: 0;
+    }
+    .journey-step i {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--ok);
+      border: 2px solid rgba(5,18,31,0.92);
+      box-shadow: 0 0 0 3px rgba(47,157,98,0.28);
+    }
+    .journey-step.warn i { background: var(--warning); box-shadow: 0 0 0 3px rgba(239,155,58,0.28); }
+    .journey-step.danger i { background: var(--danger); box-shadow: 0 0 0 3px rgba(216,75,85,0.32); }
+    .journey-step.now i { box-shadow: 0 0 0 4px rgba(255,255,255,0.22), 0 0 14px rgba(255,255,255,0.4); }
+    .journey-step strong { color: #fff; font-size: 0.74rem; line-height: 1.15; font-weight: 700; overflow-wrap: anywhere; }
+    .journey-step span { color: rgba(255,255,255,0.6); font-size: 0.66rem; line-height: 1.2; overflow-wrap: anywhere; }
+
     /* ==== LAYOUTS ==== */
     .two-col {
       display: grid;
@@ -2528,6 +2685,8 @@
 
         <div class="metric-grid" id="metric-grid"></div>
 
+        <section class="panel business-case" id="business-case" aria-label="Caso de negocio · economía de la retención"></section>
+
         <section class="panel">
           <div class="panel-head">
             <div>
@@ -2958,7 +3117,7 @@
 
       <footer class="footer">
         <strong>O2 Centro Wellness × Ciklum · Intelligence Hub</strong>
-        Demo comercial · Datos sintéticos sobre referencias públicas de O2 Centro Wellness · Independiente de WiFit · Mayo 2026
+        Demo comercial · Datos sintéticos sobre referencias públicas de O2 Centro Wellness · Junio 2026
       </footer>
     </main>
   </div>

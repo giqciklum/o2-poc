@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "o2_runtime_v9";
+  const STORAGE_KEY = "o2_runtime_v10";
   const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx3QE-JVcP1dSmnqcy6LUbQhMboZ9MbNf_LlRzrinVzBJXuDOXYNMSvM3KKgk15wiDycw/exec";
   const BACKEND_TIMEOUT = 10000;
   const POLL_INTERVAL = 15000;
@@ -9,7 +9,8 @@
   const euro = (value) => new Intl.NumberFormat("es-ES", {
     style: "currency",
     currency: "EUR",
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
+    useGrouping: true
   }).format(value || 0);
   const pct = (value) => `${Math.round(value || 0)}%`;
   const deepClone = (value) => JSON.parse(JSON.stringify(value));
@@ -231,7 +232,7 @@
         visits30: 13,
         visitsPrev: 12,
         ltv: 1980,
-        nextAction: "Mantener recomendación de Zone Her y Body&Soul",
+        nextAction: "Mantener recomendación de ZONE y Body&Soul",
         reason: "Uso recurrente, feedback positivo y progresión constante.",
         drivers: [
           ["Frecuencia", "13 accesos en 30 días y tendencia estable", 22],
@@ -390,6 +391,17 @@
       ["Horas recuperadas", 38, "Menos trabajo manual en triage y seguimiento."],
       ["Reviews críticas", 4, "Casos abiertos con respuesta pendiente."]
     ],
+    economics: {
+      // Referencias de sector fitness premium España 2025-26 (ver memoria o2-marca-hechos-verificados).
+      retainVsAcquire: "5-7×",
+      annualRevenuePerMember: 1032,
+      monthlyFeePremium: 86,
+      predictableChurn: "2 de 3",
+      tenureLow: 20,
+      tenureHigh: 33,
+      protectedPerClub: 70000,
+      recoveryRate: 40
+    },
     artifacts: [],
     timeline: [
       { time: "Listo", title: "Demo preparada", detail: "Base local con datos sintéticos O2 y runtime conectado al backend en la nube." }
@@ -427,7 +439,7 @@
     seed.dataSources = [
       ...seed.dataSources,
       { label: "App SoyO2", detail: "Reservas, retos, recordatorios y engagement", strength: 89 },
-      { label: "MOVERGY / Wellness Passport", detail: "Tendencia de actividad y progreso", strength: 74 },
+      { label: "Báscula de bioimpedancia", detail: "Composición corporal, progreso y readaptación", strength: 74 },
       { label: "Máquinas y ZONE", detail: "Uso conectado, intensidad y recurrencia", strength: 71 }
     ];
     seed.topicScores = [
@@ -956,7 +968,7 @@
       summary: "Analiza llamadas, WhatsApp y acciones comerciales para entender qué estrategias convierten mejor.",
       action: "sales",
       apply(next) {
-        next.kpis.pipeline = 318000;
+        next.kpis.pipeline = (next.kpis.pipeline || 412000) + 32000;
         next.sales.unshift({
           id: "C-2418",
           name: "Carlos Medina",
@@ -969,7 +981,7 @@
           nextAction: "Enviar comparativa de valor premium y cita con fisioterapeuta."
         });
         next.selectedSalesId = "C-2418";
-        next.salesFunnel.values = [172, 124, 76, 49];
+        next.salesFunnel.values = [402, 276, 158, 97, 60];
         next.tasks.unshift({
           id: "T-831",
           category: "Comercial",
@@ -1109,7 +1121,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : null;
       // If structure looks stale (no clubs/sparklines field), reset
-      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined || parsed.selectedOperationId === undefined || !Array.isArray(parsed.surveys) || !Array.isArray(parsed.communications) || !Array.isArray(parsed.habits)) {
+      if (!parsed || !parsed.clubs || !parsed.sparklines || !parsed.urgent || !parsed.coverage || !parsed.dataSources || !parsed.economics || parsed.selectedVoiceId === undefined || parsed.selectedSalesId === undefined || parsed.selectedCoverageIndex === undefined || parsed.selectedOperationId === undefined || !Array.isArray(parsed.surveys) || !Array.isArray(parsed.communications) || !Array.isArray(parsed.habits)) {
         return deepClone(baseState);
       }
       return parsed;
@@ -1466,6 +1478,63 @@
     }).join("");
   }
 
+  function renderBusinessCase() {
+    const band = byId("business-case");
+    if (!band) return;
+    const e = state.economics || {};
+    const recovery = (e.recoveryRate || 40) / 100;
+    const highRisk = (state.members || []).filter((m) => (m.churnScore || 0) >= 70);
+    const atRisk = (state.members || []).filter((m) => (m.churnScore || 0) >= 55);
+    const ltvExposed = atRisk.reduce((sum, m) => sum + (m.ltv || 0), 0);
+    const protectableSample = Math.round(ltvExposed * recovery);
+    const stats = [
+      { value: e.retainVsAcquire || "5-7×", label: "más caro captar un socio nuevo que retener al actual", tone: "warn" },
+      { value: e.annualRevenuePerMember || 1032, euro: true, label: `ingreso recurrente al año por socio premium (cuota ~${e.monthlyFeePremium || 86} €/mes)`, tone: "blue" },
+      { value: e.predictableChurn || "2 de 3", label: "bajas son evitables si se anticipan con 30+ días de margen", tone: "ok" }
+    ];
+    band.innerHTML = `
+      <div class="biz-head">
+        <div>
+          <span class="eyebrow">Economía de la retención</span>
+          <h2>El coste de no actuar a tiempo</h2>
+          <p>Cada socio que se va se sustituye por otro que cuesta varias veces más captar. Anticipar la baja con margen convierte ese coste en ingreso protegido.</p>
+        </div>
+        <span class="biz-tag">Caso de negocio</span>
+      </div>
+      <div class="biz-stats">
+        ${stats.map((s, i) => `
+          <article class="biz-stat ${s.tone}">
+            <strong data-biz-num="${i}" data-current-value="0" ${s.euro ? 'data-euro="1"' : ""}>${s.euro ? "0 €" : s.value}</strong>
+            <span>${s.label}</span>
+          </article>
+        `).join("")}
+      </div>
+      <div class="biz-roi">
+        <div class="biz-roi-readout">
+          <span>En la muestra viva</span>
+          <strong>${atRisk.length} socios en riesgo · ${euro(ltvExposed)} de LTV expuesto</strong>
+          <p>${highRisk.length} en riesgo alto. El modelo prioriza a quién llamar primero y por qué, no lanza una alerta genérica para todos.</p>
+        </div>
+        <div class="biz-roi-tiles">
+          <div class="biz-roi-tile">
+            <strong>${e.tenureLow || 20} → <em>${e.tenureHigh || 33}</em> meses</strong>
+            <span>permanencia media si la baja mensual cae del 5% al 3%</span>
+          </div>
+          <div class="biz-roi-tile accent">
+            <strong>≈ +${euro(e.protectedPerClub || 70000)}</strong>
+            <span>ingreso recurrente al año protegido por club premium al lograrlo</span>
+          </div>
+        </div>
+      </div>
+      <p class="biz-foot">Referencias de sector fitness premium España 2025-26 · cifras de socio sintéticas para la demo · recuperando el ${e.recoveryRate || 40}% del riesgo de la muestra se protegen ${euro(protectableSample)} de LTV.</p>
+    `;
+    stats.forEach((s, i) => {
+      if (!s.euro) return;
+      const el = band.querySelector(`[data-biz-num="${i}"]`);
+      animateNumber(el, s.value, { formatter: (v) => euro(v) });
+    });
+  }
+
   function renderImpact() {
     byId("impact-grid").innerHTML = state.impact.map(([label, value, detail]) => {
       const rendered = typeof value === "number" && value > 1000 ? euro(value) : value;
@@ -1567,6 +1636,36 @@
     `).join("");
   }
 
+  // Construye la "vida del socio" (alta → hábito → señal → estado hoy) a partir
+  // de sus propios datos, sin fabricar fechas concretas: refleja frecuencia,
+  // churn y estado para que cada timeline parezca específico de ese socio.
+  function buildJourney(m) {
+    const dropping = (m.visitsPrev || 0) > (m.visits30 || 0);
+    const dropPct = m.visitsPrev ? Math.round(((m.visits30 - m.visitsPrev) / m.visitsPrev) * 100) : 0;
+    const high = (m.churnScore || 0) >= 70;
+    const medium = (m.churnScore || 0) >= 55 && !high;
+    const stable = (m.churnScore || 0) < 40;
+    const firstDriver = (m.drivers && m.drivers[0]) ? m.drivers[0][0] : "Uso";
+    const steps = [
+      { label: "Alta", sub: "Onboarding y primer plan", tone: "ok" },
+      { label: "Hábito consolidado", sub: `${m.visitsPrev || "—"} visitas/mes`, tone: "ok" }
+    ];
+    if (high) {
+      steps.push({ label: "Caída de frecuencia", sub: `${m.visits30} visitas (${dropPct}%)`, tone: "danger" });
+      steps.push({ label: "Señal de fricción", sub: firstDriver, tone: "warn" });
+      steps.push({ label: "Alerta de retención", sub: "Acción hoy", tone: "danger", now: true });
+    } else if (medium) {
+      steps.push({ label: dropping ? "Cambio de tendencia" : "Uso irregular", sub: `${m.visits30} visitas${dropping ? ` (${dropPct}%)` : ""}`, tone: "warn" });
+      steps.push({ label: "Punto de atención", sub: firstDriver, tone: "warn" });
+      steps.push({ label: "Seguimiento preventivo", sub: "Esta semana", tone: "warn", now: true });
+    } else {
+      steps.push({ label: "Uso recurrente", sub: `${m.visits30} visitas/mes`, tone: "ok" });
+      steps.push({ label: stable ? "Socio promotor" : "Patrón saludable", sub: firstDriver, tone: "ok" });
+      steps.push({ label: "Fidelización", sub: "Recomendación activa", tone: "ok", now: true });
+    }
+    return steps;
+  }
+
   function renderMembers() {
     const members = state.members
       .slice()
@@ -1605,6 +1704,18 @@
           <div class="detail-kpi"><span>Visitas 30d</span><strong>${selected.visits30}</strong></div>
           <div class="detail-kpi"><span>Mes anterior</span><strong>${selected.visitsPrev}</strong></div>
           <div class="detail-kpi"><span>LTV</span><strong>${euro(selected.ltv)}</strong></div>
+        </div>
+        <div class="journey">
+          <span class="journey-label">Vida del socio · de alta a hoy</span>
+          <div class="journey-track">
+            ${buildJourney(selected).map((step) => `
+              <div class="journey-step ${step.tone}${step.now ? " now" : ""}">
+                <i></i>
+                <strong>${step.label}</strong>
+                <span>${step.sub}</span>
+              </div>
+            `).join("")}
+          </div>
         </div>
         <div class="source-focus">
           <span>Siguiente mejor acción</span>
@@ -2233,6 +2344,7 @@
     return {
       responsive: true,
       maintainAspectRatio: false,
+      animation: { duration: 1100, easing: "easeOutQuart" },
       plugins: {
         legend: {
           labels: {
@@ -2331,6 +2443,7 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 1100, easing: "easeOutQuart" },
         cutout: "66%",
         plugins: {
           legend: { position: "bottom", labels: { font: { family: "Inter", size: 12, weight: "600" }, padding: 14 } },
@@ -2506,6 +2619,7 @@
   function renderAll() {
     renderMetrics();
     renderSignalStrip();
+    renderBusinessCase();
     renderCoverage();
     renderNetwork();
     renderTasks();
@@ -2792,9 +2906,7 @@
     if (state.maintenance.length) {
       state.kpis.maintenanceRisk = state.maintenance.filter((item) => item.risk >= 70).length;
     }
-    if (state.sales.length) {
-      state.kpis.pipeline = Math.max(state.kpis.pipeline || 0, state.sales.reduce((sum, item) => sum + (item.intent || 0) * 1100, 0));
-    }
+    // El pipeline se mantiene según el funnel sembrado; no se infla con la intención de leads sueltos.
 
     state.heroProof = [
       ["Fuentes socio", `${state.dataSources.length} conectadas`],

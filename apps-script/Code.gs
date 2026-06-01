@@ -104,7 +104,7 @@ function setupSheet() {
   appendRows(socios, [
     ["S-1748","Clara Valera","O2CW Manuel Becerra","Well Living Plus","2025-09-17","Riesgo alto","3","11","79","3240","Spa + fuerza","Llamada + invitacion spa en franja valle"],
     ["S-0832","Javier Antón","O2CW Granada","Family Wellness","2025-03-02","Riesgo medio","5","8","62","2860","Padel + nutricion","Oferta pack padel + seguimiento nutricion"],
-    ["S-2214","Marta Roca","O2CW Boutique Barcelona","Boutique Women","2026-01-14","Activo","13","12","31","1980","Body&Soul","Mantener recomendacion Zone Her"],
+    ["S-2214","Marta Roca","O2CW Boutique Barcelona","Boutique Women","2026-01-14","Activo","13","12","31","1980","Body&Soul","Mantener recomendacion ZONE"],
     ["S-1905","David Llorente","O2CW Malaga","Well Living","2024-11-22","Activo","9","8","28","2140","Piscina","Rutina piscina + fuerza"],
     ["S-1511","Paula Gómez","O2CW Huelva","Well Living","2025-07-04","Activo","7","6","35","1760","Fisio","Check preventivo fisio"]
   ]);
